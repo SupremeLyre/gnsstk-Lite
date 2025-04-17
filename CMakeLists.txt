@@ -14,11 +14,8 @@ set(GNSSTK_VERSION_MINOR "3")
 set(GNSSTK_VERSION_PATCH "0")
 set(GNSSTK_VERSION "${GNSSTK_VERSION_MAJOR}.${GNSSTK_VERSION_MINOR}.${GNSSTK_VERSION_PATCH}")
 
-# Test data file source directory
-set(GNSSTK_TEST_DATA_DIR ${PROJECT_SOURCE_DIR}/data)
-
-# Test output directory
-set(GNSSTK_TEST_OUTPUT_DIR ${PROJECT_BINARY_DIR}/Testing/Temporary)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)
+set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib/)
 
 # This sets up variables contining GNU standard installation locations.
 include(GNUInstallDirs)
@@ -127,3 +124,10 @@ endif()
 # absence would break the build on non-windows.
 generate_export_header(gnsstk)
 include_directories(AFTER SYSTEM ${PROJECT_BINARY_DIR})
+
+# ===========================================================
+# Build GNSSTk Examples
+# ===========================================================
+add_subdirectory(examples)
+add_subdirectory(apps)
+add_subdirectory(ext/apps)

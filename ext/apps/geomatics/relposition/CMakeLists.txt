@@ -1,0 +1,30 @@
+# apps/geomatics/relposition/CMakeLists.txt
+
+add_library(baselib STATIC
+DataStructures.cpp
+CommandInput.cpp
+Configure.cpp
+ReadRawData.cpp
+ReadObsFiles.cpp
+ClockModel.cpp
+Synchronization.cpp
+DDid.cpp
+DoubleDifference.cpp
+EditDDs.cpp
+DataOutput.cpp
+Estimation.cpp
+Timetable.cpp
+ElevationMask.cpp
+ProcessRawData.cpp
+PhaseWindup.cpp
+ComputeRAIMSolution.cpp
+EditRawDataBuffers.cpp
+StochasticModels.cpp
+)
+
+add_executable(DDBase DDBase.cpp)
+target_link_libraries(DDBase baselib)
+
+
+
+

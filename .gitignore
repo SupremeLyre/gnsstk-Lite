@@ -32,3 +32,8 @@ gnsstk_doc_cpp.tgz
 _build/
 api/
 quickref.rst
+
+bin/
+lib/
+NewNavInc.h
+NewNavInit.h
