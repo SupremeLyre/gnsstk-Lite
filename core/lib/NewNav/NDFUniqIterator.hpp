@@ -40,7 +40,7 @@
 #define GNSSTK_NDFUNIQUEITERATOR_HPP
 
 #include <type_traits>
-
+#include "NavDataFactory.hpp"
 namespace gnsstk
 {
       /** This class provides a non-const iterator for iterating over
