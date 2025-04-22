@@ -37,3 +37,5 @@ bin/
 lib/
 NewNavInc.h
 NewNavInit.h
+
+prs.log

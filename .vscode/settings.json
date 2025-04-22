@@ -1,0 +1,18 @@
+{
+    "cmake.debugConfig": {
+        "args": [
+            "--verbose",
+            "--obs",
+            "ARL82660.09o",
+            "--eph",
+            "igs15502.sp3,igs15503.sp3,igs15504.sp3",
+            "--clk",
+            "igs15502.clk_30s,igs15503.clk_30s,igs15504.clk_30s",
+            "--sol",
+            "GPS:12:WC,GLO:12:PC,GPS+GLO:12:WC+PC",
+            "--ref",
+            "-740311.8581,-5457066.4731,3207249.3343:%x,%y,%z"
+        ],
+        "cwd": "${workspaceFolder}/apps/positioning/examples",
+    }
+}
