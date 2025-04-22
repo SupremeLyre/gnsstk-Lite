@@ -92,181 +92,178 @@
  * \enddictable
  */
 
-#include "NewNavInc.h"
 #include "BasicFramework.hpp"
-#include "Position.hpp"
 #include "CommandOptionWithPositionArg.hpp"
+#include "NewNavInc.h"
+#include "Position.hpp"
 
 using namespace std;
 using namespace gnsstk;
 
 class PosCvt : public BasicFramework
 {
-public:
-   PosCvt(char* arg0);
+  public:
+    PosCvt(char *arg0);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
-   virtual bool initialize(int argc, char *argv[])
-      noexcept;
+    virtual bool initialize(int argc, char *argv[]) noexcept;
 #pragma clang diagnostic pop
 
-protected:
-   virtual void process();
+  protected:
+    virtual void process();
 
-private:
-   CommandOptionWithPositionArg ecefOption;
-   CommandOptionWithPositionArg geodeticOption;
-   CommandOptionWithPositionArg geocentricOption;
-   CommandOptionWithPositionArg sphericalOption;
-   CommandOptionNoArg listFormatsOption;
-   CommandOptionWithAnyArg outputFormatOption;
-   CommandOptionMutex mutexOption;
+  private:
+    CommandOptionWithPositionArg ecefOption;
+    CommandOptionWithPositionArg geodeticOption;
+    CommandOptionWithPositionArg geocentricOption;
+    CommandOptionWithPositionArg sphericalOption;
+    CommandOptionNoArg listFormatsOption;
+    CommandOptionWithAnyArg outputFormatOption;
+    CommandOptionMutex mutexOption;
 
-   string stringToParse;
-   string posSpec;
+    string stringToParse;
+    string posSpec;
 };
 
-PosCvt::PosCvt(char* arg0)
-      : BasicFramework(arg0, "Converts from a given input position "
-                       "specification to other position formats.  Include the "
-                       "quotation marks."),
-        ecefOption('\0', "ecef", "%x %y %z", "ECEF \"X Y Z\" in meters"),
-        geodeticOption('\0', "geodetic", "%A %L %h",
-                       "Geodetic \"lat lon alt\" in deg, deg, meters"),
-        geocentricOption('\0', "geocentric", "%a %l %r",
-                         "Geocentric \"lat lon radius\" in deg, deg, meters"),
-        sphericalOption('\0', "spherical", "%t %p %r",
-                        "Spherical \"theta, phi, radius\" in deg, deg, meters"),
-        listFormatsOption('l', "list-formats", "List the available format codes"
-                          " for use by the input and output format options."),
-        outputFormatOption('F', "output-format", "Write the position with the"
-                           " given format."),
-        mutexOption(true)
+PosCvt::PosCvt(char *arg0)
+    : BasicFramework(arg0, "Converts from a given input position "
+                           "specification to other position formats.  Include the "
+                           "quotation marks."),
+      ecefOption('\0', "ecef", "%x %y %z", "ECEF \"X Y Z\" in meters"),
+      geodeticOption('\0', "geodetic", "%A %L %h", "Geodetic \"lat lon alt\" in deg, deg, meters"),
+      geocentricOption('\0', "geocentric", "%a %l %r", "Geocentric \"lat lon radius\" in deg, deg, meters"),
+      sphericalOption('\0', "spherical", "%t %p %r", "Spherical \"theta, phi, radius\" in deg, deg, meters"),
+      listFormatsOption('l', "list-formats",
+                        "List the available format codes"
+                        " for use by the input and output format options."),
+      outputFormatOption('F', "output-format",
+                         "Write the position with the"
+                         " given format."),
+      mutexOption(true)
 {
-   ecefOption.setMaxCount(1);
-   geodeticOption.setMaxCount(1);
-   geocentricOption.setMaxCount(1);
-   sphericalOption.setMaxCount(1);
-   listFormatsOption.setMaxCount(1);
-   outputFormatOption.setMaxCount(1);
+    ecefOption.setMaxCount(1);
+    geodeticOption.setMaxCount(1);
+    geocentricOption.setMaxCount(1);
+    sphericalOption.setMaxCount(1);
+    listFormatsOption.setMaxCount(1);
+    outputFormatOption.setMaxCount(1);
 
-   mutexOption.addOption(&ecefOption);
-   mutexOption.addOption(&geodeticOption);
-   mutexOption.addOption(&geocentricOption);
-   mutexOption.addOption(&sphericalOption);
+    mutexOption.addOption(&ecefOption);
+    mutexOption.addOption(&geodeticOption);
+    mutexOption.addOption(&geocentricOption);
+    mutexOption.addOption(&sphericalOption);
 }
 
-bool PosCvt::initialize(int argc, char *argv[])
-   noexcept
+bool PosCvt::initialize(int argc, char *argv[]) noexcept
 {
-   if(!BasicFramework::initialize(argc, argv))
-      return false;
+    if (!BasicFramework::initialize(argc, argv))
+        return false;
 
-   if(listFormatsOption.getCount())
-   {
-      cout << " %X %Y %Z  (cartesian or ECEF in kilometers)" << endl
-           << " %x %y %z  (cartesian or ECEF in meters)" << endl
-           << " %a %l %r  (geocentric lat,lon,radius, longitude E, "
-         "radius in meters)" << endl
-           << " %A %L %h  (geodetic lat,lon,height, longitude E, "
-         "height in meters)" << endl
-           << " %a %w %R  (geocentric lat,lon,radius, longitude W, "
-         "radius in kilometers)" << endl
-           << " %A %W %H  (geodetic lat,lon,height, longitude W, "
-         "height in kilometers)" << endl
-           << " %t %p %r  (spherical theta, phi, radius, "
-         "degrees and meters)" << endl
-           << " %T %P %R  (spherical theta, phi, radius, "
-         "radians and kilometers)" << endl;
+    if (listFormatsOption.getCount())
+    {
+        cout << " %X %Y %Z  (cartesian or ECEF in kilometers)" << endl
+             << " %x %y %z  (cartesian or ECEF in meters)" << endl
+             << " %a %l %r  (geocentric lat,lon,radius, longitude E, "
+                "radius in meters)"
+             << endl
+             << " %A %L %h  (geodetic lat,lon,height, longitude E, "
+                "height in meters)"
+             << endl
+             << " %a %w %R  (geocentric lat,lon,radius, longitude W, "
+                "radius in kilometers)"
+             << endl
+             << " %A %W %H  (geodetic lat,lon,height, longitude W, "
+                "height in kilometers)"
+             << endl
+             << " %t %p %r  (spherical theta, phi, radius, "
+                "degrees and meters)"
+             << endl
+             << " %T %P %R  (spherical theta, phi, radius, "
+                "radians and kilometers)"
+             << endl;
 
-      return false;
-   }
+        return false;
+    }
 
-   return true;
+    return true;
 }
 
 void PosCvt::process()
 {
-   try
-   {
-      Position pos;
+    try
+    {
+        Position pos;
 
-      CommandOptionWithPositionArg *whichOpt =
-         dynamic_cast<CommandOptionWithPositionArg *>(mutexOption.whichOne());
+        CommandOptionWithPositionArg *whichOpt = dynamic_cast<CommandOptionWithPositionArg *>(mutexOption.whichOne());
 
-      if (whichOpt != NULL)
-      {
-         pos = whichOpt->getPosition().front();
-      }
+        if (whichOpt != NULL)
+        {
+            pos = whichOpt->getPosition().front();
+        }
 
-      if (outputFormatOption.getCount())
-      {
-         cout << pos.printf(outputFormatOption.getValue()[0]) << endl;
-      }
-      else
-      {
-         using StringUtils::leftJustify;
-         string four(4, ' '); // four spaces!
+        if (outputFormatOption.getCount())
+        {
+            cout << pos.printf(outputFormatOption.getValue()[0]) << endl;
+        }
+        else
+        {
+            using StringUtils::leftJustify;
+            string four(4, ' '); // four spaces!
 
-         Position foo = pos.asECEF();
+            Position foo = pos.asECEF();
 
-         cout << endl
-              << four << leftJustify("ECEF (x,y,z) in meters", 36)
-              << foo.printf("%.4x %.4y %.4z") << endl;
+            cout << endl << four << leftJustify("ECEF (x,y,z) in meters", 36) << foo.printf("%.4x %.4y %.4z") << endl;
 
-         foo = pos.asGeodetic();
+            foo = pos.asGeodetic();
 
-         cout << four << leftJustify("Geodetic (llh) in deg, deg, m", 36)
-              << foo.printf("%.8A %.8L %.4h") << endl;
+            cout << four << leftJustify("Geodetic (llh) in deg, deg, m", 36) << foo.printf("%.8A %.8L %.4h") << endl;
 
             // no Position::asGeocentric() available
-         foo = pos.transformTo(Position::Geocentric);
+            foo = pos.transformTo(Position::Geocentric);
 
-         cout << four << leftJustify("Geocentric (llr) in deg, deg, m", 36)
-              << pos.printf("%.8a %.8L %.4r") << endl;
+            cout << four << leftJustify("Geocentric (llr) in deg, deg, m", 36) << pos.printf("%.8a %.8L %.4r") << endl;
 
-         foo = pos.transformTo(Position::Spherical);
+            foo = pos.transformTo(Position::Spherical);
 
-         cout << four << leftJustify("Spherical (tpr) in deg, deg, m", 36)
-              << pos.printf("%.8t %.8p %.4r") << endl
+            cout << four << leftJustify("Spherical (tpr) in deg, deg, m", 36) << pos.printf("%.8t %.8p %.4r") << endl
 
-              << endl << endl;
-      }
-
-   }
-   catch(GeometryException& ge)
-   {
-      cout << ge << endl;
-   }
+                 << endl
+                 << endl;
+        }
+    }
+    catch (GeometryException &ge)
+    {
+        cout << ge << endl;
+    }
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 #include "NewNavInit.h"
-   try
-   {
-      PosCvt pc(argv[0]);
+    try
+    {
+        PosCvt pc(argv[0]);
 
-      if (!pc.initialize(argc, argv))
-         return pc.exitCode;
+        if (!pc.initialize(argc, argv))
+            return pc.exitCode;
 
-      if(!pc.run())
-         return pc.exitCode;
+        if (!pc.run())
+            return pc.exitCode;
 
-      return pc.exitCode;
-   }
-   catch(Exception& e)
-   {
-      cout << e << endl;
-   }
-   catch(std::exception& e)
-   {
-      cout << e.what() << endl;
-   }
-   catch(...)
-   {
-      cout << "Caught an unknown exception." << endl;
-   }
-      // only reach this point if an exception was caught
-   return BasicFramework::EXCEPTION_ERROR;
+        return pc.exitCode;
+    }
+    catch (Exception &e)
+    {
+        cout << e << endl;
+    }
+    catch (std::exception &e)
+    {
+        cout << e.what() << endl;
+    }
+    catch (...)
+    {
+        cout << "Caught an unknown exception." << endl;
+    }
+    // only reach this point if an exception was caught
+    return BasicFramework::EXCEPTION_ERROR;
 }

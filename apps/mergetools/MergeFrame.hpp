@@ -45,42 +45,37 @@
 
 class MergeFrame : public gnsstk::BasicFramework
 {
-public:
-      /**
-       * arg0 is the name of the executable from argv[0].
-       * type is a string with the type of file (i.e. "RINEX Obs").
-       * message is an extra message that gets passed to the
-       * program description.
-       */
-   MergeFrame(char* arg0,
-              const std::string& type,
-              const std::string& message = std::string())
-         : gnsstk::BasicFramework(arg0,
-                                 "Sorts and merges input " + type +
-                                 " files into a single file. " + message),
-           inputFileOption("<" + type + " file> [...]", true),
-           outputFileOption('o',
-                            "output",
-                            "Name for the merged output " + type + " file."
-                            " Any existing file with that name will be"
-                            " overwritten.",
-                            true)
-   {
-      outputFileOption.setMaxCount(1);
-   }
+  public:
+    /**
+     * arg0 is the name of the executable from argv[0].
+     * type is a string with the type of file (i.e. "RINEX Obs").
+     * message is an extra message that gets passed to the
+     * program description.
+     */
+    MergeFrame(char *arg0, const std::string &type, const std::string &message = std::string())
+        : gnsstk::BasicFramework(arg0, "Sorts and merges input " + type + " files into a single file. " + message),
+          inputFileOption("<" + type + " file> [...]", true),
+          outputFileOption('o', "output",
+                           "Name for the merged output " + type +
+                               " file."
+                               " Any existing file with that name will be"
+                               " overwritten.",
+                           true)
+    {
+        outputFileOption.setMaxCount(1);
+    }
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
-   virtual bool initialize(int argc, char* argv[]) noexcept
-   {
-      return gnsstk::BasicFramework::initialize(argc, argv);
-   }
+    virtual bool initialize(int argc, char *argv[]) noexcept
+    {
+        return gnsstk::BasicFramework::initialize(argc, argv);
+    }
 #pragma clang diagnostic pop
-protected:
-   virtual void process() = 0;
+  protected:
+    virtual void process() = 0;
 
-   gnsstk::CommandOptionRest inputFileOption;
-   gnsstk::CommandOptionWithAnyArg outputFileOption;
+    gnsstk::CommandOptionRest inputFileOption;
+    gnsstk::CommandOptionWithAnyArg outputFileOption;
 };
-
 
 #endif

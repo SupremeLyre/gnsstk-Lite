@@ -73,141 +73,135 @@
  * \enddictable
  */
 
-#include "NewNavInc.h"
-#include <iostream>
-#include <iomanip>
-#include "CommonTime.hpp"
+#include "BasicFramework.hpp"
 #include "CivilTime.hpp"
-#include "YDSTime.hpp"
+#include "CommandOptionParser.hpp"
+#include "CommonTime.hpp"
 #include "GPSWeekSecond.hpp"
+#include "NewNavInc.h"
+#include "StringUtils.hpp"
+#include "SystemTime.hpp"
 #include "TimeConstants.hpp"
 #include "TimeString.hpp"
-#include "SystemTime.hpp"
-#include "CommandOptionParser.hpp"
-#include "StringUtils.hpp"
-#include "BasicFramework.hpp"
+#include "YDSTime.hpp"
+#include <iomanip>
+#include <iostream>
 
 using namespace std;
 using namespace gnsstk;
 
-
 void printMonth(short month, short year)
 {
-   CivilTime civ(year, month, 1, 0, 0, 0.0);
+    CivilTime civ(year, month, 1, 0, 0, 0.0);
 
-   cout << endl << civ.printf("%26b %4Y") << endl;
+    cout << endl << civ.printf("%26b %4Y") << endl;
 
-   GPSWeekSecond gws(civ);
+    GPSWeekSecond gws(civ);
 
-   for (; civ.month == month; ++gws.week, gws.sow = 0, civ = gws)
-   {
-      cout << setw(4) << gws.week << "  ";
+    for (; civ.month == month; ++gws.week, gws.sow = 0, civ = gws)
+    {
+        cout << setw(4) << gws.week << "  ";
 
-      for (short thisDow = 0; thisDow < 7; ++thisDow)
-      {
-         gws.sow = thisDow * SEC_PER_DAY;
-         CommonTime com(gws);
-         if (CivilTime(com).month == month)
-	   cout << printTime(com, "%2d-%03j ");
-         else
-           cout << "       ";
-      }
-      cout << endl;
-   }
+        for (short thisDow = 0; thisDow < 7; ++thisDow)
+        {
+            gws.sow = thisDow * SEC_PER_DAY;
+            CommonTime com(gws);
+            if (CivilTime(com).month == month)
+                cout << printTime(com, "%2d-%03j ");
+            else
+                cout << "       ";
+        }
+        cout << endl;
+    }
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 #include "NewNavInit.h"
 
-   try {
+    try
+    {
 
-      CommandOptionNoArg helpOption('h',"help","Display argument list.",false);
-      CommandOptionNoArg threeOption('3',"three-months","Display last, this and next months.",false);
-      CommandOptionNoArg thisYearOption('y',"year","Display all months for the current year");
-      CommandOptionWithNumberArg givenYearOption('Y',"specific-year","Display all months for a given year");
+        CommandOptionNoArg helpOption('h', "help", "Display argument list.", false);
+        CommandOptionNoArg threeOption('3', "three-months", "Display last, this and next months.", false);
+        CommandOptionNoArg thisYearOption('y', "year", "Display all months for the current year");
+        CommandOptionWithNumberArg givenYearOption('Y', "specific-year", "Display all months for a given year");
 
-      CommandOptionParser cop("GNSSTk GPS Calendar Generator");
-      cop.parseOptions(argc, argv);
+        CommandOptionParser cop("GNSSTk GPS Calendar Generator");
+        cop.parseOptions(argc, argv);
 
-      if (cop.hasErrors())
-      {
-         cop.dumpErrors(cout);
-         cop.displayUsage(cout);
-         return 1;
-      }
+        if (cop.hasErrors())
+        {
+            cop.dumpErrors(cout);
+            cop.displayUsage(cout);
+            return 1;
+        }
 
-      if(helpOption.getCount())
-      {
-         cop.displayUsage(cout);
-         return 0;
-      }
+        if (helpOption.getCount())
+        {
+            cop.displayUsage(cout);
+            return 0;
+        }
 
+        // Print this month
+        SystemTime st;
+        CivilTime now(st);
+        int firstMonth = now.month;
+        int lastMonth = now.month;
+        int firstYear = now.year;
+        int lastYear = now.year;
 
-      // Print this month
-      SystemTime st;
-      CivilTime now(st);
-      int firstMonth = now.month;
-      int lastMonth  = now.month;
-      int firstYear  = now.year;
-      int lastYear   = now.year;
+        if (thisYearOption.getCount())
+        {
+            firstMonth = 1;
+            lastMonth = 12;
+        }
 
-      if (thisYearOption.getCount())
-      {
-         firstMonth =1;
-         lastMonth  =12;
-      }
+        if (givenYearOption.getCount())
+        {
+            firstMonth = 1;
+            lastMonth = 12;
 
-      if (givenYearOption.getCount())
-      {
-         firstMonth =1;
-         lastMonth  =12;
+            firstYear = gnsstk::StringUtils::asInt((givenYearOption.getValue())[0]);
+            lastYear = firstYear;
+        }
 
-         firstYear = gnsstk::StringUtils::asInt((givenYearOption.getValue())[0]);
-         lastYear = firstYear;
+        if (threeOption.getCount())
+        {
+            firstMonth--;
+            if (firstMonth == 0)
+            {
+                firstMonth = 12;
+                firstYear--;
+            }
 
-      }
+            lastMonth++;
+            if (lastMonth == 13)
+            {
+                lastMonth = 1;
+                lastYear++;
+            }
+        }
 
-      if (threeOption.getCount())
-      {
-         firstMonth--;
-         if (firstMonth==0)
-         {
-            firstMonth = 12;
-            firstYear--;
-         }
+        int mcount = 0;
+        for (short m = firstMonth, y = firstYear; (y < lastYear) || ((m <= lastMonth) && (y == lastYear)); m++)
+        {
+            if (m == 13)
+            {
+                m = 1;
+                y++;
+            }
 
-         lastMonth++;
-         if (lastMonth==13)
-         {
-            lastMonth = 1;
-            lastYear++;
-         }
-      }
+            printMonth(m, y);
+        }
 
-      int mcount=0;
-      for (short m=firstMonth, y=firstYear;
-          (y<lastYear) || ((m<=lastMonth) && (y==lastYear));
-           m++)
-      {
-         if (m==13)
-         {
-            m=1;
-            y++;
-         }
+        cout << endl;
+    }
+    catch (Exception &error)
+    {
+        cout << error << endl;
+        return gnsstk::BasicFramework::EXCEPTION_ERROR;
+    }
 
-          printMonth(m, y);
-      }
-
-      cout << endl;
-
-
-   }
-   catch (Exception& error)
-   {
-      cout << error << endl;
-      return gnsstk::BasicFramework::EXCEPTION_ERROR;
-   }
-
-   return 0;
+    return 0;
 }

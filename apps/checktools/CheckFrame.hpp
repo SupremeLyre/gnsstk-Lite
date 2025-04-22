@@ -38,150 +38,144 @@
 
 #ifndef CHECKFRAME_HPP
 #define CHECKFRAME_HPP
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
+#include "BasicFramework.hpp"
 #include "CommandOptionWithTimeArg.hpp"
 #include "FileFilterFrame.hpp"
-#include "BasicFramework.hpp"
 
-template <class FileData>
-struct NullTimeFilter : public std::unary_function<FileData, bool>
+template <class FileData> struct NullTimeFilter : public std::unary_function<FileData, bool>
 {
-public:
-   NullTimeFilter(const gnsstk::CommonTime& startTime,
-                  const gnsstk::CommonTime& endTime)
-   {}
+  public:
+    NullTimeFilter(const gnsstk::CommonTime &startTime, const gnsstk::CommonTime &endTime)
+    {
+    }
 
-   bool operator() (const FileData& l) const
-   {
-      return false;
-   }
+    bool operator()(const FileData &l) const
+    {
+        return false;
+    }
 };
 
-
-template <class FileStream, class FileData, class FilterTimeOperator = NullTimeFilter<FileData> >
+template <class FileStream, class FileData, class FilterTimeOperator = NullTimeFilter<FileData>>
 class CheckFrame : public gnsstk::BasicFramework
 {
-public:
-   CheckFrame(char* arg0, std::string fileType) :
-         gnsstk::BasicFramework(arg0,
-                               "Reads given input " + fileType +
-                               " files and check for errors. This will only"
-                               " report the first error found in each file. "
-                               " The entire file is always checked, regardless"
-                               " of time options."),
-         firstErrorOption('1', "quit-on-first-error", "Quit on the first"
-                          " error encountered (default = no)."),
-         timeOption('t', "time", "Time of first record to count (default ="
-                    " \"beginning of time\")"),
-         eTimeOption('e', "end-time", "End of time range to compare (default"
-                     " = \"end of time\")"),
-         inputFileOption("Each input file is checked for errors.", true),
-         quitOnFirstError(false),
-         startTime(gnsstk::CommonTime::BEGINNING_OF_TIME),
-         endTime(gnsstk::CommonTime::END_OF_TIME)
-   {
-      timeOption.setMaxCount(1);
-      eTimeOption.setMaxCount(1);
-      timeOptions.addOption(&timeOption);
-      timeOptions.addOption(&eTimeOption);
-   }
+  public:
+    CheckFrame(char *arg0, std::string fileType)
+        : gnsstk::BasicFramework(arg0, "Reads given input " + fileType +
+                                           " files and check for errors. This will only"
+                                           " report the first error found in each file. "
+                                           " The entire file is always checked, regardless"
+                                           " of time options."),
+          firstErrorOption('1', "quit-on-first-error",
+                           "Quit on the first"
+                           " error encountered (default = no)."),
+          timeOption('t', "time",
+                     "Time of first record to count (default ="
+                     " \"beginning of time\")"),
+          eTimeOption('e', "end-time",
+                      "End of time range to compare (default"
+                      " = \"end of time\")"),
+          inputFileOption("Each input file is checked for errors.", true), quitOnFirstError(false),
+          startTime(gnsstk::CommonTime::BEGINNING_OF_TIME), endTime(gnsstk::CommonTime::END_OF_TIME)
+    {
+        timeOption.setMaxCount(1);
+        eTimeOption.setMaxCount(1);
+        timeOptions.addOption(&timeOption);
+        timeOptions.addOption(&eTimeOption);
+    }
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
-   virtual bool initialize(int argc, char* argv[]) noexcept
-   {
-      if (!gnsstk::BasicFramework::initialize(argc, argv))
-         return false;
-      if (firstErrorOption.getCount())
-         quitOnFirstError = true;
-      if (timeOption.getCount())
-         startTime = timeOption.getTime()[0];
-      if (eTimeOption.getCount())
-         endTime = eTimeOption.getTime()[0];
-      if (startTime > endTime)
-      {
-         std::cerr << "End time can't precede start time." << std::endl;
-         return false;
-      }
-      return true;
-   }
+    virtual bool initialize(int argc, char *argv[]) noexcept
+    {
+        if (!gnsstk::BasicFramework::initialize(argc, argv))
+            return false;
+        if (firstErrorOption.getCount())
+            quitOnFirstError = true;
+        if (timeOption.getCount())
+            startTime = timeOption.getTime()[0];
+        if (eTimeOption.getCount())
+            endTime = eTimeOption.getTime()[0];
+        if (startTime > endTime)
+        {
+            std::cerr << "End time can't precede start time." << std::endl;
+            return false;
+        }
+        return true;
+    }
 #pragma clang diagnostic pop
-protected:
-   virtual void process()
-   {
-      unsigned errors = 0;
-      std::vector<std::string> inputFiles = inputFileOption.getValue();
-      std::vector<std::string>::iterator itr = inputFiles.begin();
-      FilterTimeOperator timeFilt(startTime, endTime);
+  protected:
+    virtual void process()
+    {
+        unsigned errors = 0;
+        std::vector<std::string> inputFiles = inputFileOption.getValue();
+        std::vector<std::string>::iterator itr = inputFiles.begin();
+        FilterTimeOperator timeFilt(startTime, endTime);
 
-      while (itr != inputFiles.end())
-      {
+        while (itr != inputFiles.end())
+        {
 
-         std::cout << "Checking " << *itr << std::endl;
-         unsigned long recCount = 0;
-         try
-         {
-
-	    FileStream f((*itr).c_str());
-            f.exceptions(std::ios::failbit);
-            FileData temp;
-            while (f >> temp)
+            std::cout << "Checking " << *itr << std::endl;
+            unsigned long recCount = 0;
+            try
             {
-               if (!timeFilt(temp))
-                  recCount++;
+
+                FileStream f((*itr).c_str());
+                f.exceptions(std::ios::failbit);
+                FileData temp;
+                while (f >> temp)
+                {
+                    if (!timeFilt(temp))
+                        recCount++;
+                }
+                std::cout << "Read " << recCount << " records." << std::endl << std::endl;
             }
-            std::cout << "Read " << recCount << " records."
-                      << std::endl << std::endl;
-         }
-         catch (gnsstk::Exception& e)
-         {
-            std::cout << e << std::endl << std::endl;
-            ++errors;
-            if (quitOnFirstError)
-               GNSSTK_RETHROW(e);
-         }
-         catch (std::exception& e)
-         {
-            std::cout << e.what() << std::endl;
-            ++errors;
-            if (quitOnFirstError)
-               throw e;
-         }
-         catch (...)
-         {
-            std::cout << "unknown exception caught" << std::endl;
-            ++errors;
-            if (quitOnFirstError)
-               throw;
-         }
+            catch (gnsstk::Exception &e)
+            {
+                std::cout << e << std::endl << std::endl;
+                ++errors;
+                if (quitOnFirstError)
+                    GNSSTK_RETHROW(e);
+            }
+            catch (std::exception &e)
+            {
+                std::cout << e.what() << std::endl;
+                ++errors;
+                if (quitOnFirstError)
+                    throw e;
+            }
+            catch (...)
+            {
+                std::cout << "unknown exception caught" << std::endl;
+                ++errors;
+                if (quitOnFirstError)
+                    throw;
+            }
 
-         itr++;
-      }
+            itr++;
+        }
 
-      if (errors > 0)
-      {
+        if (errors > 0)
+        {
             // Throw an exception so the app returns 1 on any errors.
-         gnsstk::Exception exc("Encountered " +
-                              gnsstk::StringUtils::asString(errors) +
-                              " error(s).");
-         GNSSTK_THROW(exc);
-      }
-   }
+            gnsstk::Exception exc("Encountered " + gnsstk::StringUtils::asString(errors) + " error(s).");
+            GNSSTK_THROW(exc);
+        }
+    }
 
-      /// Quit on first error.
-   gnsstk::CommandOptionNoArg firstErrorOption;
-      /// start time for record counting
-   gnsstk::CommandOptionWithSimpleTimeArg timeOption;
-      /// end time for record counting
-   gnsstk::CommandOptionWithSimpleTimeArg eTimeOption;
-      /// if either of the time options are set
-   gnsstk::CommandOptionGroupOr timeOptions;
-   gnsstk::CommandOptionRest inputFileOption;
+    /// Quit on first error.
+    gnsstk::CommandOptionNoArg firstErrorOption;
+    /// start time for record counting
+    gnsstk::CommandOptionWithSimpleTimeArg timeOption;
+    /// end time for record counting
+    gnsstk::CommandOptionWithSimpleTimeArg eTimeOption;
+    /// if either of the time options are set
+    gnsstk::CommandOptionGroupOr timeOptions;
+    gnsstk::CommandOptionRest inputFileOption;
 
-   bool quitOnFirstError;
-   gnsstk::CommonTime startTime, endTime;
-
+    bool quitOnFirstError;
+    gnsstk::CommonTime startTime, endTime;
 };
 
 #endif

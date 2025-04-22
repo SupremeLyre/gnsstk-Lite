@@ -87,13 +87,13 @@
 // mergeRinMet
 // Merge and sort rinex metrological files
 
+#include "CivilTime.hpp"
+#include "FileFilterFrameWithHeader.hpp"
 #include "NewNavInc.h"
-#include "RinexMetStream.hpp"
-#include "RinexMetHeader.hpp"
 #include "RinexMetData.hpp"
 #include "RinexMetFilterOperators.hpp"
-#include "FileFilterFrameWithHeader.hpp"
-#include "CivilTime.hpp"
+#include "RinexMetHeader.hpp"
+#include "RinexMetStream.hpp"
 #include "SystemTime.hpp"
 
 #include "MergeFrame.hpp"
@@ -103,69 +103,69 @@ using namespace gnsstk;
 
 class MergeRinMet : public MergeFrame
 {
-public:
-   MergeRinMet(char* arg0)
-      : MergeFrame(arg0,
-                   std::string("RINEX Met"),
-                   std::string("The output will be sorted by time. This program assumes all the input files are from the same station."))
-   {}
+  public:
+    MergeRinMet(char *arg0)
+        : MergeFrame(arg0, std::string("RINEX Met"),
+                     std::string("The output will be sorted by time. This program assumes all the input files are from "
+                                 "the same station."))
+    {
+    }
 
-protected:
-   virtual void process();
+  protected:
+    virtual void process();
 };
 
 void MergeRinMet::process()
 {
-   std::vector<std::string> files = inputFileOption.getValue();
+    std::vector<std::string> files = inputFileOption.getValue();
 
-      // FFF will sort and merge the data using
-      // a simple time check
-   FileFilterFrameWithHeader<RinexMetStream, RinexMetData, RinexMetHeader>
-      fff(files);
+    // FFF will sort and merge the data using
+    // a simple time check
+    FileFilterFrameWithHeader<RinexMetStream, RinexMetData, RinexMetHeader> fff(files);
 
-      // get the header data
-   RinexMetHeaderTouchHeaderMerge merged;
-   fff.touchHeader(merged);
+    // get the header data
+    RinexMetHeaderTouchHeaderMerge merged;
+    fff.touchHeader(merged);
 
-      // sort and filter the data
-   fff.sort(RinexMetDataOperatorLessThanFull(merged.obsSet));
-   fff.unique(RinexMetDataOperatorEqualsSimple());
+    // sort and filter the data
+    fff.sort(RinexMetDataOperatorLessThanFull(merged.obsSet));
+    fff.unique(RinexMetDataOperatorEqualsSimple());
 
-      // set the pgm/runby/date field
-   merged.theHeader.fileProgram = std::string("mergeRinMet");
-   merged.theHeader.fileAgency = std::string("gnsstk");
-   merged.theHeader.date = CivilTime(SystemTime()).asString();
+    // set the pgm/runby/date field
+    merged.theHeader.fileProgram = std::string("mergeRinMet");
+    merged.theHeader.fileAgency = std::string("gnsstk");
+    merged.theHeader.date = CivilTime(SystemTime()).asString();
 
-      // write the header
-   std::string outputFile = outputFileOption.getValue().front();
-   fff.writeFile(outputFile, merged.theHeader);
+    // write the header
+    std::string outputFile = outputFileOption.getValue().front();
+    fff.writeFile(outputFile, merged.theHeader);
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 #include "NewNavInit.h"
-   try
-   {
-      MergeRinMet m(argv[0]);
-      if (!m.initialize(argc, argv))
-         return m.exitCode;
-      if (!m.run())
-         return m.exitCode;
+    try
+    {
+        MergeRinMet m(argv[0]);
+        if (!m.initialize(argc, argv))
+            return m.exitCode;
+        if (!m.run())
+            return m.exitCode;
 
-      return m.exitCode;
-   }
-   catch(Exception& e)
-   {
-      cout << e << endl;
-   }
-   catch(std::exception& e)
-   {
-      cout << e.what() << endl;
-   }
-   catch(...)
-   {
-      cout << "unknown error" << endl;
-   }
-      // only reach this point if an exception was caught
-   return BasicFramework::EXCEPTION_ERROR;
+        return m.exitCode;
+    }
+    catch (Exception &e)
+    {
+        cout << e << endl;
+    }
+    catch (std::exception &e)
+    {
+        cout << e.what() << endl;
+    }
+    catch (...)
+    {
+        cout << "unknown error" << endl;
+    }
+    // only reach this point if an exception was caught
+    return BasicFramework::EXCEPTION_ERROR;
 }

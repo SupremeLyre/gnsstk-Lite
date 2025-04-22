@@ -85,14 +85,14 @@
  */
 
 #include "NewNavInc.h"
-#include "Rinex3NavStream.hpp"
-#include "Rinex3NavHeader.hpp"
 #include "Rinex3NavData.hpp"
 #include "Rinex3NavFilterOperators.hpp"
+#include "Rinex3NavHeader.hpp"
+#include "Rinex3NavStream.hpp"
 
+#include "CivilTime.hpp"
 #include "FileFilterFrameWithHeader.hpp"
 #include "SystemTime.hpp"
-#include "CivilTime.hpp"
 
 #include "MergeFrame.hpp"
 
@@ -101,75 +101,75 @@ using namespace gnsstk;
 
 class MergeRinNav : public MergeFrame
 {
-public:
-   MergeRinNav(char* arg0)
-      : MergeFrame(arg0,
-                   std::string("RINEX Nav"),
-                   std::string("Only unique nav subframes will be output and they will be sorted by time."))
-   {}
+  public:
+    MergeRinNav(char *arg0)
+        : MergeFrame(arg0, std::string("RINEX Nav"),
+                     std::string("Only unique nav subframes will be output and they will be sorted by time."))
+    {
+    }
 
-protected:
-   virtual void process();
+  protected:
+    virtual void process();
 };
 
 void MergeRinNav::process()
 {
-   std::vector<std::string> files = inputFileOption.getValue();
+    std::vector<std::string> files = inputFileOption.getValue();
 
-      // FFF will sort and merge the obs data using
-      // a simple time check
-   FileFilterFrameWithHeader<Rinex3NavStream, Rinex3NavData, Rinex3NavHeader> fff(files);
+    // FFF will sort and merge the obs data using
+    // a simple time check
+    FileFilterFrameWithHeader<Rinex3NavStream, Rinex3NavData, Rinex3NavHeader> fff(files);
 
-      // get the header data
-   Rinex3NavHeaderTouchHeaderMerge merged;
+    // get the header data
+    Rinex3NavHeaderTouchHeaderMerge merged;
 
-   fff.touchHeader(merged);
+    fff.touchHeader(merged);
 
-      // sort and filter the data
-   fff.sort(Rinex3NavDataOperatorLessThanFull());
-   fff.unique(Rinex3NavDataOperatorEqualsFull());
+    // sort and filter the data
+    fff.sort(Rinex3NavDataOperatorLessThanFull());
+    fff.unique(Rinex3NavDataOperatorEqualsFull());
 
-      // set the pgm/runby/date field
-   merged.theHeader.fileType = string("NAVIGATION");
-   merged.theHeader.fileProgram = std::string("mergeRinNav");
-   merged.theHeader.fileAgency = std::string("gnsstk");
-   merged.theHeader.date = CivilTime(SystemTime()).asString();
-   merged.theHeader.version = 2.1;
-   merged.theHeader.valid |= gnsstk::Rinex3NavHeader::validVersion;
-   merged.theHeader.valid |= gnsstk::Rinex3NavHeader::validRunBy;
-   merged.theHeader.valid |= gnsstk::Rinex3NavHeader::validComment;
-   merged.theHeader.valid |= gnsstk::Rinex3NavHeader::validEoH;
+    // set the pgm/runby/date field
+    merged.theHeader.fileType = string("NAVIGATION");
+    merged.theHeader.fileProgram = std::string("mergeRinNav");
+    merged.theHeader.fileAgency = std::string("gnsstk");
+    merged.theHeader.date = CivilTime(SystemTime()).asString();
+    merged.theHeader.version = 2.1;
+    merged.theHeader.valid |= gnsstk::Rinex3NavHeader::validVersion;
+    merged.theHeader.valid |= gnsstk::Rinex3NavHeader::validRunBy;
+    merged.theHeader.valid |= gnsstk::Rinex3NavHeader::validComment;
+    merged.theHeader.valid |= gnsstk::Rinex3NavHeader::validEoH;
 
-      // write the header
-   std::string outputFile = outputFileOption.getValue().front();
-   fff.writeFile(outputFile, merged.theHeader);
+    // write the header
+    std::string outputFile = outputFileOption.getValue().front();
+    fff.writeFile(outputFile, merged.theHeader);
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 #include "NewNavInit.h"
-   try
-   {
-      MergeRinNav m(argv[0]);
-      if (!m.initialize(argc, argv))
-         return m.exitCode;
-      if (!m.run())
-         return m.exitCode;
+    try
+    {
+        MergeRinNav m(argv[0]);
+        if (!m.initialize(argc, argv))
+            return m.exitCode;
+        if (!m.run())
+            return m.exitCode;
 
-      return m.exitCode;
-   }
-   catch(Exception& e)
-   {
-      cout << e << endl;
-   }
-   catch(std::exception& e)
-   {
-      cout << e.what() << endl;
-   }
-   catch(...)
-   {
-      cout << "unknown error" << endl;
-   }
-      // only reach this point if an exception was caught
-   return BasicFramework::EXCEPTION_ERROR;
+        return m.exitCode;
+    }
+    catch (Exception &e)
+    {
+        cout << e << endl;
+    }
+    catch (std::exception &e)
+    {
+        cout << e.what() << endl;
+    }
+    catch (...)
+    {
+        cout << "unknown error" << endl;
+    }
+    // only reach this point if an exception was caught
+    return BasicFramework::EXCEPTION_ERROR;
 }

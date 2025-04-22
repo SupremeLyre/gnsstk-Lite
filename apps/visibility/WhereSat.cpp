@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -46,7 +45,10 @@
  *
  * \section wheresat_synopsis SYNOPSIS
  * <b>wheresat</b>  <b>-h</b> <br/>
- * <b>wheresat</b> <b>-e</b>&nbsp;\argarg{ARG} <b>[-d</b><b>]</b> <b>[-v</b><b>]</b> <b>[-i</b><b>]</b> <b>[-V</b><b>]</b> <b>[-u</b>&nbsp;\argarg{ARG}<b>]</b> <b>[\--start</b>&nbsp;\argarg{TIME}<b>]</b> <b>[\--end</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-f</b>&nbsp;\argarg{ARG}<b>]</b> <b>[-s</b>&nbsp;\argarg{ARG}<b>]</b> <b>[-p</b>&nbsp;\argarg{NUM}<b>]</b> <b>[-t</b>&nbsp;\argarg{NUM}<b>]</b> <b>[-A</b><b>]</b>
+ * <b>wheresat</b> <b>-e</b>&nbsp;\argarg{ARG} <b>[-d</b><b>]</b> <b>[-v</b><b>]</b> <b>[-i</b><b>]</b>
+ * <b>[-V</b><b>]</b> <b>[-u</b>&nbsp;\argarg{ARG}<b>]</b> <b>[\--start</b>&nbsp;\argarg{TIME}<b>]</b>
+ * <b>[\--end</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-f</b>&nbsp;\argarg{ARG}<b>]</b> <b>[-s</b>&nbsp;\argarg{ARG}<b>]</b>
+ * <b>[-p</b>&nbsp;\argarg{NUM}<b>]</b> <b>[-t</b>&nbsp;\argarg{NUM}<b>]</b> <b>[-A</b><b>]</b>
  *
  * \section wheresat_description DESCRIPTION
  * This application uses input ephemeris to compute the estimated
@@ -97,7 +99,8 @@
  *
  * \dictionary
  * \dicterm{-e, \--eph-files=\argarg{ARG}}
- * \dicdef{Ephemeris source file(s). Can be SP3a, SP3b, SP3c, SP3d, RINEX2, RINEX3, Yuma, SEM, RawNavCSV, NovAtel, MDP, FIC, MDH.}
+ * \dicdef{Ephemeris source file(s). Can be SP3a, SP3b, SP3c, SP3d, RINEX2, RINEX3, Yuma, SEM, RawNavCSV, NovAtel, MDP,
+ * FIC, MDH.}
  * \dicterm{-d, \--debug}
  * \dicdef{Increase debug level}
  * \dicterm{-v, \--verbose}
@@ -109,7 +112,8 @@
  * \dicterm{-V, \--velocity}
  * \dicdef{Display velocity in addition to position}
  * \dicterm{-u, \--position=\argarg{ARG}}
- * \dicdef{Antenna position (m) in ECEF (x,y,z) coordinates.  Format as a string: "X Y Z". Used to give user-centered data (SV range, azimuth & elevation) when SV is in view.}
+ * \dicdef{Antenna position (m) in ECEF (x,y,z) coordinates.  Format as a string: "X Y Z". Used to give user-centered
+ * data (SV range, azimuth & elevation) when SV is in view.}
  * \dicterm{\--start=\argarg{TIME}}
  * \dicdef{Ignore data before this time. Format as string: "MO/DD/YYYY HH:MM:SS".}
  * \dicterm{\--end=\argarg{TIME}}
@@ -117,9 +121,11 @@
  * \dicterm{-f, \--time-format=\argarg{ARG}}
  * \dicdef{CommonTime format specifier used for times in the output. The default is "%02m/%02d/%4Y %02H:%02M:%04.1f".}
  * \dicterm{-s, \--sat=\argarg{ARG}}
- * \dicdef{Which SVs to analyze (by RINEX SatID.  e.g., G01 E30). Repeat option for multiple satellites. If this option is not specified, all ephemeris data will be processed.}
+ * \dicdef{Which SVs to analyze (by RINEX SatID.  e.g., G01 E30). Repeat option for multiple satellites. If this option
+ * is not specified, all ephemeris data will be processed.}
  * \dicterm{-p, \--prn=\argarg{NUM}}
- * \dicdef{Which SVs to analyze (by PRN). Repeat option for multiple satellites. If this option is not specified, all ephemeris data will be processed.}
+ * \dicdef{Which SVs to analyze (by PRN). Repeat option for multiple satellites. If this option is not specified, all
+ * ephemeris data will be processed.}
  * \dicterm{-t, \--time=\argarg{NUM}}
  * \dicdef{Time increment for ephemeris calculation. Enter increment in seconds. Default is 900 (15 min).}
  * \dicterm{-A, \--use-alm}
@@ -130,7 +136,7 @@
  *
  * The output for wheresat is of the following form:
  * \code{.sh}
- * Date       Time        Sat    ECEF-X(m)    ECEF-Y(m)      ECEF-Z(m)      clock(ms)  az(deg)   el(deg)   Range-to-SV(m)
+ * Date       Time        Sat    ECEF-X(m)    ECEF-Y(m)      ECEF-Z(m)      clock(ms)  az(deg)   el(deg) Range-to-SV(m)
  * 07/19/2015 00:00:00.0  G13    9094017.832  -20832137.536  -13973496.670  -0.133344  151.603    7.742    25105556.964
  * \endcode
  *
@@ -253,366 +259,358 @@
  * \ref compSatVis, \ref compStaVis, \ref svvis
  *
  *   1. The GNSS Toolkit, GNSSTk.  Website: http://www.gnsstk.org/
- *   2. RINEX: The Receiver Independent Exchange Format Version 2.10.  Available on the web at http://www.ngs.noaa.gov/CORS/Rinex2.html
+ *   2. RINEX: The Receiver Independent Exchange Format Version 2.10.  Available on the web at
+ * http://www.ngs.noaa.gov/CORS/Rinex2.html
  *   3. Roger Bate, Donald Mueller, and Jerry White. <i>Fundamentals of Astrodynamics</i>. Dover. New York, NY. 1971.
  *   4. A. E. Roy. <i>Orbital Motion, 2nd Edition</i>. Adam Hilger Ltd. Bristol, Great Britain. 1982.
- *   5. Battin, Richard. <i>An Introduction to the Mathematics and Methods of Astrodynamics</i>, Revised Editino. AIAA Press. Reston, Virginia, 1999.
- *   6. B. Hoffman-Wellenhof, H. Lichtenegger, and J. Collins. GPS: Theory and Practice, 5th edition. Springer Verlag.  New York, NY. 2001
- *   7. Misra, Pratap and Enge, Per. <i>Global Positioning System: Signals, Measurements and Performance</i>.  Ganga-Jamuna Press. 2004.
- *   8. ICD-GPS-200, now more recently renamed to IS-GPS-200. Website: http://www.navcen.uscg.gov/ftp/policy/icd200/ICD200Cw1234.pdf
+ *   5. Battin, Richard. <i>An Introduction to the Mathematics and Methods of Astrodynamics</i>, Revised Editino. AIAA
+ * Press. Reston, Virginia, 1999.
+ *   6. B. Hoffman-Wellenhof, H. Lichtenegger, and J. Collins. GPS: Theory and Practice, 5th edition. Springer Verlag.
+ * New York, NY. 2001
+ *   7. Misra, Pratap and Enge, Per. <i>Global Positioning System: Signals, Measurements and Performance</i>.
+ * Ganga-Jamuna Press. 2004.
+ *   8. ICD-GPS-200, now more recently renamed to IS-GPS-200. Website:
+ * http://www.navcen.uscg.gov/ftp/policy/icd200/ICD200Cw1234.pdf
  *
  * \section wheresat_authors AUTHORS
  * wheresat was written by Tracie Conn and other employees of ARL:UT.
  */
 
-#include <iostream>
-#include <iomanip>
 #include <fstream>
+#include <iomanip>
+#include <iostream>
 #include <set>
 
 #include "BasicFramework.hpp"
-#include "CommonTime.hpp"
-#include "CommandOption.hpp"
-#include "CommandOptionWithCommonTimeArg.hpp"
-#include "CommandOptionParser.hpp"
-#include "WGS84Ellipsoid.hpp"
-#include "NavLibrary.hpp"
-#include "MultiFormatNavDataFactory.hpp"
-#include "RinexSatID.hpp"
 #include "CivilTime.hpp"
-#include "TimeString.hpp"
-#include "Xvt.hpp"
+#include "CommandOption.hpp"
+#include "CommandOptionParser.hpp"
+#include "CommandOptionWithCommonTimeArg.hpp"
+#include "CommonTime.hpp"
+#include "MultiFormatNavDataFactory.hpp"
+#include "NavLibrary.hpp"
 #include "NewNavInc.h"
+#include "RinexSatID.hpp"
+#include "TimeString.hpp"
+#include "WGS84Ellipsoid.hpp"
+#include "Xvt.hpp"
 
 using namespace std;
 using namespace gnsstk;
 using namespace gnsstk::StringUtils;
 
-
 class WhereSat : public BasicFramework
 {
-public:
-   WhereSat(const string& applName);
+  public:
+    WhereSat(const string &applName);
 
-   void process() override;
+    void process() override;
 
-   CommandOptionNoArg ignoreHealthOpt;
-   CommandOptionNoArg velOpt;
-   CommandOptionWithAnyArg ephFiles;
-   CommandOptionWithAnyArg positionOpt;
-   CommandOptionWithCommonTimeArg startTimeOpt;
-   CommandOptionWithCommonTimeArg endTimeOpt;
-   CommandOptionWithAnyArg formatOpt;
-   CommandOptionWithAnyArg sidOpt;
-   CommandOptionWithNumberArg prnOpt;
-   CommandOptionWithNumberArg incrementOpt;
-   CommandOptionNoArg almOpt;
-      /// High level nav store interface.
-   NavLibrary navLib;
-      /// nav data file reader
-   gnsstk::NavDataFactoryPtr ndfp;
+    CommandOptionNoArg ignoreHealthOpt;
+    CommandOptionNoArg velOpt;
+    CommandOptionWithAnyArg ephFiles;
+    CommandOptionWithAnyArg positionOpt;
+    CommandOptionWithCommonTimeArg startTimeOpt;
+    CommandOptionWithCommonTimeArg endTimeOpt;
+    CommandOptionWithAnyArg formatOpt;
+    CommandOptionWithAnyArg sidOpt;
+    CommandOptionWithNumberArg prnOpt;
+    CommandOptionWithNumberArg incrementOpt;
+    CommandOptionNoArg almOpt;
+    /// High level nav store interface.
+    NavLibrary navLib;
+    /// nav data file reader
+    gnsstk::NavDataFactoryPtr ndfp;
 };
 
-
-WhereSat ::
-WhereSat(const string& applName)
-      : BasicFramework(applName, "Computes ephemeris data."),
-        ignoreHealthOpt('i',"noHealth","Ignore bad SV health."),
-        velOpt('V',"velocity","Display velocity in addition to position"),
-        ephFiles('e',"eph-files","Ephemeris source file(s). Can be RINEX nav,"
-                 " SP3, RawNavCSV, or FIC.",true),
-        positionOpt('u',"position","Antenna position (m) in ECEF (x,y,z)"
-                    " coordinates.  Format as a string: \"X Y Z\". Used to give"
-                    " user-centered data (SV range, azimuth & elevation) when"
-                    " SV is in view."),
-        startTimeOpt('\0',"start","%m/%d/%Y %H:%M:%S",
-                     "Ignore data before this time. Format as"
-                     " string: \"MO/DD/YYYY HH:MM:SS\"."),
-        endTimeOpt('\0',"end","%m/%d/%Y %H:%M:%S",
-                   "Ignore data after this time. Format as string: "
-                   "\"MO/DD/YYYY HH:MM:SS\"."),
-        formatOpt('f',"time-format","CommonTime format specifier used for times"
-                  " in the output. The default is \"%02m/%02d/%4Y"
-                  " %02H:%02M:%04.1f\"."),
-        sidOpt('s',"sat","Which SVs to analyze (by RINEX SatID.  e.g., G01"
-               " E30). Repeat option for multiple satellites. If this option is"
-               " not specified, all ephemeris data will be processed."),
-        prnOpt('p',"prn","Which SVs to analyze (by PRN). Repeat option for"
-               " multiple satellites. If this option is not specified, all"
-               " ephemeris data will be processed."),
-        incrementOpt('t',"time","Time increment for ephemeris calculation. "
-                     "Enter increment in seconds. Default is 900 (15 min)."),
-        almOpt('A', "use-alm", "Use almanac to compute positions"
-               " (default=ephemeris)")
+WhereSat ::WhereSat(const string &applName)
+    : BasicFramework(applName, "Computes ephemeris data."), ignoreHealthOpt('i', "noHealth", "Ignore bad SV health."),
+      velOpt('V', "velocity", "Display velocity in addition to position"),
+      ephFiles('e', "eph-files",
+               "Ephemeris source file(s). Can be RINEX nav,"
+               " SP3, RawNavCSV, or FIC.",
+               true),
+      positionOpt('u', "position",
+                  "Antenna position (m) in ECEF (x,y,z)"
+                  " coordinates.  Format as a string: \"X Y Z\". Used to give"
+                  " user-centered data (SV range, azimuth & elevation) when"
+                  " SV is in view."),
+      startTimeOpt('\0', "start", "%m/%d/%Y %H:%M:%S",
+                   "Ignore data before this time. Format as"
+                   " string: \"MO/DD/YYYY HH:MM:SS\"."),
+      endTimeOpt('\0', "end", "%m/%d/%Y %H:%M:%S",
+                 "Ignore data after this time. Format as string: "
+                 "\"MO/DD/YYYY HH:MM:SS\"."),
+      formatOpt('f', "time-format",
+                "CommonTime format specifier used for times"
+                " in the output. The default is \"%02m/%02d/%4Y"
+                " %02H:%02M:%04.1f\"."),
+      sidOpt('s', "sat",
+             "Which SVs to analyze (by RINEX SatID.  e.g., G01"
+             " E30). Repeat option for multiple satellites. If this option is"
+             " not specified, all ephemeris data will be processed."),
+      prnOpt('p', "prn",
+             "Which SVs to analyze (by PRN). Repeat option for"
+             " multiple satellites. If this option is not specified, all"
+             " ephemeris data will be processed."),
+      incrementOpt('t', "time",
+                   "Time increment for ephemeris calculation. "
+                   "Enter increment in seconds. Default is 900 (15 min)."),
+      almOpt('A', "use-alm",
+             "Use almanac to compute positions"
+             " (default=ephemeris)")
 {
-      // Initialize these two items in here rather than in the
-      // initializer list to guarantee execution order and avoid seg
-      // faults.
-   ndfp = std::make_shared<gnsstk::MultiFormatNavDataFactory>();
-   ephFiles.setDescription("Ephemeris source file(s). Can be " +
-                           ndfp->getFactoryFormats() + ".");
+    // Initialize these two items in here rather than in the
+    // initializer list to guarantee execution order and avoid seg
+    // faults.
+    ndfp = std::make_shared<gnsstk::MultiFormatNavDataFactory>();
+    ephFiles.setDescription("Ephemeris source file(s). Can be " + ndfp->getFactoryFormats() + ".");
 }
 
-
-void WhereSat ::
-process()
+void WhereSat ::process()
 {
-      // prnSet is a set of int that represents the PRN numbers
-      // requested on the command line (if any).  It is system
-      // agnostic.  That is to say, the GNSS will be determined by the
-      // data set that is loaded.
-   cout << "Scanning over prnSet." << endl;
-   set<SatID> prnSet;
-   size_t index;
-   for (index = 0; index < prnOpt.getCount(); index++)
-   {
-      int prn = asInt(prnOpt.getValue()[index]);
-      SatID sid(prn,SatelliteSystem::GPS);
-      prnSet.insert(sid);
-   }
+    // prnSet is a set of int that represents the PRN numbers
+    // requested on the command line (if any).  It is system
+    // agnostic.  That is to say, the GNSS will be determined by the
+    // data set that is loaded.
+    cout << "Scanning over prnSet." << endl;
+    set<SatID> prnSet;
+    size_t index;
+    for (index = 0; index < prnOpt.getCount(); index++)
+    {
+        int prn = asInt(prnOpt.getValue()[index]);
+        SatID sid(prn, SatelliteSystem::GPS);
+        prnSet.insert(sid);
+    }
 
-   bool failCount = false;
-   for (index=0;index<sidOpt.getCount(); index++)
-   {
-      try
-      {
-         RinexSatID rsid = RinexSatID(sidOpt.getValue()[index]);
-         SatID sid = SatID(rsid.id,rsid.system);
-         prnSet.insert(sid);
-      }
-      catch (Exception)
-      {
-         cout << "Invalid SV " << sidOpt.getValue()[index];
-         failCount = true;
-      }
-   }
-   if (failCount)
-   {
-      cout << "One of more invalid SVs specified.  wheresat will terminate."
-           << endl;
-      exitCode = 1;
-      return;
-   }
-   cout << "Scan complete, # of PRNs on command line = " << prnSet.size()
-        << endl;
+    bool failCount = false;
+    for (index = 0; index < sidOpt.getCount(); index++)
+    {
+        try
+        {
+            RinexSatID rsid = RinexSatID(sidOpt.getValue()[index]);
+            SatID sid = SatID(rsid.id, rsid.system);
+            prnSet.insert(sid);
+        }
+        catch (Exception)
+        {
+            cout << "Invalid SV " << sidOpt.getValue()[index];
+            failCount = true;
+        }
+    }
+    if (failCount)
+    {
+        cout << "One of more invalid SVs specified.  wheresat will terminate." << endl;
+        exitCode = 1;
+        return;
+    }
+    cout << "Scan complete, # of PRNs on command line = " << prnSet.size() << endl;
 
-   std::string timeFormat;
-   if (formatOpt.getCount())
-      timeFormat = formatOpt.getValue()[0];
-   else
-//    timeFormat = "%4Y %3j %02H:%02M:%04.1f";
-      timeFormat = "%02m/%02d/%04Y %02H:%02M:%04.1f";
-   cout << "Set timeFormat to " << timeFormat << endl;
+    std::string timeFormat;
+    if (formatOpt.getCount())
+        timeFormat = formatOpt.getValue()[0];
+    else
+        //    timeFormat = "%4Y %3j %02H:%02M:%04.1f";
+        timeFormat = "%02m/%02d/%04Y %02H:%02M:%04.1f";
+    cout << "Set timeFormat to " << timeFormat << endl;
 
-   cout << "positionOpt has count = " << positionOpt.getCount() << endl;
+    cout << "positionOpt has count = " << positionOpt.getCount() << endl;
 
-   cout << "# time, PRN, X(m), Y(m), Z(m), Clock Correction(ms), Azimuth(deg),"
-        << " Elevation(deg), Range(m)";
-   if (velOpt)
-   {
-      cout << ", Vx(m/s), Vy(m/s), Vz(m/s)";
-   }
-   cout << endl;
+    cout << "# time, PRN, X(m), Y(m), Z(m), Clock Correction(ms), Azimuth(deg),"
+         << " Elevation(deg), Range(m)";
+    if (velOpt)
+    {
+        cout << ", Vx(m/s), Vy(m/s), Vz(m/s)";
+    }
+    cout << endl;
 
-   Xvt antXvt;
-   if (positionOpt.getCount())
-   {
-      double x, y, z;
-      sscanf(positionOpt.getValue().front().c_str(),"%lf %lf %lf", &x, &y, &z);
-      antXvt.x[0] = x; antXvt.x[1] = y; antXvt.x[2] = z;
-   }
+    Xvt antXvt;
+    if (positionOpt.getCount())
+    {
+        double x, y, z;
+        sscanf(positionOpt.getValue().front().c_str(), "%lf %lf %lf", &x, &y, &z);
+        antXvt.x[0] = x;
+        antXvt.x[1] = y;
+        antXvt.x[2] = z;
+    }
 
-   int incr=900;
-   if (incrementOpt.getCount())
-      incr = asInt(incrementOpt.getValue()[0]);
+    int incr = 900;
+    if (incrementOpt.getCount())
+        incr = asInt(incrementOpt.getValue()[0]);
 
-      // get the ephemeris source(s)
-      // without clock, SP3 doesn't work.
-   navLib.addFactory(ndfp); // must be done before setTypeFilter
-   navLib.setTypeFilter({NavMessageType::Ephemeris, NavMessageType::Almanac, NavMessageType::Clock});
-   if (debugLevel)
-   {
-      cout << "Attempting to read ephemeris data." << endl;
-   }
-   vector<string> names = ephFiles.getValue();
-   for (size_t i=0; i<names.size(); i++)
-   {
-      if (!ndfp->addDataSource(names[i]))
-      {
-         cerr << "Unable to load \"" << names[i] << "\"" << endl;
-         exitCode = BasicFramework::EXIST_ERROR;            
-      }
-      else
-      {
-         cout << "File read by NavLibrary." << endl;
-      }
-   }
+    // get the ephemeris source(s)
+    // without clock, SP3 doesn't work.
+    navLib.addFactory(ndfp); // must be done before setTypeFilter
+    navLib.setTypeFilter({NavMessageType::Ephemeris, NavMessageType::Almanac, NavMessageType::Clock});
+    if (debugLevel)
+    {
+        cout << "Attempting to read ephemeris data." << endl;
+    }
+    vector<string> names = ephFiles.getValue();
+    for (size_t i = 0; i < names.size(); i++)
+    {
+        if (!ndfp->addDataSource(names[i]))
+        {
+            cerr << "Unable to load \"" << names[i] << "\"" << endl;
+            exitCode = BasicFramework::EXIST_ERROR;
+        }
+        else
+        {
+            cout << "File read by NavLibrary." << endl;
+        }
+    }
 
-      // Get the list of SatIDs that are available in the navigation message
-      // store.  Convert this to a set that will be used later.
-   if (debugLevel)
-   {
-      cout << "Figuring out set of PRNs for which calculations will be"
-           << " performed." << endl;
-   }
-   bool loadPrnSet = false;
-   if (prnSet.size()==0)
-      loadPrnSet = true;
-   std::set<gnsstk::SatID> storedSats = navLib.getIndexSet(
-      CommonTime::BEGINNING_OF_TIME, CommonTime::END_OF_TIME);
+    // Get the list of SatIDs that are available in the navigation message
+    // store.  Convert this to a set that will be used later.
+    if (debugLevel)
+    {
+        cout << "Figuring out set of PRNs for which calculations will be"
+             << " performed." << endl;
+    }
+    bool loadPrnSet = false;
+    if (prnSet.size() == 0)
+        loadPrnSet = true;
+    std::set<gnsstk::SatID> storedSats = navLib.getIndexSet(CommonTime::BEGINNING_OF_TIME, CommonTime::END_OF_TIME);
 
-      // This will hold a list of the SVs for which positions are to
-      // be calculated
-   std::set<gnsstk::SatID> satSet;
+    // This will hold a list of the SVs for which positions are to
+    // be calculated
+    std::set<gnsstk::SatID> satSet;
 
-      // Check command line entered PRNs against the satellite IDs
-      // available in the set.  Make a list of all the satellites for
-      // which posotions are to be computed.  iF no PRNs were enetered
-      // on the command line, copy all of satList into satSet.
-   std::set<gnsstk::SatID>::const_iterator cit;
-   if (prnSet.size()==0)
-   {
-      for (cit=storedSats.begin();cit!=storedSats.end();cit++)
-      {
-         SatID nextID = *cit;
-         satSet.insert(nextID);
-      }
-   }
-      // If PRNs were entered on the commmand line, see if they exist
-      // in the list of satellites in the store.  If they do NOT, then
-      // warn the user.
-   else
-   {
-      std::set<SatID>::const_iterator cit2;
-      for (cit2=prnSet.begin();cit2!=prnSet.end();cit2++)
-      {
-         bool found = false;
-         const SatID& testID = *cit2;
-         cit = storedSats.find(testID);
-         if (cit!=storedSats.end())
-            satSet.insert(testID);
-         else
-         {
-            cout << "PRN " << testID << " entered on command line, but not"
-                 << " found in the set of orbit elements." << endl;
-         }
-      }
-   }
-   cout << "Number of satellites for which positions will be computed = "
-        << satSet.size() << endl;
-
-   CivilTime tS, tE;
-   CommonTime tStart,tEnd;
-   if (startTimeOpt.getCount())
-   {
-      tStart = startTimeOpt.getTime()[0];
-      tStart.setTimeSystem(gnsstk::TimeSystem::Any);
-   }
-   else
-   {
-      tStart = navLib.getInitialTime();
-   }
-   tS = tStart;
-   cout << tS << endl;
-
-   if (endTimeOpt.getCount())
-   {
-      tEnd = endTimeOpt.getTime()[0];
-      tEnd.setTimeSystem(gnsstk::TimeSystem::Any);
-   }
-   else
-   {
-      tEnd = navLib.getFinalTime();
-   }
-   tE = tEnd;
-   cout << tE << endl;
-
-   CommonTime t = tStart;
-   if (debugLevel)
-   {
-      cerr << "dump:" << endl;
-      navLib.dump(std::cerr, gnsstk::DumpDetail::OneLine);
-   }
-   while (t <= tEnd)
-   {
-      for(set<SatID>::iterator i = satSet.begin(); i != satSet.end(); i++ )
-      {
-         SatID thisSat = *i;
-         RinexSatID rsid(thisSat);   // Used only for output formatting
-         Xvt xvt;
-         if (navLib.getXvt(
-                NavSatelliteID(thisSat),t,xvt, almOpt,
-                (ignoreHealthOpt ? SVHealth::Any : SVHealth::Healthy),
-                NavValidityType::ValidOnly, NavSearchOrder::Nearest))
-         {
-            cout << printTime(t,timeFormat)
-                 << right << fixed  << setprecision(3)
-                 << " " << setw(4)  <<  rsid
-                 << " " << setw(14) << xvt.x[0]
-                 << " " << setw(14) << xvt.x[1]
-                 << " " << setw(14) << xvt.x[2]
-                 << " " << setprecision(6) << setw(10)
-                 << ((xvt.clkbias + xvt.relcorr)*1000);
-
-            WGS84Ellipsoid ellipsoid;
-            double correction = 0;
-
-            if ( abs(antXvt.x[0]) < 1 || antXvt.x.elvAngle(xvt.x) < 0 )
-            {
-               cout << right
-                    << " "  << setw(8) << "-"
-                    << " "  << setw(8) << "-"
-                    << " "  << setw(15) << "-";
-            }
+    // Check command line entered PRNs against the satellite IDs
+    // available in the set.  Make a list of all the satellites for
+    // which posotions are to be computed.  iF no PRNs were enetered
+    // on the command line, copy all of satList into satSet.
+    std::set<gnsstk::SatID>::const_iterator cit;
+    if (prnSet.size() == 0)
+    {
+        for (cit = storedSats.begin(); cit != storedSats.end(); cit++)
+        {
+            SatID nextID = *cit;
+            satSet.insert(nextID);
+        }
+    }
+    // If PRNs were entered on the commmand line, see if they exist
+    // in the list of satellites in the store.  If they do NOT, then
+    // warn the user.
+    else
+    {
+        std::set<SatID>::const_iterator cit2;
+        for (cit2 = prnSet.begin(); cit2 != prnSet.end(); cit2++)
+        {
+            bool found = false;
+            const SatID &testID = *cit2;
+            cit = storedSats.find(testID);
+            if (cit != storedSats.end())
+                satSet.insert(testID);
             else
             {
-               cout << right << fixed << setprecision(3)
-                    << " "  << setw(8) << antXvt.x.azAngle(xvt.x)
-                    << " "  << setw(8) << antXvt.x.elvAngle(xvt.x)
-                    << " "  << setw(15)
-                    << xvt.preciseRho(antXvt.x, ellipsoid, correction);
+                cout << "PRN " << testID << " entered on command line, but not"
+                     << " found in the set of orbit elements." << endl;
             }
-            if (velOpt)
+        }
+    }
+    cout << "Number of satellites for which positions will be computed = " << satSet.size() << endl;
+
+    CivilTime tS, tE;
+    CommonTime tStart, tEnd;
+    if (startTimeOpt.getCount())
+    {
+        tStart = startTimeOpt.getTime()[0];
+        tStart.setTimeSystem(gnsstk::TimeSystem::Any);
+    }
+    else
+    {
+        tStart = navLib.getInitialTime();
+    }
+    tS = tStart;
+    cout << tS << endl;
+
+    if (endTimeOpt.getCount())
+    {
+        tEnd = endTimeOpt.getTime()[0];
+        tEnd.setTimeSystem(gnsstk::TimeSystem::Any);
+    }
+    else
+    {
+        tEnd = navLib.getFinalTime();
+    }
+    tE = tEnd;
+    cout << tE << endl;
+
+    CommonTime t = tStart;
+    if (debugLevel)
+    {
+        cerr << "dump:" << endl;
+        navLib.dump(std::cerr, gnsstk::DumpDetail::OneLine);
+    }
+    while (t <= tEnd)
+    {
+        for (set<SatID>::iterator i = satSet.begin(); i != satSet.end(); i++)
+        {
+            SatID thisSat = *i;
+            RinexSatID rsid(thisSat); // Used only for output formatting
+            Xvt xvt;
+            if (navLib.getXvt(NavSatelliteID(thisSat), t, xvt, almOpt,
+                              (ignoreHealthOpt ? SVHealth::Any : SVHealth::Healthy), NavValidityType::ValidOnly,
+                              NavSearchOrder::Nearest))
             {
-               cout << right << fixed << setprecision(3)
-                    << " " << setw(9) << xvt.v[0]
-                    << " " << setw(9) << xvt.v[1]
-                    << " " << setw(9) << xvt.v[2];
+                cout << printTime(t, timeFormat) << right << fixed << setprecision(3) << " " << setw(4) << rsid << " "
+                     << setw(14) << xvt.x[0] << " " << setw(14) << xvt.x[1] << " " << setw(14) << xvt.x[2] << " "
+                     << setprecision(6) << setw(10) << ((xvt.clkbias + xvt.relcorr) * 1000);
+
+                WGS84Ellipsoid ellipsoid;
+                double correction = 0;
+
+                if (abs(antXvt.x[0]) < 1 || antXvt.x.elvAngle(xvt.x) < 0)
+                {
+                    cout << right << " " << setw(8) << "-"
+                         << " " << setw(8) << "-"
+                         << " " << setw(15) << "-";
+                }
+                else
+                {
+                    cout << right << fixed << setprecision(3) << " " << setw(8) << antXvt.x.azAngle(xvt.x) << " "
+                         << setw(8) << antXvt.x.elvAngle(xvt.x) << " " << setw(15)
+                         << xvt.preciseRho(antXvt.x, ellipsoid, correction);
+                }
+                if (velOpt)
+                {
+                    cout << right << fixed << setprecision(3) << " " << setw(9) << xvt.v[0] << " " << setw(9)
+                         << xvt.v[1] << " " << setw(9) << xvt.v[2];
+                }
+                cout << endl;
             }
-            cout << endl;
-         }
-      }
+        }
 
-      t += incr;
-   }
+        t += incr;
+    }
 }
-
 
 int main(int argc, char *argv[])
 {
-   try
-   {
+    try
+    {
 #include "NewNavInit.h"
-      WhereSat app(argv[0]);
+        WhereSat app(argv[0]);
 
-      if (app.initialize(argc, argv))
-      {
-         app.run();
-      }
-      return app.exitCode;
-   }
-   catch(Exception& e)
-   {
-      cout << e << endl;
-   }
-   catch(std::exception& e)
-   {
-      cout << "Caught std::exception " << e.what() << endl;
-   }
-   catch(...)
-   {
-      cout << "Caught unknown exception" << endl;
-   }
-      // only reach this point if an exception was caught
-   return BasicFramework::EXCEPTION_ERROR;
+        if (app.initialize(argc, argv))
+        {
+            app.run();
+        }
+        return app.exitCode;
+    }
+    catch (Exception &e)
+    {
+        cout << e << endl;
+    }
+    catch (std::exception &e)
+    {
+        cout << "Caught std::exception " << e.what() << endl;
+    }
+    catch (...)
+    {
+        cout << "Caught unknown exception" << endl;
+    }
+    // only reach this point if an exception was caught
+    return BasicFramework::EXCEPTION_ERROR;
 }

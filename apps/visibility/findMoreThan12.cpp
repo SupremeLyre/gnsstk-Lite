@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -46,7 +45,8 @@
  *
  * \section findMoreThan12_synopsis SYNOPSIS
  * <b>findMoreThan12</b>  <b>-h</b> <br/>
- * <b>findMoreThan12</b> <b>-e</b>&nbsp;\argarg{ARG} <b>-p</b>&nbsp;\argarg{POSITION} <b>-m</b>&nbsp;\argarg{NUM} <b>[-d</b><b>]</b> <b>[-v</b><b>]</b> <b>[-T</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-E</b>&nbsp;\argarg{TIME}<b>]</b>
+ * <b>findMoreThan12</b> <b>-e</b>&nbsp;\argarg{ARG} <b>-p</b>&nbsp;\argarg{POSITION} <b>-m</b>&nbsp;\argarg{NUM}
+ * <b>[-d</b><b>]</b> <b>[-v</b><b>]</b> <b>[-T</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-E</b>&nbsp;\argarg{TIME}<b>]</b>
  *
  * \section findMoreThan12_description DESCRIPTION
  * This application finds when there are simultaneously more than 12
@@ -93,254 +93,227 @@
  * \ref compSatVis, \ref compStaVis, \ref wheresat
  */
 
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
 #include "BasicFramework.hpp"
-#include "CommonTime.hpp"
-#include "CommandOptionWithPositionArg.hpp"
-#include "CommandOptionWithCommonTimeArg.hpp"
 #include "CivilTime.hpp"
-#include "TimeString.hpp"
-#include "NavLibrary.hpp"
+#include "CommandOptionWithCommonTimeArg.hpp"
+#include "CommandOptionWithPositionArg.hpp"
+#include "CommonTime.hpp"
 #include "MultiFormatNavDataFactory.hpp"
+#include "NavLibrary.hpp"
 #include "NewNavInc.h"
+#include "TimeString.hpp"
 
 using namespace std;
 using namespace gnsstk;
 
 class FindMoreThan12 : public BasicFramework
 {
-public:
-   FindMoreThan12(const std::string& applName);
+  public:
+    FindMoreThan12(const std::string &applName);
 
-   virtual bool initialize( int argc,
-                            char *argv[],
-                            bool pretty = true )
-      noexcept;
+    virtual bool initialize(int argc, char *argv[], bool pretty = true) noexcept;
 
-      /// load ephemeris data
-   virtual void additionalSetup();
+    /// load ephemeris data
+    virtual void additionalSetup();
 
-   virtual void process();
+    virtual void process();
 
-      /// Specify the location(s) of ephemeris data files
-   CommandOptionWithAnyArg ephFiles;
-      /// Specify the reference antenna position
-   CommandOptionWithPositionArg antennaPosition;
-      /// Cut-off elevation at which point the user cares about >12 SVs in view
-   CommandOptionWithNumberArg minElev;
-      /// Allow the user to specify a time to start processing
-   CommandOptionWithCommonTimeArg startTime;
-      /// Allow the user to specify a time to stop processing
-   CommandOptionWithCommonTimeArg endTime;
+    /// Specify the location(s) of ephemeris data files
+    CommandOptionWithAnyArg ephFiles;
+    /// Specify the reference antenna position
+    CommandOptionWithPositionArg antennaPosition;
+    /// Cut-off elevation at which point the user cares about >12 SVs in view
+    CommandOptionWithNumberArg minElev;
+    /// Allow the user to specify a time to start processing
+    CommandOptionWithCommonTimeArg startTime;
+    /// Allow the user to specify a time to stop processing
+    CommandOptionWithCommonTimeArg endTime;
 
-      /// User's requested elevation cut-off.
-   int minEl;
-      /// High level nav store interface.
-   NavLibrary navLib;
-      /// nav data file reader
-   gnsstk::NavDataFactoryPtr ndfp;
-      /// Start and end times of processing
-   CommonTime tstart, tend;
+    /// User's requested elevation cut-off.
+    int minEl;
+    /// High level nav store interface.
+    NavLibrary navLib;
+    /// nav data file reader
+    gnsstk::NavDataFactoryPtr ndfp;
+    /// Start and end times of processing
+    CommonTime tstart, tend;
 };
 
-
-FindMoreThan12 ::
-FindMoreThan12(const std::string& applName)
-      : BasicFramework(applName, "Find when there are simultaneously more"
-                       " than 12 SVs above a given elevation."),
-        ephFiles('e', "eph-files",
-                 "If you see this, we failed.",
-                 true),
-        antennaPosition('p', "position", "%x %y %z",
-                        "Antenna position in ECEF meters (x y z)",
-                        true),
-        minElev('m', "min-elev",
-                "Give an integer for the elevation (degrees) above which you"
-                " want to find more than 12 SVs at a given time.",
-                true),
-        startTime('T', "time", "%Y %j %s", "start time of simulation (YYYY DOY"
-                  " SOD)"),
-        endTime('E', "end-time", "%Y %j %s", "end time of simulation (YYYY DOY"
-                " SOD)")
+FindMoreThan12 ::FindMoreThan12(const std::string &applName)
+    : BasicFramework(applName, "Find when there are simultaneously more"
+                               " than 12 SVs above a given elevation."),
+      ephFiles('e', "eph-files", "If you see this, we failed.", true),
+      antennaPosition('p', "position", "%x %y %z", "Antenna position in ECEF meters (x y z)", true),
+      minElev('m', "min-elev",
+              "Give an integer for the elevation (degrees) above which you"
+              " want to find more than 12 SVs at a given time.",
+              true),
+      startTime('T', "time", "%Y %j %s",
+                "start time of simulation (YYYY DOY"
+                " SOD)"),
+      endTime('E', "end-time", "%Y %j %s",
+              "end time of simulation (YYYY DOY"
+              " SOD)")
 {
-      // Initialize these two items in here rather than in the
-      // initializer list to guarantee execution order and avoid seg
-      // faults.
-   ndfp = std::make_shared<gnsstk::MultiFormatNavDataFactory>();
-   ephFiles.setDescription("Ephemeris source file(s). Can be " +
-                           ndfp->getFactoryFormats() + ".");
-   antennaPosition.setMaxCount(1);
-   minElev.setMaxCount(1);
-   startTime.setMaxCount(1);
-   endTime.setMaxCount(1);
+    // Initialize these two items in here rather than in the
+    // initializer list to guarantee execution order and avoid seg
+    // faults.
+    ndfp = std::make_shared<gnsstk::MultiFormatNavDataFactory>();
+    ephFiles.setDescription("Ephemeris source file(s). Can be " + ndfp->getFactoryFormats() + ".");
+    antennaPosition.setMaxCount(1);
+    minElev.setMaxCount(1);
+    startTime.setMaxCount(1);
+    endTime.setMaxCount(1);
 }
 
-
-bool FindMoreThan12 ::
-initialize( int argc,
-            char *argv[],
-            bool pretty )
-   noexcept
+bool FindMoreThan12 ::initialize(int argc, char *argv[], bool pretty) noexcept
 {
-   if (!BasicFramework::initialize(argc, argv, pretty))
-      return false;
+    if (!BasicFramework::initialize(argc, argv, pretty))
+        return false;
 
-      // get the minimum elevation
-   minEl = gnsstk::StringUtils::asInt((minElev.getValue())[0]);
-   if (minEl < 0)
-   {
-      cerr << "Please enter a positive elevation." << endl;
-      return false;
-   }
+    // get the minimum elevation
+    minEl = gnsstk::StringUtils::asInt((minElev.getValue())[0]);
+    if (minEl < 0)
+    {
+        cerr << "Please enter a positive elevation." << endl;
+        return false;
+    }
 
-   navLib.addFactory(ndfp);
-      // without clock, SP3 doesn't work.
-   navLib.setTypeFilter({NavMessageType::Ephemeris, NavMessageType::Clock});
+    navLib.addFactory(ndfp);
+    // without clock, SP3 doesn't work.
+    navLib.setTypeFilter({NavMessageType::Ephemeris, NavMessageType::Clock});
 
-   return true;
+    return true;
 }
 
-
-void FindMoreThan12 ::
-additionalSetup()
+void FindMoreThan12 ::additionalSetup()
 {
-      // get the ephemeris source(s)
-   vector<string> names = ephFiles.getValue();
-   for (size_t i=0; i<names.size(); i++)
-   {
-      if (!ndfp->addDataSource(names[i]))
-      {
-         cerr << "Unable to load \"" << names[i] << "\"" << endl;
-         exitCode = BasicFramework::EXIST_ERROR;            
-      }
-   }
+    // get the ephemeris source(s)
+    vector<string> names = ephFiles.getValue();
+    for (size_t i = 0; i < names.size(); i++)
+    {
+        if (!ndfp->addDataSource(names[i]))
+        {
+            cerr << "Unable to load \"" << names[i] << "\"" << endl;
+            exitCode = BasicFramework::EXIST_ERROR;
+        }
+    }
 
-   if (startTime.getCount())
-   {
-      tstart = startTime.getTime()[0];
-      tstart.setTimeSystem(TimeSystem::Any);
-   }
-   else
-   {
-      tstart = navLib.getInitialTime();
-   }
-   if (endTime.getCount())
-   {
-      tend = endTime.getTime()[0];
-      tend.setTimeSystem(TimeSystem::Any);
-   }
-   else
-   {
-      tend = navLib.getFinalTime();
-   }
+    if (startTime.getCount())
+    {
+        tstart = startTime.getTime()[0];
+        tstart.setTimeSystem(TimeSystem::Any);
+    }
+    else
+    {
+        tstart = navLib.getInitialTime();
+    }
+    if (endTime.getCount())
+    {
+        tend = endTime.getTime()[0];
+        tend.setTimeSystem(TimeSystem::Any);
+    }
+    else
+    {
+        tend = navLib.getFinalTime();
+    }
 }
 
-
-void FindMoreThan12 ::
-process()
+void FindMoreThan12 ::process()
 {
-   CommonTime t = tstart;
+    CommonTime t = tstart;
 
-   cout << "Start Time: " << printTime(tstart, "%02m/%02d/%04Y %02H:%02M:%02S")
-        << " End Time: "  << printTime(tend,   "%02m/%02d/%04Y %02H:%02M:%02S")
-        << endl;
+    cout << "Start Time: " << printTime(tstart, "%02m/%02d/%04Y %02H:%02M:%02S")
+         << " End Time: " << printTime(tend, "%02m/%02d/%04Y %02H:%02M:%02S") << endl;
 
-   Position antXYZ = antennaPosition.getPosition()[0];
+    Position antXYZ = antennaPosition.getPosition()[0];
 
-   while (t < tend)
-   {
-      short numSVsAboveElv = 0;
-      for (int prn=1; prn <= gnsstk::MAX_PRN; prn++)
-      {
-         try
-         {
-            gnsstk::Xvt peXVT;
-            if (navLib.getXvt(
-                   NavSatelliteID(SatID(prn,SatelliteSystem::GPS)),t,peXVT,
-                   false, SVHealth::Any, NavValidityType::ValidOnly,
-                   NavSearchOrder::Nearest))
-            {
-               double elvAngle = antXYZ.elvAngle(peXVT.x);
-               if ( elvAngle > minEl )
-                  numSVsAboveElv++;
-            }
-         }
-         catch(gnsstk::Exception& e)
-         {
-            if (verboseLevel)
-               cout << e << endl;
-         }
-      }
-
-      if (numSVsAboveElv > 12)
-      {
-         cout << "Found " << numSVsAboveElv << " SVs above " << minEl
-              << " degrees at "
-              << printTime(t, "%02m/%02d/%04Y %02H:%02M:%02S") << endl;
-
-         for (int prn = 1; prn <= gnsstk::MAX_PRN; prn++)
-         {
+    while (t < tend)
+    {
+        short numSVsAboveElv = 0;
+        for (int prn = 1; prn <= gnsstk::MAX_PRN; prn++)
+        {
             try
             {
-               gnsstk::Xvt peXVT;
-               if (navLib.getXvt(
-                      NavSatelliteID(SatID(prn,SatelliteSystem::GPS)),t,peXVT,
-                      false, SVHealth::Any, NavValidityType::ValidOnly,
-                      NavSearchOrder::Nearest))
-               {
-                  double elvAngle = antXYZ.elvAngle(peXVT.x);
-                  if ( elvAngle > 0 )
-                  {
-                     double azAngle = antXYZ.azAngle(peXVT.x);
-                     cout << printTime(t, "%02m/%02d/%04Y %02H:%02M:%02S")
-                          << "  PRN " << setw(2) << prn
-                          << " : elev: " << elvAngle
-                          << "  azim: " << azAngle
-                          << " degrees" << endl;
-                  }
-               }
+                gnsstk::Xvt peXVT;
+                if (navLib.getXvt(NavSatelliteID(SatID(prn, SatelliteSystem::GPS)), t, peXVT, false, SVHealth::Any,
+                                  NavValidityType::ValidOnly, NavSearchOrder::Nearest))
+                {
+                    double elvAngle = antXYZ.elvAngle(peXVT.x);
+                    if (elvAngle > minEl)
+                        numSVsAboveElv++;
+                }
             }
-            catch(gnsstk::Exception& e)
+            catch (gnsstk::Exception &e)
             {
-               if (verboseLevel)
-                  cout << e << endl;
+                if (verboseLevel)
+                    cout << e << endl;
             }
-         }
-      }
-      t += 10;
-   }
+        }
+
+        if (numSVsAboveElv > 12)
+        {
+            cout << "Found " << numSVsAboveElv << " SVs above " << minEl << " degrees at "
+                 << printTime(t, "%02m/%02d/%04Y %02H:%02M:%02S") << endl;
+
+            for (int prn = 1; prn <= gnsstk::MAX_PRN; prn++)
+            {
+                try
+                {
+                    gnsstk::Xvt peXVT;
+                    if (navLib.getXvt(NavSatelliteID(SatID(prn, SatelliteSystem::GPS)), t, peXVT, false, SVHealth::Any,
+                                      NavValidityType::ValidOnly, NavSearchOrder::Nearest))
+                    {
+                        double elvAngle = antXYZ.elvAngle(peXVT.x);
+                        if (elvAngle > 0)
+                        {
+                            double azAngle = antXYZ.azAngle(peXVT.x);
+                            cout << printTime(t, "%02m/%02d/%04Y %02H:%02M:%02S") << "  PRN " << setw(2) << prn
+                                 << " : elev: " << elvAngle << "  azim: " << azAngle << " degrees" << endl;
+                        }
+                    }
+                }
+                catch (gnsstk::Exception &e)
+                {
+                    if (verboseLevel)
+                        cout << e << endl;
+                }
+            }
+        }
+        t += 10;
+    }
 }
 
-
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-   try
-   {
+    try
+    {
 #include "NewNavInit.h"
-      FindMoreThan12 app(argv[0]);
+        FindMoreThan12 app(argv[0]);
 
-      if (!app.initialize(argc, argv))
-         return app.exitCode;
+        if (!app.initialize(argc, argv))
+            return app.exitCode;
 
-      if(!app.run())
-         return app.exitCode;
+        if (!app.run())
+            return app.exitCode;
 
-      return app.exitCode;
-   }
-   catch(Exception& e)
-   {
-      cout << e << endl;
-   }
-   catch(std::exception& e)
-   {
-      cout << e.what() << endl;
-   }
-   catch(...)
-   {
-      cout << "Caught an unknown exception." << endl;
-   }
-      // only reach this point if an exception was caught
-   return BasicFramework::EXCEPTION_ERROR;
+        return app.exitCode;
+    }
+    catch (Exception &e)
+    {
+        cout << e << endl;
+    }
+    catch (std::exception &e)
+    {
+        cout << e.what() << endl;
+    }
+    catch (...)
+    {
+        cout << "Caught an unknown exception." << endl;
+    }
+    // only reach this point if an exception was caught
+    return BasicFramework::EXCEPTION_ERROR;
 }

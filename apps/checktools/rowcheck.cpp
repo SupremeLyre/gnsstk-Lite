@@ -90,41 +90,41 @@
  * \ref rmwcheck, \ref rnwcheck
  */
 
-#include "NewNavInc.h"
 #include "CheckFrame.hpp"
+#include "NewNavInc.h"
 
-#include "Rinex3ObsStream.hpp"
 #include "Rinex3ObsData.hpp"
+#include "Rinex3ObsStream.hpp"
 
 using namespace std;
 using namespace gnsstk;
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 #include "NewNavInit.h"
-   try
-   {
-      CheckFrame<Rinex3ObsStream, Rinex3ObsData> cf(argv[0],
-                                                  std::string("Rinex Obs"));
+    try
+    {
+        CheckFrame<Rinex3ObsStream, Rinex3ObsData> cf(argv[0], std::string("Rinex Obs"));
 
-      if (!cf.initialize(argc, argv))
-         return cf.exitCode;
-      if (!cf.run())
-         return cf.exitCode;
+        if (!cf.initialize(argc, argv))
+            return cf.exitCode;
+        if (!cf.run())
+            return cf.exitCode;
 
-      return cf.exitCode;
-   }
-   catch(gnsstk::Exception& e)
-   {
-      cout << e << endl;
-   }
-   catch(std::exception& e)
-   {
-      cout << e.what() << endl;
-   }
-   catch(...)
-   {
-      cout << "unknown error" << endl;
-   }
-   return BasicFramework::EXCEPTION_ERROR;;
+        return cf.exitCode;
+    }
+    catch (gnsstk::Exception &e)
+    {
+        cout << e << endl;
+    }
+    catch (std::exception &e)
+    {
+        cout << e.what() << endl;
+    }
+    catch (...)
+    {
+        cout << "unknown error" << endl;
+    }
+    return BasicFramework::EXCEPTION_ERROR;
+    ;
 }

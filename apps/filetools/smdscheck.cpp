@@ -36,8 +36,8 @@
 //
 //==============================================================================
 
-#include "NewNavInc.h"
 #include "BasicFramework.hpp"
+#include "NewNavInc.h"
 #include "SatMetaDataStore.hpp"
 
 using namespace std;
@@ -47,87 +47,82 @@ using namespace gnsstk;
  * valid satellite metadata. */
 class SatMetaDataStoreCheck : public BasicFramework
 {
-public:
-      /** Initialize command-line options.
-       * @param[in] applName Application file name.
-       */
-   SatMetaDataStoreCheck(const string& applName);
+  public:
+    /** Initialize command-line options.
+     * @param[in] applName Application file name.
+     */
+    SatMetaDataStoreCheck(const string &applName);
 
-      /** Load all specified input files.
-       * @copydetails BasicFramework::initialize()
-       */
-   bool initialize(int argc, char* argv[], bool pretty=true) noexcept override;
+    /** Load all specified input files.
+     * @copydetails BasicFramework::initialize()
+     */
+    bool initialize(int argc, char *argv[], bool pretty = true) noexcept override;
 
-      /// Print out a message if no errors were found.
-   void shutDown() override;
+    /// Print out a message if no errors were found.
+    void shutDown() override;
 
-      /// command option for specifying the location of the satellite metadata.
-   CommandOptionWithAnyArg satMetaOpt;
-      /// Storage for PRN<->SVN translation.
-   SatMetaDataStore satMetaDataStore;
+    /// command option for specifying the location of the satellite metadata.
+    CommandOptionWithAnyArg satMetaOpt;
+    /// Storage for PRN<->SVN translation.
+    SatMetaDataStore satMetaDataStore;
 };
 
-
-SatMetaDataStoreCheck ::
-SatMetaDataStoreCheck(const string& applName)
-      : BasicFramework(applName, "Perform basic sanity checks on a"
-                       " SatMetaDataStore CSV file"),
-        satMetaOpt('M', "svconfig", "File containing satellite configuration"
-                   " information for mapping SVN<->PRN", true)
+SatMetaDataStoreCheck ::SatMetaDataStoreCheck(const string &applName)
+    : BasicFramework(applName, "Perform basic sanity checks on a"
+                               " SatMetaDataStore CSV file"),
+      satMetaOpt('M', "svconfig",
+                 "File containing satellite configuration"
+                 " information for mapping SVN<->PRN",
+                 true)
 {
 }
 
-
-bool SatMetaDataStoreCheck ::
-initialize(int argc, char* argv[], bool pretty) noexcept
+bool SatMetaDataStoreCheck ::initialize(int argc, char *argv[], bool pretty) noexcept
 {
-   if (!BasicFramework::initialize(argc, argv))
-      return false;
+    if (!BasicFramework::initialize(argc, argv))
+        return false;
 
-   for (unsigned i = 0; i < satMetaOpt.getCount(); i++)
-   {
-      if (!satMetaDataStore.loadData(satMetaOpt.getValue()[i]))
-      {
-         cerr << "Failed to load \"" << satMetaOpt.getValue()[i]
-              << "\"" << endl;
-         exitCode = 2;
-         return false;
-      }
-   }
-   return true;
+    for (unsigned i = 0; i < satMetaOpt.getCount(); i++)
+    {
+        if (!satMetaDataStore.loadData(satMetaOpt.getValue()[i]))
+        {
+            cerr << "Failed to load \"" << satMetaOpt.getValue()[i] << "\"" << endl;
+            exitCode = 2;
+            return false;
+        }
+    }
+    return true;
 }
 
-
-void SatMetaDataStoreCheck ::
-shutDown()
+void SatMetaDataStoreCheck ::shutDown()
 {
-   if (exitCode == 0)
-      cout << "Success" << endl;
+    if (exitCode == 0)
+        cout << "Success" << endl;
 }
 
 int main(int argc, char *argv[])
 {
 #include "NewNavInit.h"
-   try
-   {
-      SatMetaDataStoreCheck app(argv[0]);
-      if (!app.initialize(argc, argv))
-         return app.exitCode;
-      app.run();
-      return app.exitCode;
-   }
-   catch(Exception& e)
-   {
-      cout << e << endl;
-   }
-   catch(std::exception& e)
-   {
-      cout << e.what() << endl;
-   }
-   catch(...)
-   {
-      cout << "unknown error" << endl;
-   }
-      // only reach this point if an exception was caught
-   return BasicFramework::EXCEPTION_ERROR;
+    try
+    {
+        SatMetaDataStoreCheck app(argv[0]);
+        if (!app.initialize(argc, argv))
+            return app.exitCode;
+        app.run();
+        return app.exitCode;
+    }
+    catch (Exception &e)
+    {
+        cout << e << endl;
+    }
+    catch (std::exception &e)
+    {
+        cout << e.what() << endl;
+    }
+    catch (...)
+    {
+        cout << "unknown error" << endl;
+    }
+    // only reach this point if an exception was caught
+    return BasicFramework::EXCEPTION_ERROR;
 }

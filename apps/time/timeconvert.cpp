@@ -47,7 +47,15 @@
  * \section timeconvert_synopsis SYNOPSIS
  * <b>timeconvert</b>  <b>-h</b> <br/>
  * <b>timeconvert</b>  <b>\--systems</b> <br/>
- * <b>timeconvert</b> <b>[-d</b><b>]</b> <b>[-v</b><b>]</b> <b>[-A</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-c</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-R</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-o</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-f</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-w</b>&nbsp;\argarg{TIME}<b>]</b> <b>[\--z29</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-Z</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-j</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-m</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-u</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-y</b>&nbsp;\argarg{TIME}<b>]</b> <b>[\--src-sys</b>&nbsp;\argarg{ARG}<b>]</b> <b>[\--tgt-sys</b>&nbsp;\argarg{ARG}<b>]</b> <b>[\--nav</b>&nbsp;\argarg{ARG}<b>]</b> <b>[\--input-format</b>&nbsp;\argarg{ARG}<b>]</b> <b>[\--input-time</b>&nbsp;\argarg{ARG}<b>]</b> <b>[\--offset</b><b>]</b> <b>[-F</b>&nbsp;\argarg{ARG}<b>]</b> <b>[-a</b>&nbsp;\argarg{NUM}<b>]</b> <b>[-s</b>&nbsp;\argarg{NUM}<b>]</b>
+ * <b>timeconvert</b> <b>[-d</b><b>]</b> <b>[-v</b><b>]</b> <b>[-A</b>&nbsp;\argarg{TIME}<b>]</b>
+ * <b>[-c</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-R</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-o</b>&nbsp;\argarg{TIME}<b>]</b>
+ * <b>[-f</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-w</b>&nbsp;\argarg{TIME}<b>]</b> <b>[\--z29</b>&nbsp;\argarg{TIME}<b>]</b>
+ * <b>[-Z</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-j</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-m</b>&nbsp;\argarg{TIME}<b>]</b>
+ * <b>[-u</b>&nbsp;\argarg{TIME}<b>]</b> <b>[-y</b>&nbsp;\argarg{TIME}<b>]</b>
+ * <b>[\--src-sys</b>&nbsp;\argarg{ARG}<b>]</b> <b>[\--tgt-sys</b>&nbsp;\argarg{ARG}<b>]</b>
+ * <b>[\--nav</b>&nbsp;\argarg{ARG}<b>]</b> <b>[\--input-format</b>&nbsp;\argarg{ARG}<b>]</b>
+ * <b>[\--input-time</b>&nbsp;\argarg{ARG}<b>]</b> <b>[\--offset</b><b>]</b> <b>[-F</b>&nbsp;\argarg{ARG}<b>]</b>
+ * <b>[-a</b>&nbsp;\argarg{NUM}<b>]</b> <b>[-s</b>&nbsp;\argarg{NUM}<b>]</b>
  *
  * \section timeconvert_description DESCRIPTION
  * This application allows the user to convert between time formats
@@ -191,7 +199,7 @@
  * Convert GPS time to UTC.
  * \code{.sh}
  * > timeconvert -y "2021 2 0" --tgt-sys UTC
- * 
+ *
  *         Month/Day/Year H:M:S            01/01/2021 23:59:42
  *         Modified Julian Date            59215.999791667
  *         GPSweek DayOfWeek SecOfWeek     90 5  518382.000000
@@ -210,7 +218,7 @@
  * Convert GPS time to UTC using RINEX NAV DELTA-UTC headers.
  * \code{.sh}
  * > timeconvert -f "1854 233472" --nav gnsstk-apps/data/test_input_mpsolve.15n --tgt-sys UTC
- * 
+ *
  *         Month/Day/Year H:M:S            07/21/2015 16:51:29
  *         Modified Julian Date            57224.702418981
  *         GPSweek DayOfWeek SecOfWeek     830 2  233489.000000
@@ -248,394 +256,369 @@
  * printTime()
  */
 
-#include "NewNavInc.h"
-#include "BasicFramework.hpp"
-#include "TimeString.hpp"
-#include "TimeConstants.hpp"
 #include "ANSITime.hpp"
+#include "BasicFramework.hpp"
+#include "BasicTimeSystemConverter.hpp"
 #include "CivilTime.hpp"
+#include "CommandOptionWithCommonTimeArg.hpp"
+#include "DebugTrace.hpp"
+#include "EnumIterator.hpp"
 #include "GPSWeekSecond.hpp"
 #include "GPSWeekZcount.hpp"
 #include "JulianDate.hpp"
 #include "MJD.hpp"
+#include "MultiFormatNavDataFactory.hpp"
+#include "NavTimeSystemConverter.hpp"
+#include "NewNavInc.h"
+#include "SystemTime.hpp"
+#include "TimeConstants.hpp"
+#include "TimeString.hpp"
 #include "UnixTime.hpp"
 #include "YDSTime.hpp"
-#include "SystemTime.hpp"
-#include "DebugTrace.hpp"
-#include "CommandOptionWithCommonTimeArg.hpp"
-#include "EnumIterator.hpp"
-#include "BasicTimeSystemConverter.hpp"
-#include "NavTimeSystemConverter.hpp"
-#include "MultiFormatNavDataFactory.hpp"
 
 using namespace std;
 using namespace gnsstk;
 
 class CommandOptionHelpTimeSystem : public gnsstk::CommandOptionHelp
 {
-public:
-      /** Constructor.
-       * @param[in] shOpt The one character command line option.
-       *   Set to 0 if unused.
-       * @param[in] loOpt The long command option.  Set to
-       *   std::string() if unused.
-       * @param[in] desc A string describing what this option does.
-       */ 
-   CommandOptionHelpTimeSystem(const char shOpt,
-                               const std::string& loOpt,
-                               const std::string& desc)
-         : CommandOptionHelp(gnsstk::CommandOption::noArgument, shOpt, loOpt,
-                             desc)
-   {
-   }
+  public:
+    /** Constructor.
+     * @param[in] shOpt The one character command line option.
+     *   Set to 0 if unused.
+     * @param[in] loOpt The long command option.  Set to
+     *   std::string() if unused.
+     * @param[in] desc A string describing what this option does.
+     */
+    CommandOptionHelpTimeSystem(const char shOpt, const std::string &loOpt, const std::string &desc)
+        : CommandOptionHelp(gnsstk::CommandOption::noArgument, shOpt, loOpt, desc)
+    {
+    }
 
-      /** Print the requested help information.
-       * @param[in] out The stream to which the help text will be printed.
-       * @param[in] pretty Unused in this child class. */
-   void printHelp(std::ostream& out, bool pretty = true) override
-   {
-      out << "Available Time Systems:" << endl;
-      for (gnsstk::TimeSystem e : TimeSystemIterator())
-      {
-         cout << "  " << gnsstk::StringUtils::asString(e) << endl;
-      }
-   }
+    /** Print the requested help information.
+     * @param[in] out The stream to which the help text will be printed.
+     * @param[in] pretty Unused in this child class. */
+    void printHelp(std::ostream &out, bool pretty = true) override
+    {
+        out << "Available Time Systems:" << endl;
+        for (gnsstk::TimeSystem e : TimeSystemIterator())
+        {
+            cout << "  " << gnsstk::StringUtils::asString(e) << endl;
+        }
+    }
 };
-
 
 class TimCvt : public BasicFramework
 {
-public:
-   TimCvt(char* arg0);
+  public:
+    TimCvt(char *arg0);
 
-protected:
-   virtual void process();
+  protected:
+    virtual void process();
 
-private:
-   CommandOptionWithCommonTimeArg ANSITimeOption;
-   CommandOptionWithCommonTimeArg CivilTimeOption;
-   CommandOptionWithCommonTimeArg RinexFileTimeOption;
-   CommandOptionWithCommonTimeArg GPSEWSOption;
-   CommandOptionWithCommonTimeArg GPSWSOption;
-   CommandOptionWithCommonTimeArg GPSWZOption;
-   CommandOptionWithCommonTimeArg GPSZ29Option;
-   CommandOptionWithCommonTimeArg GPSZ32Option;
-   CommandOptionWithCommonTimeArg JDOption;
-   CommandOptionWithCommonTimeArg MJDOption;
-   CommandOptionWithCommonTimeArg UnixTimeOption;
-   CommandOptionWithCommonTimeArg YDSTimeOption;
-   CommandOptionHelpTimeSystem timeSystemHelpOption;
-   CommandOptionWithAnyArg srcTSOption; ///< Source time system
-   CommandOptionWithAnyArg tgtTSOption; ///< Target time system
-   CommandOptionWithAnyArg navOption;   ///< Navigation data input files.
+  private:
+    CommandOptionWithCommonTimeArg ANSITimeOption;
+    CommandOptionWithCommonTimeArg CivilTimeOption;
+    CommandOptionWithCommonTimeArg RinexFileTimeOption;
+    CommandOptionWithCommonTimeArg GPSEWSOption;
+    CommandOptionWithCommonTimeArg GPSWSOption;
+    CommandOptionWithCommonTimeArg GPSWZOption;
+    CommandOptionWithCommonTimeArg GPSZ29Option;
+    CommandOptionWithCommonTimeArg GPSZ32Option;
+    CommandOptionWithCommonTimeArg JDOption;
+    CommandOptionWithCommonTimeArg MJDOption;
+    CommandOptionWithCommonTimeArg UnixTimeOption;
+    CommandOptionWithCommonTimeArg YDSTimeOption;
+    CommandOptionHelpTimeSystem timeSystemHelpOption;
+    CommandOptionWithAnyArg srcTSOption; ///< Source time system
+    CommandOptionWithAnyArg tgtTSOption; ///< Target time system
+    CommandOptionWithAnyArg navOption;   ///< Navigation data input files.
 
-   CommandOptionWithAnyArg inputFormatOption;
-   CommandOptionWithAnyArg inputTimeOption;
-   CommandOptionAllOf inputFormatAndTimeOption;
+    CommandOptionWithAnyArg inputFormatOption;
+    CommandOptionWithAnyArg inputTimeOption;
+    CommandOptionAllOf inputFormatAndTimeOption;
 
-   CommandOptionNoArg offsOnlyOption;
-   CommandOptionWithAnyArg formatOption;
-   CommandOptionMutex offsetOrFormatOption;
-   CommandOptionDependent offsetTgtTSOption;
-   CommandOptionWithNumberArg addOption;
-   CommandOptionWithNumberArg subOption;
-   CommandOptionMutex mutexOption;
+    CommandOptionNoArg offsOnlyOption;
+    CommandOptionWithAnyArg formatOption;
+    CommandOptionMutex offsetOrFormatOption;
+    CommandOptionDependent offsetTgtTSOption;
+    CommandOptionWithNumberArg addOption;
+    CommandOptionWithNumberArg subOption;
+    CommandOptionMutex mutexOption;
 
-   string stringToParse;
-   string timeSpec;
-      /// nav data file reader
-   gnsstk::NavDataFactoryPtr ndfp;
+    string stringToParse;
+    string timeSpec;
+    /// nav data file reader
+    gnsstk::NavDataFactoryPtr ndfp;
 };
 
-
-TimCvt::TimCvt(char* arg0)
-      : BasicFramework(arg0, "Converts from a given input time specification"
-                       " to other time formats.  Include the quotation marks."
-                       "  All year values are four digit years.\n\nWhen"
-                       " converting between time systems, GPS is the default"
-                       " source time system when a time is specified, while UTC"
-                       " is the default source time system when a time is not"
-                       " specified."),
-        ANSITimeOption('A', "ansi", "%K", "\"ANSI-Second\""),
-        CivilTimeOption('c', "civil", "%m %d %Y %H:%M:%f",
-                        "\"Month(numeric) DayOfMonth Year"
-                        " Hour:Minute:Second\""),
-        RinexFileTimeOption('R', "rinex-file", "%y %m %d %H %M %S",
-                            "\"Year(2-digit) Month(numeric) DayOfMonth Hour"
-                            " Minute Second\""),
-        GPSEWSOption('o', "ews", "%E %G %g", 
-                     "\"GPSEpoch 10bitGPSweek SecondOfWeek\""),
-        GPSWSOption('f', "ws", "%F %g", "\"FullGPSWeek SecondOfWeek\""),
-        GPSWZOption('w', "wz", "%F %Z", "\"FullGPSWeek Zcount\""),
-        GPSZ29Option(0, "z29", "%E %c", "\"29bitZcount\""),
-        GPSZ32Option('Z', "z32", "%C", "\"32bitZcount\""),
-        JDOption('j', "julian", "%J", "\"JulianDate\""),
-        MJDOption('m', "mjd", "%Q", "\"ModifiedJulianDate\""),
-        UnixTimeOption('u',"unixtime", "%U %u",
-                       "\"UnixSeconds UnixMicroseconds\""),
-        YDSTimeOption('y', "doy", "%Y %j %s",
-                      "\"Year DayOfYear SecondsOfDay\""),
-        inputFormatOption(0, "input-format", "Time format to use on input"),
-        inputTimeOption(0, "input-time",
-                        "Time to be parsed by \"input-format\" option"),
-        formatOption('F', "format", "Time format to use on output"),
-        addOption('a', "add-offset", "Add NUM seconds to specified time"),
-        subOption('s', "sub-offset",
-                  "Subtract NUM seconds from specified time"),
-        timeSystemHelpOption(0, "systems", "List available time systems"),
-        srcTSOption(0, "src-sys", "Source time system when converting between"
-                    " systems"),
-        tgtTSOption(0, "tgt-sys", "Target time system when converting between"
-                    " systems"),
-        navOption(0, "nav", "if you see this, we failed"),
-        offsOnlyOption(0, "offset", "Only display the offset at the reference"
-                       " time"),
-        offsetTgtTSOption(&tgtTSOption, &offsOnlyOption)
+TimCvt::TimCvt(char *arg0)
+    : BasicFramework(arg0, "Converts from a given input time specification"
+                           " to other time formats.  Include the quotation marks."
+                           "  All year values are four digit years.\n\nWhen"
+                           " converting between time systems, GPS is the default"
+                           " source time system when a time is specified, while UTC"
+                           " is the default source time system when a time is not"
+                           " specified."),
+      ANSITimeOption('A', "ansi", "%K", "\"ANSI-Second\""), CivilTimeOption('c', "civil", "%m %d %Y %H:%M:%f",
+                                                                            "\"Month(numeric) DayOfMonth Year"
+                                                                            " Hour:Minute:Second\""),
+      RinexFileTimeOption('R', "rinex-file", "%y %m %d %H %M %S",
+                          "\"Year(2-digit) Month(numeric) DayOfMonth Hour"
+                          " Minute Second\""),
+      GPSEWSOption('o', "ews", "%E %G %g", "\"GPSEpoch 10bitGPSweek SecondOfWeek\""),
+      GPSWSOption('f', "ws", "%F %g", "\"FullGPSWeek SecondOfWeek\""),
+      GPSWZOption('w', "wz", "%F %Z", "\"FullGPSWeek Zcount\""), GPSZ29Option(0, "z29", "%E %c", "\"29bitZcount\""),
+      GPSZ32Option('Z', "z32", "%C", "\"32bitZcount\""), JDOption('j', "julian", "%J", "\"JulianDate\""),
+      MJDOption('m', "mjd", "%Q", "\"ModifiedJulianDate\""),
+      UnixTimeOption('u', "unixtime", "%U %u", "\"UnixSeconds UnixMicroseconds\""),
+      YDSTimeOption('y', "doy", "%Y %j %s", "\"Year DayOfYear SecondsOfDay\""),
+      inputFormatOption(0, "input-format", "Time format to use on input"),
+      inputTimeOption(0, "input-time", "Time to be parsed by \"input-format\" option"),
+      formatOption('F', "format", "Time format to use on output"),
+      addOption('a', "add-offset", "Add NUM seconds to specified time"),
+      subOption('s', "sub-offset", "Subtract NUM seconds from specified time"),
+      timeSystemHelpOption(0, "systems", "List available time systems"),
+      srcTSOption(0, "src-sys",
+                  "Source time system when converting between"
+                  " systems"),
+      tgtTSOption(0, "tgt-sys",
+                  "Target time system when converting between"
+                  " systems"),
+      navOption(0, "nav", "if you see this, we failed"), offsOnlyOption(0, "offset",
+                                                                        "Only display the offset at the reference"
+                                                                        " time"),
+      offsetTgtTSOption(&tgtTSOption, &offsOnlyOption)
 {
-      // Initialize these two items in here rather than in the
-      // initializer list to guarantee execution order and avoid seg
-      // faults.
-   ndfp = std::make_shared<gnsstk::MultiFormatNavDataFactory>();
-      // process only time offset messages
-   ndfp->setTypeFilter({NavMessageType::TimeOffset});
-   navOption.setDescription("Where to get the navigation data. Can be " +
-                            ndfp->getFactoryFormats() + ".");
-   ANSITimeOption.setMaxCount(1);
-   CivilTimeOption.setMaxCount(1);
-   RinexFileTimeOption.setMaxCount(1);
-   GPSEWSOption.setMaxCount(1);
-   GPSWSOption.setMaxCount(1);
-   GPSWZOption.setMaxCount(1);
-   GPSZ29Option.setMaxCount(1);
-   GPSZ32Option.setMaxCount(1);
-   JDOption.setMaxCount(1);
-   MJDOption.setMaxCount(1);
-   UnixTimeOption.setMaxCount(1);
-   YDSTimeOption.setMaxCount(1);
-   formatOption.setMaxCount(1);
-   srcTSOption.setMaxCount(1);
-   tgtTSOption.setMaxCount(1);
+    // Initialize these two items in here rather than in the
+    // initializer list to guarantee execution order and avoid seg
+    // faults.
+    ndfp = std::make_shared<gnsstk::MultiFormatNavDataFactory>();
+    // process only time offset messages
+    ndfp->setTypeFilter({NavMessageType::TimeOffset});
+    navOption.setDescription("Where to get the navigation data. Can be " + ndfp->getFactoryFormats() + ".");
+    ANSITimeOption.setMaxCount(1);
+    CivilTimeOption.setMaxCount(1);
+    RinexFileTimeOption.setMaxCount(1);
+    GPSEWSOption.setMaxCount(1);
+    GPSWSOption.setMaxCount(1);
+    GPSWZOption.setMaxCount(1);
+    GPSZ29Option.setMaxCount(1);
+    GPSZ32Option.setMaxCount(1);
+    JDOption.setMaxCount(1);
+    MJDOption.setMaxCount(1);
+    UnixTimeOption.setMaxCount(1);
+    YDSTimeOption.setMaxCount(1);
+    formatOption.setMaxCount(1);
+    srcTSOption.setMaxCount(1);
+    tgtTSOption.setMaxCount(1);
 
-   inputFormatOption.setMaxCount(1);
-   inputTimeOption.setMaxCount(1);
-   inputFormatAndTimeOption.addOption(&inputFormatOption);
-   inputFormatAndTimeOption.addOption(&inputTimeOption);
+    inputFormatOption.setMaxCount(1);
+    inputTimeOption.setMaxCount(1);
+    inputFormatAndTimeOption.addOption(&inputFormatOption);
+    inputFormatAndTimeOption.addOption(&inputTimeOption);
 
-   mutexOption.addOption(&ANSITimeOption);
-   mutexOption.addOption(&CivilTimeOption);
-   mutexOption.addOption(&RinexFileTimeOption);
-   mutexOption.addOption(&GPSEWSOption);
-   mutexOption.addOption(&GPSWSOption);
-   mutexOption.addOption(&GPSWZOption);
-   mutexOption.addOption(&GPSZ29Option);
-   mutexOption.addOption(&GPSZ32Option);
-   mutexOption.addOption(&JDOption);
-   mutexOption.addOption(&MJDOption);
-   mutexOption.addOption(&UnixTimeOption);
-   mutexOption.addOption(&YDSTimeOption);
-   mutexOption.addOption(&inputFormatAndTimeOption);
+    mutexOption.addOption(&ANSITimeOption);
+    mutexOption.addOption(&CivilTimeOption);
+    mutexOption.addOption(&RinexFileTimeOption);
+    mutexOption.addOption(&GPSEWSOption);
+    mutexOption.addOption(&GPSWSOption);
+    mutexOption.addOption(&GPSWZOption);
+    mutexOption.addOption(&GPSZ29Option);
+    mutexOption.addOption(&GPSZ32Option);
+    mutexOption.addOption(&JDOption);
+    mutexOption.addOption(&MJDOption);
+    mutexOption.addOption(&UnixTimeOption);
+    mutexOption.addOption(&YDSTimeOption);
+    mutexOption.addOption(&inputFormatAndTimeOption);
 
-   offsetOrFormatOption.addOption(&offsOnlyOption);
-   offsetOrFormatOption.addOption(&formatOption);
+    offsetOrFormatOption.addOption(&offsOnlyOption);
+    offsetOrFormatOption.addOption(&formatOption);
 }
-
 
 void TimCvt::process()
 {
-   if (debugLevel)
-   {
-      DEBUGTRACE_ENABLE();
-   }
-   CommonTime ct;
-   ct.setTimeSystem(TimeSystem::GPS);
-   CommandOption *whichOpt = mutexOption.whichOne();
+    if (debugLevel)
+    {
+        DEBUGTRACE_ENABLE();
+    }
+    CommonTime ct;
+    ct.setTimeSystem(TimeSystem::GPS);
+    CommandOption *whichOpt = mutexOption.whichOne();
 
-   if (navOption.getCount())
-   {
-         // create our time system converter
-      CommonTime::tsConv = make_shared<NavTimeSystemConverter>();
-      NavTimeSystemConverter *ntsc = dynamic_cast<NavTimeSystemConverter*>(
-         CommonTime::tsConv.get());
-         // create our NavLibrary and associate it with the
-         // NavTimeSystemConverter
-      ntsc->navLib = make_shared<NavLibrary>();
-         // Set the NavLibrary to use the MultiFormatNavDataFactory
-      ntsc->navLib->addFactory(ndfp);
-         // load the data files.
-      std::vector<string> values(navOption.getValue());
-      for (size_t i=0; i<values.size(); i++)
-      {
-         if (!ndfp->addDataSource(values[i]))
-         {
-            cerr << "Unable to load \"" << values[i] << "\"" << endl;
-               // this could be a missing or invalid file either one.
-            exitCode = BasicFramework::EXIST_ERROR;
-               // We continue because it's possible that the user
-               // specified a valid file in addition to this invalid
-               // one.  But we still want to indicate the error with
-               // the message and exit code.
-         }
-      }
-      switch (debugLevel)
-      {
-         case 0:
+    if (navOption.getCount())
+    {
+        // create our time system converter
+        CommonTime::tsConv = make_shared<NavTimeSystemConverter>();
+        NavTimeSystemConverter *ntsc = dynamic_cast<NavTimeSystemConverter *>(CommonTime::tsConv.get());
+        // create our NavLibrary and associate it with the
+        // NavTimeSystemConverter
+        ntsc->navLib = make_shared<NavLibrary>();
+        // Set the NavLibrary to use the MultiFormatNavDataFactory
+        ntsc->navLib->addFactory(ndfp);
+        // load the data files.
+        std::vector<string> values(navOption.getValue());
+        for (size_t i = 0; i < values.size(); i++)
+        {
+            if (!ndfp->addDataSource(values[i]))
+            {
+                cerr << "Unable to load \"" << values[i] << "\"" << endl;
+                // this could be a missing or invalid file either one.
+                exitCode = BasicFramework::EXIST_ERROR;
+                // We continue because it's possible that the user
+                // specified a valid file in addition to this invalid
+                // one.  But we still want to indicate the error with
+                // the message and exit code.
+            }
+        }
+        switch (debugLevel)
+        {
+        case 0:
             break;
-         case 1:
+        case 1:
             ndfp->dump(std::cerr, gnsstk::DumpDetail::OneLine);
             break;
-         case 2:
+        case 2:
             ndfp->dump(std::cerr, gnsstk::DumpDetail::Brief);
             break;
-         default:
+        default:
             ndfp->dump(std::cerr, gnsstk::DumpDetail::Full);
             break;
-      }
-   }
-   else
-   {
-      CommonTime::tsConv = make_shared<BasicTimeSystemConverter>();
-   }
+        }
+    }
+    else
+    {
+        CommonTime::tsConv = make_shared<BasicTimeSystemConverter>();
+    }
 
-   if (whichOpt)
-   {
-      CommandOptionWithCommonTimeArg *cta =
-         dynamic_cast<CommandOptionWithCommonTimeArg *>(whichOpt);
-      if (cta)
-      {
-         ct = cta->getTime().front();
-         if (srcTSOption.getCount())
-         {
-            ct.setTimeSystem(gnsstk::StringUtils::asTimeSystem(
-                                srcTSOption.getValue()[0]));
-         }
-         else
-         {
-            ct.setTimeSystem(TimeSystem::GPS);
-         }
-      }
-      else // whichOpt == &inputFormatAndTimeOption
-      {
-         mixedScanTime( ct,
-                        inputTimeOption.getValue().front(),
-                        inputFormatOption.getValue().front() );
-         if (srcTSOption.getCount())
-         {
-            ct.setTimeSystem(gnsstk::StringUtils::asTimeSystem(
-                                srcTSOption.getValue()[0]));
-         }
-         else
-         {
-            ct.setTimeSystem(TimeSystem::GPS);
-         }
-      }
-   }
-   else
-   {
-      ct = SystemTime();
-      ct.setTimeSystem(TimeSystem::UTC); 
-   }
+    if (whichOpt)
+    {
+        CommandOptionWithCommonTimeArg *cta = dynamic_cast<CommandOptionWithCommonTimeArg *>(whichOpt);
+        if (cta)
+        {
+            ct = cta->getTime().front();
+            if (srcTSOption.getCount())
+            {
+                ct.setTimeSystem(gnsstk::StringUtils::asTimeSystem(srcTSOption.getValue()[0]));
+            }
+            else
+            {
+                ct.setTimeSystem(TimeSystem::GPS);
+            }
+        }
+        else // whichOpt == &inputFormatAndTimeOption
+        {
+            mixedScanTime(ct, inputTimeOption.getValue().front(), inputFormatOption.getValue().front());
+            if (srcTSOption.getCount())
+            {
+                ct.setTimeSystem(gnsstk::StringUtils::asTimeSystem(srcTSOption.getValue()[0]));
+            }
+            else
+            {
+                ct.setTimeSystem(TimeSystem::GPS);
+            }
+        }
+    }
+    else
+    {
+        ct = SystemTime();
+        ct.setTimeSystem(TimeSystem::UTC);
+    }
 
-   int i;
-   int addOptions = addOption.getCount();
-   int subOptions = subOption.getCount();
-   for (i = 0; i < addOptions; i++)
-      ct += StringUtils::asDouble(addOption.getValue()[i]);
-   for (i = 0; i < subOptions; i++)
-      ct -= StringUtils::asDouble(subOption.getValue()[i]);
+    int i;
+    int addOptions = addOption.getCount();
+    int subOptions = subOption.getCount();
+    for (i = 0; i < addOptions; i++)
+        ct += StringUtils::asDouble(addOption.getValue()[i]);
+    for (i = 0; i < subOptions; i++)
+        ct -= StringUtils::asDouble(subOption.getValue()[i]);
 
-   if (tgtTSOption.getCount())
-   {
-      gnsstk::TimeSystem ts = gnsstk::StringUtils::asTimeSystem(
-         tgtTSOption.getValue()[0]);
-      if (offsOnlyOption)
-      {
-         double offset;
-         if (!CommonTime::tsConv->getOffset(ct.getTimeSystem(), ts, ct, offset))
-         {
-            cerr << "Unable to change time systems" << endl;
-            exitCode = 1;
-         }
-         else
-         {
-            cout << setprecision(20) << offset << endl;
-         }
-         return;
-      }
-      else
-      {
-         if (!ct.changeTimeSystem(ts))
-         {
-            cerr << "Unable to change time systems" << endl;
-            exitCode = 1;
+    if (tgtTSOption.getCount())
+    {
+        gnsstk::TimeSystem ts = gnsstk::StringUtils::asTimeSystem(tgtTSOption.getValue()[0]);
+        if (offsOnlyOption)
+        {
+            double offset;
+            if (!CommonTime::tsConv->getOffset(ct.getTimeSystem(), ts, ct, offset))
+            {
+                cerr << "Unable to change time systems" << endl;
+                exitCode = 1;
+            }
+            else
+            {
+                cout << setprecision(20) << offset << endl;
+            }
             return;
-         }
-      }
-   }
+        }
+        else
+        {
+            if (!ct.changeTimeSystem(ts))
+            {
+                cerr << "Unable to change time systems" << endl;
+                exitCode = 1;
+                return;
+            }
+        }
+    }
 
-   if (formatOption.getCount())
-   {
-      cout << printTime(ct, formatOption.getValue()[0]) << endl;
-   }
-   else
-   {
-      using StringUtils::leftJustify;
-      string eight(8, ' '); // eight spaces
+    if (formatOption.getCount())
+    {
+        cout << printTime(ct, formatOption.getValue()[0]) << endl;
+    }
+    else
+    {
+        using StringUtils::leftJustify;
+        string eight(8, ' '); // eight spaces
 
-      GPSWeekZcount wz(ct);
-      CivilTime civ(ct);
+        GPSWeekZcount wz(ct);
+        CivilTime civ(ct);
 
-      cout << endl
-           << eight << leftJustify("Month/Day/Year H:M:S", 32)
-           << CivilTime(ct).printf("%02m/%02d/%04Y %02H:%02M:%02S") << endl
+        cout << endl
+             << eight << leftJustify("Month/Day/Year H:M:S", 32)
+             << CivilTime(ct).printf("%02m/%02d/%04Y %02H:%02M:%02S") << endl
 
-           << eight << leftJustify("Modified Julian Date", 32)
-           << setprecision(15) << MJD(ct).printf("%15.9Q") << endl
+             << eight << leftJustify("Modified Julian Date", 32) << setprecision(15) << MJD(ct).printf("%15.9Q") << endl
 
-           << eight << leftJustify("GPSweek DayOfWeek SecOfWeek", 32)
-           << GPSWeekSecond(ct).printf("%G %w % 13.6g") << endl
+             << eight << leftJustify("GPSweek DayOfWeek SecOfWeek", 32) << GPSWeekSecond(ct).printf("%G %w % 13.6g")
+             << endl
 
-           << eight << leftJustify("FullGPSweek Zcount", 32)
-           << wz.printf("%F % 6z") << endl
+             << eight << leftJustify("FullGPSweek Zcount", 32) << wz.printf("%F % 6z") << endl
 
-           << eight << leftJustify("Year DayOfYear SecondOfDay", 32)
-           << YDSTime(ct).printf("%Y %03j % 12.6s") << endl
+             << eight << leftJustify("Year DayOfYear SecondOfDay", 32) << YDSTime(ct).printf("%Y %03j % 12.6s") << endl
 
-           << eight << leftJustify("Unix: Second Microsecond", 32)
-           << UnixTime(ct).printf("%U % 6u") << endl
+             << eight << leftJustify("Unix: Second Microsecond", 32) << UnixTime(ct).printf("%U % 6u") << endl
 
-           << eight << leftJustify("Zcount: 29-bit (32-bit)", 32)
-           << wz.printf("%c (%C)") << endl
+             << eight << leftJustify("Zcount: 29-bit (32-bit)", 32) << wz.printf("%c (%C)") << endl
 
-           << endl << endl;
-   }
+             << endl
+             << endl;
+    }
 
-   return;
+    return;
 }
 
-
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 #include "NewNavInit.h"
-   try
-   {
-      TimCvt m(argv[0]);
-      if (!m.initialize(argc, argv))
-         return m.exitCode;
-      m.run();
-      return m.exitCode;
-   }
-   catch(Exception& e)
-   {
-      cout << e << endl;
-   }
-   catch(std::exception& e)
-   {
-      cout << e.what() << endl;
-   }
-   catch(...)
-   {
-      cout << "unknown error" << endl;
-   }
-      // only reach this point if an exception was caught
-   return BasicFramework::EXCEPTION_ERROR;
+    try
+    {
+        TimCvt m(argv[0]);
+        if (!m.initialize(argc, argv))
+            return m.exitCode;
+        m.run();
+        return m.exitCode;
+    }
+    catch (Exception &e)
+    {
+        cout << e << endl;
+    }
+    catch (std::exception &e)
+    {
+        cout << e.what() << endl;
+    }
+    catch (...)
+    {
+        cout << "unknown error" << endl;
+    }
+    // only reach this point if an exception was caught
+    return BasicFramework::EXCEPTION_ERROR;
 }
