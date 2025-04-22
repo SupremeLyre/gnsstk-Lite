@@ -40,115 +40,101 @@
 // compute Robust statistics. Also demonstrate the use
 // of random number generators.
 
-#include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <iostream>
 
 #include "RobustStats.hpp"
-#include "random.hpp"
 #include "Stats.hpp"
+#include "random.hpp"
 
 using namespace std;
 using namespace gnsstk;
 using namespace Robust;
 
-
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-   double *s = nullptr;
-   double mean = 10.0;
-   double stdDev = 2.0;
-   double badMeasurement = 10000;
+    double *s = nullptr;
+    double mean = 10.0;
+    double stdDev = 2.0;
+    double badMeasurement = 10000;
 
-   try
-   {
+    try
+    {
 
-         // Generate a set of random numbers that are normally distributed
-      size_t N = 1000;
-      s= new double[N];
+        // Generate a set of random numbers that are normally distributed
+        size_t N = 1000;
+        s = new double[N];
 
-      Stats<double> simpleStats;
+        Stats<double> simpleStats;
 
-      for (size_t i = 0; i<N; i++)
-      {
-         s[i] = RandNorm(stdDev)+mean;
+        for (size_t i = 0; i < N; i++)
+        {
+            s[i] = RandNorm(stdDev) + mean;
             // Note the 1.0 keeps the math floating point,
             // otherwise the division is integer division.
 
-         simpleStats.Add(s[i]);
-      }
+            simpleStats.Add(s[i]);
+        }
 
-         // Show the sample mean and std deviation before adding
-         // perturbed samples.
-      cout  << endl << "Before perturbation: sample mean is               "
-	    << simpleStats.Average() << ", " << endl;
-      cout  << "                     sample standard deviation is "
-	    << simpleStats.StdDev() << endl << endl;
+        // Show the sample mean and std deviation before adding
+        // perturbed samples.
+        cout << endl << "Before perturbation: sample mean is               " << simpleStats.Average() << ", " << endl;
+        cout << "                     sample standard deviation is " << simpleStats.StdDev() << endl << endl;
 
-         // Now perturb the sample data set with a "bad" measurement.
-      srand(time(0));
-      size_t i = (rand()%N);
-      s[i] = badMeasurement;
-      cout << "Altering measurement " << i << " to take the value of "
-	   << badMeasurement << endl;
+        // Now perturb the sample data set with a "bad" measurement.
+        srand(time(0));
+        size_t i = (rand() % N);
+        s[i] = badMeasurement;
+        cout << "Altering measurement " << i << " to take the value of " << badMeasurement << endl;
 
-         // Show how the sample mean and std deviation are altered.
-      Stats<double> secondStats;
-      for (size_t i = 0; i<N; i++)
-      {
-         secondStats.Add(s[i]);
-      }
+        // Show how the sample mean and std deviation are altered.
+        Stats<double> secondStats;
+        for (size_t i = 0; i < N; i++)
+        {
+            secondStats.Add(s[i]);
+        }
 
-         // Show the sample mean and std deviation before adding
-         // perturbed samples.
-      cout  << endl << "After perturbation:  sample mean is                "
-	    << secondStats.Average() << ", " << endl;
-      cout  << "                     sample standard deviation is "
-	    << secondStats.StdDev() << endl << endl;
+        // Show the sample mean and std deviation before adding
+        // perturbed samples.
+        cout << endl << "After perturbation:  sample mean is                " << secondStats.Average() << ", " << endl;
+        cout << "                     sample standard deviation is " << secondStats.StdDev() << endl << endl;
 
-      double median,mad,Q1,Q3;
+        double median, mad, Q1, Q3;
 
-      QSort(s,N);
-      Robust::Quartiles(s,N,Q1,Q3);
-      mad = Robust::MedianAbsoluteDeviation(s,N,median);
+        QSort(s, N);
+        Robust::Quartiles(s, N, Q1, Q3);
+        mad = Robust::MedianAbsoluteDeviation(s, N, median);
 
-      cout << "Robust statistics:\n";
-      cout << "                     number    = " << N << endl;
-      cout << "                     quartiles = " << setw(11)
-           << setprecision(8) << Q1
-	   << " " << setw(11) << setprecision(8) << Q3 << endl;
-      cout << "                     median    = " << setw(11)
-           << setprecision(8) << median << endl;
-      cout << "                     MAD       = " << setw(11)
-           << setprecision(8) << mad << endl;
+        cout << "Robust statistics:\n";
+        cout << "                     number    = " << N << endl;
+        cout << "                     quartiles = " << setw(11) << setprecision(8) << Q1 << " " << setw(11)
+             << setprecision(8) << Q3 << endl;
+        cout << "                     median    = " << setw(11) << setprecision(8) << median << endl;
+        cout << "                     MAD       = " << setw(11) << setprecision(8) << mad << endl;
 
+        // Show how the sample mean and std deviation are altered.
+        Stats<double> thirdStats;
+        for (size_t i = 0; i < N; i++)
+        {
+            if ((fabs(s[i] - median) / mad) < 8)
+                thirdStats.Add(s[i]);
+        }
 
-         // Show how the sample mean and std deviation are altered.
-      Stats<double> thirdStats;
-      for (size_t i = 0; i<N; i++)
-      {
-         if ((fabs(s[i] - median)/mad)<8)
-            thirdStats.Add(s[i]);
-      }
+        // Compute the mean and std deviation now given robust statistics.
+        cout << endl << "Using robust stats:  sample mean is                " << thirdStats.Average() << ", " << endl;
+        cout << "                     sample standard deviation is " << thirdStats.StdDev() << endl << endl;
+    }
+    catch (bad_alloc &b)
+    {
+        cerr << "Allocation error. Out of memory?" << endl;
+        exit(1);
+    }
 
+    // Delete the dynamic array allocation.
+    // (don't just rely on the operating system to do this).
+    delete[] s;
+    s = 0;
 
-         // Compute the mean and std deviation now given robust statistics.
-      cout  << endl << "Using robust stats:  sample mean is                "
-	    << thirdStats.Average() << ", " << endl;
-      cout  << "                     sample standard deviation is "
-	    << thirdStats.StdDev() << endl << endl;
-
-   }
-   catch (bad_alloc& b)
-   {
-      cerr << "Allocation error. Out of memory?" << endl;
-      exit(1);
-   }
-
-      // Delete the dynamic array allocation.
-      // (don't just rely on the operating system to do this).
-   delete[] s;
-   s = 0;
-
-   return 0;
+    return 0;
 }

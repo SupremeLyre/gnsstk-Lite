@@ -43,75 +43,75 @@
 /// application's navigation message storage class
 class NavSubframe
 {
-public:
-      /** The Navigation Subframe. 10 4-byte words.  There are 11
-       * elements to facilitate access to elements 1-10. */
-   std::vector<uint32_t> subframe;
+  public:
+    /** The Navigation Subframe. 10 4-byte words.  There are 11
+     * elements to facilitate access to elements 1-10. */
+    std::vector<uint32_t> subframe;
 };
 
 /// Combine the nav filter store and the application store into a single class
 class MyNavFilterData : public gnsstk::LNavFilterData
 {
-public:
-   NavSubframe appData;
+  public:
+    NavSubframe appData;
 };
 
 /// function to read a single nav subframe
-MyNavFilterData* readNav()
+MyNavFilterData *readNav()
 {
-   if (!strm)
-      return NULL;
-   MyNavFilterData *rv = new MyNavFilterData();
-   strm >> rv->appData;
-   retun rv;
+    if (!strm)
+        return NULL;
+    MyNavFilterData *rv = new MyNavFilterData();
+    strm >> rv->appData;
+    retun rv;
 }
 
 void filterEX()
 {
-      // Filter manager, where the work is done
-   gnsstk::NavFilterMgr mgr;
-      // Individual filters being applied
-   gnsstk::LNavCookFilter filtCook;
-   gnsstk::LNavCrossSourceFilter filtVote;
-   gnsstk::NavFilter::NavMsgList::const_iterator nmli;
+    // Filter manager, where the work is done
+    gnsstk::NavFilterMgr mgr;
+    // Individual filters being applied
+    gnsstk::LNavCookFilter filtCook;
+    gnsstk::LNavCrossSourceFilter filtVote;
+    gnsstk::NavFilter::NavMsgList::const_iterator nmli;
 
-      // Tell the manager what filters to use
-   mgr.addFilter(&filtCook);
-   mgr.addFilter(&filtVote);
+    // Tell the manager what filters to use
+    mgr.addFilter(&filtCook);
+    mgr.addFilter(&filtVote);
 
-   while (strm)
-   {
-      MyNavFilterData *fd = readNav();
+    while (strm)
+    {
+        MyNavFilterData *fd = readNav();
 
-         // validate the subframe
-      gnsstk::NavFilter::NavMsgList l = mgr.validate(fd);
+        // validate the subframe
+        gnsstk::NavFilter::NavMsgList l = mgr.validate(fd);
 
-         // process the results
-      for (nmli = l.begin(); nmli != l.end(); nmli++)
-      {
-         MyNavFilterData *ofd = dynamic_cast<MyNavFilterData*>(*nmli);
+        // process the results
+        for (nmli = l.begin(); nmli != l.end(); nmli++)
+        {
+            MyNavFilterData *ofd = dynamic_cast<MyNavFilterData *>(*nmli);
             // do something with fd (nav message that passed the filters)
 
             // Then free the memory.  Note that this would also free
             // the application's data, so you may want to delay this
             // depending on what you're trying to do.
-         delete ofd;
-      }
-   }
+            delete ofd;
+        }
+    }
 
-      // Finalize the filters.  Probably not necessary when using only
-      // depth 1 filters, but good practice in any case.
-   gnsstk::NavFilter::NavMsgList l = mgr.finalize();
+    // Finalize the filters.  Probably not necessary when using only
+    // depth 1 filters, but good practice in any case.
+    gnsstk::NavFilter::NavMsgList l = mgr.finalize();
 
-      // process the results
-   for (nmli = l.begin(); nmli != l.end(); nmli++)
-   {
-      MyNavFilterData *ofd = dynamic_cast<MyNavFilterData*>(*nmli);
-         // do something with fd (nav message that passed the filters)
+    // process the results
+    for (nmli = l.begin(); nmli != l.end(); nmli++)
+    {
+        MyNavFilterData *ofd = dynamic_cast<MyNavFilterData *>(*nmli);
+        // do something with fd (nav message that passed the filters)
 
-         // Then free the memory.  Note that this would also free
-         // the application's data, so you may want to delay this
-         // depending on what you're trying to do.
-      delete ofd;
-   }
+        // Then free the memory.  Note that this would also free
+        // the application's data, so you may want to delay this
+        // depending on what you're trying to do.
+        delete ofd;
+    }
 }

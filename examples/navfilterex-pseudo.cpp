@@ -41,31 +41,31 @@
 
 void filterEX()
 {
-      // Filter manager, where the work is done
-   gnsstk::NavFilterMgr mgr;
-      // Individual filters being applied
-   gnsstk::LNavCookFilter filtCook;
-   gnsstk::LNavParityFilter filtParity;
-      // Data being passed to the filter
-   gnsstk::LNavFilterData navFiltData;
-      // Generic LNAV message storage
-   std::vector<uint32_t> subframe(10,0);
+    // Filter manager, where the work is done
+    gnsstk::NavFilterMgr mgr;
+    // Individual filters being applied
+    gnsstk::LNavCookFilter filtCook;
+    gnsstk::LNavParityFilter filtParity;
+    // Data being passed to the filter
+    gnsstk::LNavFilterData navFiltData;
+    // Generic LNAV message storage
+    std::vector<uint32_t> subframe(10, 0);
 
-      // Tell the manager what filters to use
-   mgr.addFilter(&filtCook);
-   mgr.addFilter(&filtParity);
+    // Tell the manager what filters to use
+    mgr.addFilter(&filtCook);
+    mgr.addFilter(&filtParity);
 
-      // Point the filter data to the LNAV message
-   navFiltData.sf = &subframe[0];
+    // Point the filter data to the LNAV message
+    navFiltData.sf = &subframe[0];
 
-      // validate the subframe
-   gnsstk::NavFilter::NavMsgList l = mgr.validate(&navFiltData);
+    // validate the subframe
+    gnsstk::NavFilter::NavMsgList l = mgr.validate(&navFiltData);
 
-      // process the results
-   gnsstk::NavFilter::NavMsgList::const_iterator nmli;
-   for (nmli = l.begin(); nmli != l.end(); nmli++)
-   {
-      gnsstk::LNavFilterData *fd = dynamic_cast<gnsstk::LNavFilterData*>(*nmli);
-         // do something with fd (nav message that passed the filters)
-   }
+    // process the results
+    gnsstk::NavFilter::NavMsgList::const_iterator nmli;
+    for (nmli = l.begin(); nmli != l.end(); nmli++)
+    {
+        gnsstk::LNavFilterData *fd = dynamic_cast<gnsstk::LNavFilterData *>(*nmli);
+        // do something with fd (nav message that passed the filters)
+    }
 }

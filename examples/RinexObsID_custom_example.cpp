@@ -44,71 +44,68 @@
  */
 
 #include <iostream>
-#include <string>
 #include <map>
 #include <set>
+#include <string>
 
-#include "ObsID.hpp"
-#include "RinexObsID.hpp"
 #include "Exception.hpp"
+#include "ObsID.hpp"
 #include "Rinex3ObsHeader.hpp"
-
+#include "RinexObsID.hpp"
 
 int main(int argc, char *argv[])
 {
-   using namespace gnsstk;
-   using namespace std;
+    using namespace gnsstk;
+    using namespace std;
 
-   map< RinexObsID, string> i2s;
+    map<RinexObsID, string> i2s;
 
-      // abbreviate.
-   double cv = gnsstk::Rinex3ObsBase::currentVersion;
-   i2s[RinexObsID("C1C", cv)] = "C1C";
-   i2s[RinexObsID("L1C", cv)] = "L1C";
-   i2s[RinexObsID("D1C", cv)] = "D1C";
-   i2s[RinexObsID("S1C", cv)] = "S1C";
-   i2s[RinexObsID("L1W", cv)] = "L1W";
-   i2s[RinexObsID("D2Z", cv)] = "D2Z";
-   i2s[RinexObsID("S1X", cv)] = "S1X";
-   i2s[RinexObsID("L5Q", cv)] = "L5Q";
-   i2s[RinexObsID("EL5Q", cv)] = "EL5Q";
-   i2s[RinexObsID("EC1C", cv)] = "EC1C";
-      // Note that you can just start using custom id's
-   i2s[RinexObsID("C4x", cv)] = "C4x";
-   i2s[RinexObsID("C4y", cv)] = "C4y";
+    // abbreviate.
+    double cv = gnsstk::Rinex3ObsBase::currentVersion;
+    i2s[RinexObsID("C1C", cv)] = "C1C";
+    i2s[RinexObsID("L1C", cv)] = "L1C";
+    i2s[RinexObsID("D1C", cv)] = "D1C";
+    i2s[RinexObsID("S1C", cv)] = "S1C";
+    i2s[RinexObsID("L1W", cv)] = "L1W";
+    i2s[RinexObsID("D2Z", cv)] = "D2Z";
+    i2s[RinexObsID("S1X", cv)] = "S1X";
+    i2s[RinexObsID("L5Q", cv)] = "L5Q";
+    i2s[RinexObsID("EL5Q", cv)] = "EL5Q";
+    i2s[RinexObsID("EC1C", cv)] = "EC1C";
+    // Note that you can just start using custom id's
+    i2s[RinexObsID("C4x", cv)] = "C4x";
+    i2s[RinexObsID("C4y", cv)] = "C4y";
 
-      // You can also explicitly create one so it can have a good description
-   RinexObsID dfif = RinexObsID::newID("C3 ", "Ionosphere-free pseudorange");
-   i2s[dfif] = "C3 ";
+    // You can also explicitly create one so it can have a good description
+    RinexObsID dfif = RinexObsID::newID("C3 ", "Ionosphere-free pseudorange");
+    i2s[dfif] = "C3 ";
 
-      // You can also fix up the descriptions manually
-   RinexObsID C4y("C4y", cv);
-   ObsID::tcDesc[C4y.code] = "y";
-   ObsID::cbDesc[C4y.band] = "L4";
+    // You can also fix up the descriptions manually
+    RinexObsID C4y("C4y", cv);
+    ObsID::tcDesc[C4y.code] = "y";
+    ObsID::cbDesc[C4y.band] = "L4";
 
-   RinexObsID l1lc(ObservationType::TrackLen, CarrierBand::L1, TrackingCode::Y);
-   i2s[l1lc] = "cust";
+    RinexObsID l1lc(ObservationType::TrackLen, CarrierBand::L1, TrackingCode::Y);
+    i2s[l1lc] = "cust";
 
-   i2s[RinexObsID("C1 ", cv)] = "C1 ";
+    i2s[RinexObsID("C1 ", cv)] = "C1 ";
 
-   try
-   {
-      RinexObsID garbage = RinexObsID::newID("C1C", "this should fail");
-      cerr << "Error:" << StringUtils::asString(garbage) << " didn't fail "
-           << garbage << endl;
-   }
-   catch (Exception& e)
-   {
-      cerr << e << endl;
-   }
+    try
+    {
+        RinexObsID garbage = RinexObsID::newID("C1C", "this should fail");
+        cerr << "Error:" << StringUtils::asString(garbage) << " didn't fail " << garbage << endl;
+    }
+    catch (Exception &e)
+    {
+        cerr << e << endl;
+    }
 
-      // Dump the map of obs ids
-   cout << "Rinex   Ctor   Description" << endl;
-   for (const auto& i : i2s)
-   {
-      cout << left << setw(7) << RinexObsID(i.first).asString()
-           << " " << setw(7) << i.second
-           << " " << i.first << endl;
-   }
-   return 0;
+    // Dump the map of obs ids
+    cout << "Rinex   Ctor   Description" << endl;
+    for (const auto &i : i2s)
+    {
+        cout << left << setw(7) << RinexObsID(i.first).asString() << " " << setw(7) << i.second << " " << i.first
+             << endl;
+    }
+    return 0;
 }

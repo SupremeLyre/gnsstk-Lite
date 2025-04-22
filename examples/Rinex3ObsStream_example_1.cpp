@@ -40,12 +40,12 @@
  * example of using Rinex3ObsStream for input and output where the
  * input data is copied to the output with unnecessary processing. */
 
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
 #include "Rinex3ObsBase.hpp"
-#include "Rinex3ObsHeader.hpp"
 #include "Rinex3ObsData.hpp"
+#include "Rinex3ObsHeader.hpp"
 #include "Rinex3ObsStream.hpp"
 
 using namespace std;
@@ -54,25 +54,24 @@ using namespace gnsstk;
 int main()
 {
 
-      // Create the input file stream
-   Rinex3ObsStream rin("bahr1620.04o");
+    // Create the input file stream
+    Rinex3ObsStream rin("bahr1620.04o");
 
-      // Create the output file stream
-   Rinex3ObsStream rout("bahr1620.04o.new", ios::out|ios::trunc);
+    // Create the output file stream
+    Rinex3ObsStream rout("bahr1620.04o.new", ios::out | ios::trunc);
 
-      // Read the RINEX header
-   Rinex3ObsHeader head;    //RINEX header object
-   rin >> head;
-   rout.header = rin.header;
-   rout << rout.header;
+    // Read the RINEX header
+    Rinex3ObsHeader head; // RINEX header object
+    rin >> head;
+    rout.header = rin.header;
+    rout << rout.header;
 
-      // Loop over all data epochs
-   Rinex3ObsData data;   //RINEX data object
-   while (rin >> data)
-   {
-      rout << data;
-   }
+    // Loop over all data epochs
+    Rinex3ObsData data; // RINEX data object
+    while (rin >> data)
+    {
+        rout << data;
+    }
 
-   return 0;
-
+    return 0;
 }

@@ -43,88 +43,86 @@
 /// application's navigation message storage class
 class NavSubframe
 {
-public:
-      /** The Navigation Subframe. 10 4-byte words.  There are 11
-       * elements to facilitate access to elements 1-10. */
-   std::vector<uint32_t> subframe;
+  public:
+    /** The Navigation Subframe. 10 4-byte words.  There are 11
+     * elements to facilitate access to elements 1-10. */
+    std::vector<uint32_t> subframe;
 };
 
 /// use pointers because performance
-typedef std::list<NavSubframe*> NavSubframeList;
+typedef std::list<NavSubframe *> NavSubframeList;
 
 /// function to store a single epoch's worth of NavSubframe data
-void readNavEpoch(NavSubframeList& nsl)
+void readNavEpoch(NavSubframeList &nsl)
 {
-   NavSubframe *nsf;
-   while (sameEpoch)
-   {
-      nsf = new NavSubframe();
-      strm >> *nsf;
-      if (strm)
-         nsl.push_back(nsf);
-   }
+    NavSubframe *nsf;
+    while (sameEpoch)
+    {
+        nsf = new NavSubframe();
+        strm >> *nsf;
+        if (strm)
+            nsl.push_back(nsf);
+    }
 }
 
 void filterEX()
 {
-      // Filter manager, where the work is done
-   gnsstk::NavFilterMgr mgr;
-      // Individual filters being applied
-   gnsstk::LNavCookFilter filtCook;
-   gnsstk::LNavParityFilter filtParity;
-      // Data being passed to the filter
-   gnsstk::LNavFilterData navFiltData;
-   gnsstk::NavFilter::NavMsgList::const_iterator nmli;
-      // application's nav storage
-   NavSubframeList nsl;
-   NavSubframeList::iterator nsli;
+    // Filter manager, where the work is done
+    gnsstk::NavFilterMgr mgr;
+    // Individual filters being applied
+    gnsstk::LNavCookFilter filtCook;
+    gnsstk::LNavParityFilter filtParity;
+    // Data being passed to the filter
+    gnsstk::LNavFilterData navFiltData;
+    gnsstk::NavFilter::NavMsgList::const_iterator nmli;
+    // application's nav storage
+    NavSubframeList nsl;
+    NavSubframeList::iterator nsli;
 
-      // Tell the manager what filters to use
-   mgr.addFilter(&filtCook);
-   mgr.addFilter(&filtParity);
+    // Tell the manager what filters to use
+    mgr.addFilter(&filtCook);
+    mgr.addFilter(&filtParity);
 
-   while (strm)
-   {
-      readNavEpoch(nsl);
+    while (strm)
+    {
+        readNavEpoch(nsl);
 
-         // process each subframe read from the input stream
-      for (nsli = nsl.begin(); nsli != nsl.end(); nsli++)
-      {
-         NavSubframe *nsf = *nsli;
+        // process each subframe read from the input stream
+        for (nsli = nsl.begin(); nsli != nsl.end(); nsli++)
+        {
+            NavSubframe *nsf = *nsli;
             // Point the filter data to the LNAV message
-         navFiltData.sf = &nsf->subframe[1];
+            navFiltData.sf = &nsf->subframe[1];
 
             // validate the subframe
-         gnsstk::NavFilter::NavMsgList l = mgr.validate(&navFiltData);
+            gnsstk::NavFilter::NavMsgList l = mgr.validate(&navFiltData);
 
             // process the results
-         for (nmli = l.begin(); nmli != l.end(); nmli++)
-         {
-            gnsstk::LNavFilterData *fd =
-               dynamic_cast<gnsstk::LNavFilterData*>(*nmli);
-               // do something with fd (nav message that passed the filters)
-         }
+            for (nmli = l.begin(); nmli != l.end(); nmli++)
+            {
+                gnsstk::LNavFilterData *fd = dynamic_cast<gnsstk::LNavFilterData *>(*nmli);
+                // do something with fd (nav message that passed the filters)
+            }
             // Because the filters are depth 1, we can immediately
             // free the application data storage.  We set the value in
             // the list to NULL as "good practice".  Erase the list at
             // the end so that we don't end up doing any weird
             // unnecessary memory management internal to the list
             // implementation.
-         delete nsf;
-         *nsli = NULL;
-      }
-      nsl.clear();
-   }
+            delete nsf;
+            *nsli = NULL;
+        }
+        nsl.clear();
+    }
 
-      // Finalize the filters.  Probably not necessary when using only
-      // depth 1 filters, but good practice in any case.
-   gnsstk::NavFilter::NavMsgList l = mgr.finalize();
+    // Finalize the filters.  Probably not necessary when using only
+    // depth 1 filters, but good practice in any case.
+    gnsstk::NavFilter::NavMsgList l = mgr.finalize();
 
-      // process the results
-   for (nmli = l.begin(); nmli != l.end(); nmli++)
-   {
-      gnsstk::LNavFilterData *fd =
-         dynamic_cast<gnsstk::LNavFilterData*>(*nmli);
-         // do something with fd (nav message that passed the filters)
-   }
+    // process the results
+    for (nmli = l.begin(); nmli != l.end(); nmli++)
+    {
+        gnsstk::LNavFilterData *fd = dynamic_cast<gnsstk::LNavFilterData *>(*nmli);
+        // do something with fd (nav message that passed the filters)
+    }
 }
