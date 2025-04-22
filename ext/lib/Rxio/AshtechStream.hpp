@@ -48,54 +48,59 @@
 
 namespace gnsstk
 {
-   /**
-    * This is a stream used to decode data in the Ashtech format.
-    */
-   class AshtechStream : public FFBinaryStream
-   {
-   public:
-      AshtechStream():header(false) {}
+/**
+ * This is a stream used to decode data in the Ashtech format.
+ */
+class AshtechStream : public FFBinaryStream
+{
+  public:
+    AshtechStream() : header(false)
+    {
+    }
 
-      /**
-       * @param fn the name of the Ashtech file to be opened
-       * @param mode the ios::openmode to be used on \a fn
-       */
-      AshtechStream(const char* fn, std::ios::openmode mode = std::ios::in)
-         : FFBinaryStream(fn, mode)
-      {}
+    /**
+     * @param fn the name of the Ashtech file to be opened
+     * @param mode the ios::openmode to be used on \a fn
+     */
+    AshtechStream(const char *fn, std::ios::openmode mode = std::ios::in) : FFBinaryStream(fn, mode)
+    {
+    }
 
-      /// destructor per the coding standards
-      virtual ~AshtechStream()
-      {}
+    /// destructor per the coding standards
+    virtual ~AshtechStream()
+    {
+    }
 
-      /// overrides open to reset the header
-      virtual void open(const char* fn, std::ios::openmode mode = std::ios::in)
-      {
-         FFBinaryStream::open(fn, mode);
-      }
+    /// overrides open to reset the header
+    virtual void open(const char *fn, std::ios::openmode mode = std::ios::in)
+    {
+        FFBinaryStream::open(fn, mode);
+    }
 
-      /// The raw bytes read from the file.
-      std::string rawData;
+    /// The raw bytes read from the file.
+    std::string rawData;
 
-      // set true when a header was the last piece read, set false when the
-      // a body is read.
-      bool header;
+    // set true when a header was the last piece read, set false when the
+    // a body is read.
+    bool header;
 
-      // Offset of the first character in rawData in the file
-      std::streampos getRawPos()
-      {
-         std::streampos t = tellg();
-         if (static_cast<long>(t)==-1)
+    // Offset of the first character in rawData in the file
+    std::streampos getRawPos()
+    {
+        std::streampos t = tellg();
+        if (static_cast<long>(t) == -1)
             return -1;
-         else
+        else
             return t - static_cast<std::streampos>(rawData.length());
-      }
+    }
 
-         /// Ashtech data is always big endian
-      virtual bool isStreamLittleEndian() const noexcept
-      { return false; }
+    /// Ashtech data is always big endian
+    virtual bool isStreamLittleEndian() const noexcept
+    {
+        return false;
+    }
 
-   }; // class AshtechStream
+}; // class AshtechStream
 } // namespace gnsstk
 
 #endif

@@ -36,8 +36,8 @@
 //
 //==============================================================================
 
-#include "StringUtils.hpp"
 #include "BinUtils.hpp"
+#include "StringUtils.hpp"
 
 #include "AshtechALB.hpp"
 #include "AshtechStream.hpp"
@@ -45,69 +45,66 @@
 using namespace std;
 
 namespace gnsstk
- {
-   const char* AshtechALB::myId = "ALB";
+{
+const char *AshtechALB::myId = "ALB";
 
-   //---------------------------------------------------------------------------
-   void AshtechALB::reallyGetRecord(FFStream& ffs)
-   {
-      AshtechStream& stream=dynamic_cast<AshtechStream&>(ffs);
+//---------------------------------------------------------------------------
+void AshtechALB::reallyGetRecord(FFStream &ffs)
+{
+    AshtechStream &stream = dynamic_cast<AshtechStream &>(ffs);
 
-      // make sure the object is reset before starting the search
-      clear(fmtbit | lenbit | crcbit);
-      string& rawData = stream.rawData;
+    // make sure the object is reset before starting the search
+    clear(fmtbit | lenbit | crcbit);
+    string &rawData = stream.rawData;
 
-      // If this object doesn't have an id set yet, assume that the streams
-      // most recent read id is what we need to be
-      if (id == "" && rawData.size()>=11 &&
-          rawData.substr(0,7) == preamble &&
-          rawData[10]==',')
-         id = rawData.substr(7,3);
+    // If this object doesn't have an id set yet, assume that the streams
+    // most recent read id is what we need to be
+    if (id == "" && rawData.size() >= 11 && rawData.substr(0, 7) == preamble && rawData[10] == ',')
+        id = rawData.substr(7, 3);
 
-      // If that didn't work, or this is object is not of the right type,
-      // then give up.
-      if (id == "" || !checkId(id))
-         return;
+    // If that didn't work, or this is object is not of the right type,
+    // then give up.
+    if (id == "" || !checkId(id))
+        return;
 
-      readBody(stream);
-   }
+    readBody(stream);
+}
 
-   //---------------------------------------------------------------------------
-   void AshtechALB::decode(const std::string& data)
-   {
-      using BinUtils::decodeVar;
+//---------------------------------------------------------------------------
+void AshtechALB::decode(const std::string &data)
+{
+    using BinUtils::decodeVar;
 
-      string str(data);
-      if (debugLevel>1)
-         cout << "ALB " << str.length() << " " << endl;
-      if (str.length() == 138)
-      {
-         ascii=false;
-         header      = str.substr(0,11); str.erase(0,11);
-         svid         = decodeVar<uint16_t>(str);
-         str.erase(0,1);
+    string str(data);
+    if (debugLevel > 1)
+        cout << "ALB " << str.length() << " " << endl;
+    if (str.length() == 138)
+    {
+        ascii = false;
+        header = str.substr(0, 11);
+        str.erase(0, 11);
+        svid = decodeVar<uint16_t>(str);
+        str.erase(0, 1);
 
-         for (int w=0; w<10; w++)
+        for (int w = 0; w < 10; w++)
             word[w] = decodeVar<uint32_t>(str);
 
-         (void)decodeVar<uint16_t>(str);   // ignore checksum
-         clear(ios_base::goodbit);
-      }
-   }
+        (void)decodeVar<uint16_t>(str); // ignore checksum
+        clear(ios_base::goodbit);
+    }
+}
 
-   //---------------------------------------------------------------------------
-   void AshtechALB::dump(ostream& out) const noexcept
-   {
-      ostringstream oss;
-      using gnsstk::StringUtils::asString;
-      using gnsstk::StringUtils::leftJustify;
+//---------------------------------------------------------------------------
+void AshtechALB::dump(ostream &out) const noexcept
+{
+    ostringstream oss;
+    using gnsstk::StringUtils::asString;
+    using gnsstk::StringUtils::leftJustify;
 
-      AshtechData::dump(out);
-      oss << getName() << "1:"
-          << " svid:" << svid
-          << " S0W0: ..."
-          << endl;
-      out << oss.str() << flush;
-   }
+    AshtechData::dump(out);
+    oss << getName() << "1:"
+        << " svid:" << svid << " S0W0: ..." << endl;
+    out << oss.str() << flush;
+}
 
 } // namespace gnsstk

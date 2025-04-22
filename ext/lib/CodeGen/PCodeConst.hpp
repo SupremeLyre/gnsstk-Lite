@@ -37,65 +37,70 @@
 //==============================================================================
 
 //  PCodeConst.hpp - Constants for GPS X-register manipulation
-//#define PCODE_DEBUG
+// #define PCODE_DEBUG
 
 #ifndef PCodeConst_HPP
 #define PCodeConst_HPP
 
 namespace gnsstk
 {
-   /// @ingroup CodeGen
-   /**
-    *  PCodeConst.hpp maintains a variety of "magic numbers" related
-    *  to P-code generation and used throughout the P-code generator.
-    */
-   enum codeType { P_CODE, Y_CODE, BOTH };
+/// @ingroup CodeGen
+/**
+ *  PCodeConst.hpp maintains a variety of "magic numbers" related
+ *  to P-code generation and used throughout the P-code generator.
+ */
+enum codeType
+{
+    P_CODE,
+    Y_CODE,
+    BOTH
+};
 
-      /// Number of bits assumed to be in a unsigned long int
-   const int MAX_BIT = 32;
+/// Number of bits assumed to be in a unsigned long int
+const int MAX_BIT = 32;
 
-      /// Maximum PRN Code number (1-n)
-   const int MAX_PRN_CODE = 210;
+/// Maximum PRN Code number (1-n)
+const int MAX_PRN_CODE = 210;
 
-      /// Number of X1 epochs in one day
-   const int X1_PER_DAY = 57600;
+/// Number of X1 epochs in one day
+const int X1_PER_DAY = 57600;
 
-      /// Number of 4 byte unsigned ints necessary to hold 6 sec of P-code
-   const long NUM_6SEC_WORDS = 1918125;
+/// Number of 4 byte unsigned ints necessary to hold 6 sec of P-code
+const long NUM_6SEC_WORDS = 1918125;
 
-      /// Number of 4 byte unsigned ints necessary to hold an X2 sequence (with leading delay)
-   const long NUM_X2_WORDS   = 1918131;
+/// Number of 4 byte unsigned ints necessary to hold an X2 sequence (with leading delay)
+const long NUM_X2_WORDS = 1918131;
 
-      /// INIT variables are starting conditions of 12-bit registers (IS-GPS-200)
-   const unsigned int X1A_INIT = 0x0248;
-   const unsigned int X1B_INIT = 0x0554;
-   const unsigned int X2A_INIT = 0x0925;
-   const unsigned int X2B_INIT = 0x0554;
+/// INIT variables are starting conditions of 12-bit registers (IS-GPS-200)
+const unsigned int X1A_INIT = 0x0248;
+const unsigned int X1B_INIT = 0x0554;
+const unsigned int X2A_INIT = 0x0925;
+const unsigned int X2B_INIT = 0x0554;
 
-      /// TAPS variables denote which stages of 12-bit registers are XOR'd.
-   const unsigned int X1A_TAPS = 0x0CA0;
-   const unsigned int X1B_TAPS = 0x0F93;
-   const unsigned int X2A_TAPS = 0x0FDD;
-   const unsigned int X2B_TAPS = 0x098E;
+/// TAPS variables denote which stages of 12-bit registers are XOR'd.
+const unsigned int X1A_TAPS = 0x0CA0;
+const unsigned int X1B_TAPS = 0x0F93;
+const unsigned int X2A_TAPS = 0x0FDD;
+const unsigned int X2B_TAPS = 0x098E;
 
-      /// X?_MAX_EPOCH is the maximum number of epochs in a sequence
-   const int XA_MAX_EPOCH = 3750;
-   const int XB_MAX_EPOCH = 3749;
+/// X?_MAX_EPOCH is the maximum number of epochs in a sequence
+const int XA_MAX_EPOCH = 3750;
+const int XB_MAX_EPOCH = 3749;
 
-      /// X?_COUNT is the number of bits in an epoch
-   const int XA_COUNT = 4092;
-   const int XB_COUNT = 4093;
+/// X?_COUNT is the number of bits in an epoch
+const int XA_COUNT = 4092;
+const int XB_COUNT = 4093;
 
-      /** XA_EPOCH_DELAY and XB_EPOCH_DELAY allow for precession of X1B and X2B wrt
-       * to X1A and X2A at the end of each X1A epoch and X2A epoch.  End
-       * of week delays are handled elsewhere.
-       */
-   const long XA_EPOCH_DELAY  =   0;
-   const long XB_EPOCH_DELAY  = 343;
+/** XA_EPOCH_DELAY and XB_EPOCH_DELAY allow for precession of X1B and X2B wrt
+ * to X1A and X2A at the end of each X1A epoch and X2A epoch.  End
+ * of week delays are handled elsewhere.
+ */
+const long XA_EPOCH_DELAY = 0;
+const long XB_EPOCH_DELAY = 343;
 
-      /// The 37 chip delay at the end of every X2A epoch
-   const long X2A_EPOCH_DELAY = 37;
-   //@}
-} // namespace
+/// The 37 chip delay at the end of every X2A epoch
+const long X2A_EPOCH_DELAY = 37;
+//@}
+} // namespace gnsstk
 
 #endif

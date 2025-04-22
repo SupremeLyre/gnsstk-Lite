@@ -41,31 +41,32 @@
 
 namespace gnsstk
 {
-   CodeBuffer::CodeBuffer( const int SVPRNID )
-   {
-      PRNID = SVPRNID;
-      POrYCode = P_CODE;
-      currentTime = SystemTime();
-      buffer = new unsigned long[NUM_6SEC_WORDS];
-   }
+CodeBuffer::CodeBuffer(const int SVPRNID)
+{
+    PRNID = SVPRNID;
+    POrYCode = P_CODE;
+    currentTime = SystemTime();
+    buffer = new unsigned long[NUM_6SEC_WORDS];
+}
 
-   // Assignment
-   CodeBuffer& CodeBuffer::operator=( const CodeBuffer& c )
-   {
-      if (this!=&c)
-      {
-         PRNID = c.PRNID;
-         POrYCode = c.POrYCode;
-         currentTime = c.currentTime;
-         for (long i=0;i<NUM_6SEC_WORDS;++i) buffer[i] = c.buffer[i];
-      }
-      return( *this );
-   }
+// Assignment
+CodeBuffer &CodeBuffer::operator=(const CodeBuffer &c)
+{
+    if (this != &c)
+    {
+        PRNID = c.PRNID;
+        POrYCode = c.POrYCode;
+        currentTime = c.currentTime;
+        for (long i = 0; i < NUM_6SEC_WORDS; ++i)
+            buffer[i] = c.buffer[i];
+    }
+    return (*this);
+}
 
-   void CodeBuffer::updateBufferStatus( const gnsstk::CommonTime& dt, const codeType PYFlag )
-   {
-      currentTime = dt;
-      POrYCode = PYFlag;
-   }
+void CodeBuffer::updateBufferStatus(const gnsstk::CommonTime &dt, const codeType PYFlag)
+{
+    currentTime = dt;
+    POrYCode = PYFlag;
+}
 
-}     // end of namespace
+} // namespace gnsstk

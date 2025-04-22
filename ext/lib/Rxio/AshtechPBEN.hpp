@@ -44,8 +44,8 @@
 #ifndef ASHTECHPBEN_HPP
 #define ASHTECHPBEN_HPP
 
-#include "gnsstk_export.h"
 #include "AshtechData.hpp"
+#include "gnsstk_export.h"
 
 #ifdef SWIG
 %immutable gnsstk::AshtechPBEN::myId;
@@ -53,53 +53,57 @@
 
 namespace gnsstk
 {
-   class AshtechPBEN : public AshtechData
-   {
-   public:
+class AshtechPBEN : public AshtechData
+{
+  public:
+    AshtechPBEN() {};
 
-      AshtechPBEN() {};
+    std::string header; // 11 characters exactly
 
-      std::string header; // 11 characters exactly
+    double sow;
+    std::string sitename; // 4 characters exactly
+    double navx;          // meters
+    double navy;          // meters
+    double navz;          // meters
+    float navt;           // meters
+    float navxdot;        // meters/sec
+    float navydot;        // meters/sec
+    float navzdot;        // meters/sec
+    float navtdot;        // meters/sec
+    unsigned pdop;
 
-      double   sow;
-      std::string sitename; // 4 characters exactly
-      double   navx;    // meters
-      double   navy;    // meters
-      double   navz;    // meters
-      float    navt;    // meters
-      float    navxdot; // meters/sec
-      float    navydot; // meters/sec
-      float    navzdot; // meters/sec
-      float    navtdot; // meters/sec
-      unsigned pdop;
+    // These items are not part of the binary output and only exist in the
+    // ascii output
+    float lat, lon, alt, numSV, hdop, vdop, tdop;
 
-      // These items are not part of the binary output and only exist in the
-      // ascii output
-      float lat, lon, alt, numSV, hdop, vdop, tdop;
+    GNSSTK_EXPORT static const char *myId;
 
+    virtual std::string getName() const
+    {
+        return "pben";
+    }
 
-      GNSSTK_EXPORT static const char* myId;
+    bool checkId(const std::string &hdrId) const
+    {
+        return hdrId == myId;
+    }
 
-      virtual std::string getName() const {return "pben";}
+    void dump(std::ostream &out) const noexcept;
 
-      bool checkId(const std::string& hdrId) const {return hdrId==myId;}
+    /**
+     * @throw std::exception
+     * @throw FFStreamError
+     */
+    virtual void decode(const std::string &data);
 
-      void dump(std::ostream& out) const noexcept;
-
-         /**
-          * @throw std::exception
-          * @throw FFStreamError
-          */
-      virtual void decode(const std::string& data);
-
-   protected:
-         /**
-          * @throw std::exception
-          * @throw FFStreamError
-          * @throw EndOfFile
-          */
-      virtual void reallyGetRecord(FFStream& ffs);
-   };
+  protected:
+    /**
+     * @throw std::exception
+     * @throw FFStreamError
+     * @throw EndOfFile
+     */
+    virtual void reallyGetRecord(FFStream &ffs);
+};
 } // namespace gnsstk
 
 #endif

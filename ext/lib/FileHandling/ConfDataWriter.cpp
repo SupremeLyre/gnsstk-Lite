@@ -37,9 +37,9 @@
 //==============================================================================
 
 /**
-* @file ConfDataWriter.cpp
-* Class to write configuration data files.
-*/
+ * @file ConfDataWriter.cpp
+ * Class to write configuration data files.
+ */
 
 #include "ConfDataWriter.hpp"
 
@@ -48,255 +48,230 @@ using namespace std;
 namespace gnsstk
 {
 
-	   // Method to open a configuration data file to be written.
-	void ConfDataWriter::open(const char* fn)
-	{
-		FFTextStream::open(fn, std::ios::out);
+// Method to open a configuration data file to be written.
+void ConfDataWriter::open(const char *fn)
+{
+    FFTextStream::open(fn, std::ios::out);
 
-		writeHeader();
+    writeHeader();
 
-		return;
-	}
-      // Write a common header for all of the configuration data files
-      // written by this class.
-	void ConfDataWriter::writeHeader()
-	{
-     /*
-	   writeCommentLine("This is a configuration file written by ConfDataWriter, and it ");
-      writeCommentLine("can be read by ConfDataReader.");
-		writeCommentLine("YAN Wei,Dec,8th 2009");
-		writeCommentLine("Enjoy!");
-		writeCommentLine("");
-		writeSeparatorLine();
-		*/
-
-	}
-
-      // Write a comment line start by '#'
-	void ConfDataWriter::writeCommentLine(const string& comment)
-	{
-		formattedPutLine("# "+comment);
-	}
-
-
-      // Write a comment line as a separator line
-      // @param s    char of the separator line
-      // @param n    size of the separator line
-	void ConfDataWriter::writeSeparatorLine(const string& s,
-                                           const int&    n )
-	{
-		writeCommentLine(string(n,s[0]));
-	}
-
-      // Write several blank lines default write one line
-	void ConfDataWriter::writeBlankLine(const int& n)
-	{
-		int nLine = (n < 1) ? 0 : n;
-		for(int i = 0;i < nLine; i++)
-      {
-         formattedPutLine("");
-      }
-	}
-
-      /* Write a string variable with general format
-      *
-      * @param var          variable name
-      * @param val          variable value
-      * @param varComment   variable comment
-      * @param valComment   value comment
-      */
-   void ConfDataWriter::writeVariable(const std::string& var,
-                                      const std::string& val,
-                                      const std::string& varComment,
-                                      const std::string& valComment)
-	{
-		string line=var;
-
-      if(int(var.length())<variableWidth)
-         line = StringUtils::leftJustify(var,variableWidth);
-
-		if(varComment.length()>0) line += " , " + varComment;
-
-      line += " = " + val;
-
-      if(valComment.length() > 0) line += " , " + valComment;
-
-      formattedPutLine(line);
-	}
-
-      /* Write a double variable with general format
-       *
-       * @param var          variable name
-       * @param val          variable value
-       * @param varComment   variable comment
-       * @param valComment   value comment
+    return;
+}
+// Write a common header for all of the configuration data files
+// written by this class.
+void ConfDataWriter::writeHeader()
+{
+    /*
+      writeCommentLine("This is a configuration file written by ConfDataWriter, and it ");
+     writeCommentLine("can be read by ConfDataReader.");
+       writeCommentLine("YAN Wei,Dec,8th 2009");
+       writeCommentLine("Enjoy!");
+       writeCommentLine("");
+       writeSeparatorLine();
        */
-   void ConfDataWriter::writeVariable(const std::string& var,
-                                      const double& val,
-                                      const std::string& varComment,
-                                      const std::string& valComment)
-   {
-      writeVariable(var,StringUtils::asString(val,valuePrecison),
-                                                         varComment,valComment);
-   }
+}
 
+// Write a comment line start by '#'
+void ConfDataWriter::writeCommentLine(const string &comment)
+{
+    formattedPutLine("# " + comment);
+}
 
+// Write a comment line as a separator line
+// @param s    char of the separator line
+// @param n    size of the separator line
+void ConfDataWriter::writeSeparatorLine(const string &s, const int &n)
+{
+    writeCommentLine(string(n, s[0]));
+}
 
-	   /* Write a string variable list with general format
-       *
-       * @param var          variable name
-       * @param valList      variable list values
-       * @param n            size of the variable list
-       * @param varComment   variable comment
-       * @param valComment   value comment
-       */
-   void ConfDataWriter::writeVariableList(const std::string& var,
-                                          const std::string  valList[],
-                                          const int&    n,
-                                          const std::string& varComment,
-                                          const std::string& valComment)
-	{
-		string line=var;
+// Write several blank lines default write one line
+void ConfDataWriter::writeBlankLine(const int &n)
+{
+    int nLine = (n < 1) ? 0 : n;
+    for (int i = 0; i < nLine; i++)
+    {
+        formattedPutLine("");
+    }
+}
 
-      if(int(var.length())<variableWidth)
-         line = StringUtils::leftJustify(var,variableWidth);
+/* Write a string variable with general format
+ *
+ * @param var          variable name
+ * @param val          variable value
+ * @param varComment   variable comment
+ * @param valComment   value comment
+ */
+void ConfDataWriter::writeVariable(const std::string &var, const std::string &val, const std::string &varComment,
+                                   const std::string &valComment)
+{
+    string line = var;
 
-		if(varComment.length() > 0) line += " , " + varComment;
+    if (int(var.length()) < variableWidth)
+        line = StringUtils::leftJustify(var, variableWidth);
 
-		line += " = ";
+    if (varComment.length() > 0)
+        line += " , " + varComment;
 
-		for(int i=0;i<n;i++) line += valList[i] + " ";
+    line += " = " + val;
 
+    if (valComment.length() > 0)
+        line += " , " + valComment;
 
-		if(valComment.length() > 0) line += " , " + valComment;
+    formattedPutLine(line);
+}
 
-		formattedPutLine(line);
-	}
+/* Write a double variable with general format
+ *
+ * @param var          variable name
+ * @param val          variable value
+ * @param varComment   variable comment
+ * @param valComment   value comment
+ */
+void ConfDataWriter::writeVariable(const std::string &var, const double &val, const std::string &varComment,
+                                   const std::string &valComment)
+{
+    writeVariable(var, StringUtils::asString(val, valuePrecison), varComment, valComment);
+}
 
+/* Write a string variable list with general format
+ *
+ * @param var          variable name
+ * @param valList      variable list values
+ * @param n            size of the variable list
+ * @param varComment   variable comment
+ * @param valComment   value comment
+ */
+void ConfDataWriter::writeVariableList(const std::string &var, const std::string valList[], const int &n,
+                                       const std::string &varComment, const std::string &valComment)
+{
+    string line = var;
 
-      /* Write a string variable list with general format
-       *
-       * @param var          variable name
-       * @param valList      variable list values by std::vector
-       * @param varComment   variable comment
-       * @param valComment   value comment
-       */
-   void ConfDataWriter::writeVariableList(const std::string&         var,
-                                          std::vector<std::string> valList,
-                                          const std::string&         varComment,
-                                          const std::string&         valComment)
-	{
-		string line=var;
+    if (int(var.length()) < variableWidth)
+        line = StringUtils::leftJustify(var, variableWidth);
 
-      if(int(var.length())<variableWidth)
-         line = StringUtils::leftJustify(var,variableWidth);
+    if (varComment.length() > 0)
+        line += " , " + varComment;
 
-		if(varComment.length() > 0) line += " , " + varComment;
+    line += " = ";
 
-		line += " = ";
+    for (int i = 0; i < n; i++)
+        line += valList[i] + " ";
 
-		for(vector<string>::const_iterator it = valList.begin();
-         it != valList.end();
-         ++it )
-		{
-			line += (*it) + " ";
-		}
+    if (valComment.length() > 0)
+        line += " , " + valComment;
 
+    formattedPutLine(line);
+}
 
-		if(valComment.length() > 0) line += " , " + valComment;
+/* Write a string variable list with general format
+ *
+ * @param var          variable name
+ * @param valList      variable list values by std::vector
+ * @param varComment   variable comment
+ * @param valComment   value comment
+ */
+void ConfDataWriter::writeVariableList(const std::string &var, std::vector<std::string> valList,
+                                       const std::string &varComment, const std::string &valComment)
+{
+    string line = var;
 
-		formattedPutLine(line);
-	}
+    if (int(var.length()) < variableWidth)
+        line = StringUtils::leftJustify(var, variableWidth);
 
+    if (varComment.length() > 0)
+        line += " , " + varComment;
 
-      /* Write a int variable list with general format
-       *
-       * @param var          variable name
-       * @param valList      variable list values
-       * @param n            size of the variable list
-       * @param varComment   variable comment
-       * @param valComment   value comment
-       */
-   void ConfDataWriter::writeVariableList(const std::string& var,
-                                          const int     valList[],
-                                          const int&    n,
-                                          const std::string& varComment,
-                                          const std::string& valComment )
-	{
-		vector<string> vals;
-		for(int i = 0; i < n; i++)
-      {
-         vals.push_back(StringUtils::asString(valList[i]));
-      }
+    line += " = ";
 
-		writeVariableList(var, vals, varComment, valComment);
-	}
+    for (vector<string>::const_iterator it = valList.begin(); it != valList.end(); ++it)
+    {
+        line += (*it) + " ";
+    }
 
-      /* Write a double variable list with general format
-       *
-       * @param var          variable name
-       * @param valList      variable list values
-       * @param n            size of the variable list
-       * @param varComment   variable comment
-       * @param valComment   value comment
-       */
-   void ConfDataWriter::writeVariableList(const std::string& var,
-                                          const double valList[],
-                                          const int&    n,
-                                          const std::string& varComment,
-                                          const std::string& valComment)
-	{
-		vector<string> vals;
-		for(int i = 0; i < n; i++)
-      {
-         vals.push_back(StringUtils::asString(valList[i],valuePrecison));
-      }
+    if (valComment.length() > 0)
+        line += " , " + valComment;
 
-		writeVariableList(var, vals, varComment, valComment);
-	}
+    formattedPutLine(line);
+}
 
+/* Write a int variable list with general format
+ *
+ * @param var          variable name
+ * @param valList      variable list values
+ * @param n            size of the variable list
+ * @param varComment   variable comment
+ * @param valComment   value comment
+ */
+void ConfDataWriter::writeVariableList(const std::string &var, const int valList[], const int &n,
+                                       const std::string &varComment, const std::string &valComment)
+{
+    vector<string> vals;
+    for (int i = 0; i < n; i++)
+    {
+        vals.push_back(StringUtils::asString(valList[i]));
+    }
 
-      /* Write a new section with some comment
-       *
-       * @param name          name of the section to be written
-       * @param comment       comment of the section to be written
-       */
-	void ConfDataWriter::writeSection(const string& name,
-                                     const string& comment)
-	{
-      string commentCopy(comment);
+    writeVariableList(var, vals, varComment, valComment);
+}
 
-		if(commentCopy.length() < 1)
-      {
-         commentCopy = "Configuration data for '" + name + "' section";
-      }
+/* Write a double variable list with general format
+ *
+ * @param var          variable name
+ * @param valList      variable list values
+ * @param n            size of the variable list
+ * @param varComment   variable comment
+ * @param valComment   value comment
+ */
+void ConfDataWriter::writeVariableList(const std::string &var, const double valList[], const int &n,
+                                       const std::string &varComment, const std::string &valComment)
+{
+    vector<string> vals;
+    for (int i = 0; i < n; i++)
+    {
+        vals.push_back(StringUtils::asString(valList[i], valuePrecison));
+    }
 
-      writeCommentLine(StringUtils::upperCase(commentCopy));
+    writeVariableList(var, vals, varComment, valComment);
+}
 
-		writeSeparatorLine();
+/* Write a new section with some comment
+ *
+ * @param name          name of the section to be written
+ * @param comment       comment of the section to be written
+ */
+void ConfDataWriter::writeSection(const string &name, const string &comment)
+{
+    string commentCopy(comment);
 
-      formattedPutLine("[" + StringUtils::strip(name) + "]");
+    if (commentCopy.length() < 1)
+    {
+        commentCopy = "Configuration data for '" + name + "' section";
+    }
 
-	}
+    writeCommentLine(StringUtils::upperCase(commentCopy));
 
+    writeSeparatorLine();
 
-      // Write a common tailer for all of the configuration data files
-      // written by this class.
-	void ConfDataWriter::writeEnd()
-	{
-		writeBlankLine();
+    formattedPutLine("[" + StringUtils::strip(name) + "]");
+}
 
-		writeCommentLine("End Of the File");
+// Write a common tailer for all of the configuration data files
+// written by this class.
+void ConfDataWriter::writeEnd()
+{
+    writeBlankLine();
 
-      writeSeparatorLine();
-	}
+    writeCommentLine("End Of the File");
 
+    writeSeparatorLine();
+}
 
-      // Write a string line to the file.
-	void ConfDataWriter::formattedPutLine(const std::string& sline)
-	{
-      // to make sure the line is less than 255
-		(*this) << sline.substr(0,255) << endl;
-	}
+// Write a string line to the file.
+void ConfDataWriter::formattedPutLine(const std::string &sline)
+{
+    // to make sure the line is less than 255
+    (*this) << sline.substr(0, 255) << endl;
+}
 
-}  // End of 'namespace gnsstk'
+} // namespace gnsstk

@@ -36,7 +36,6 @@
 //
 //==============================================================================
 
-
 /**
  * @file AshtechALB.hpp
  * gnsstk::AshtechALB - class to hold an Ashtech ALB message
@@ -45,8 +44,8 @@
 #ifndef ASHTECHALB_HPP
 #define ASHTECHALB_HPP
 
-#include "gnsstk_export.h"
 #include "AshtechData.hpp"
+#include "gnsstk_export.h"
 
 #ifdef SWIG
 %immutable gnsstk::AshtechALB::myId;
@@ -54,39 +53,44 @@
 
 namespace gnsstk
 {
-   class AshtechALB : public AshtechData
-   {
-   public:
+class AshtechALB : public AshtechData
+{
+  public:
+    AshtechALB() {};
 
-      AshtechALB() {};
+    std::string header; // 11 characters exactly
 
-      std::string header; // 11 characters exactly
+    unsigned svid;
+    long word[10];
 
-      unsigned svid;
-      long     word[10];
+    GNSSTK_EXPORT static const char *myId;
 
-      GNSSTK_EXPORT static const char* myId;
+    virtual std::string getName() const
+    {
+        return "alb";
+    }
 
-      virtual std::string getName() const {return "alb";}
+    bool checkId(const std::string &hdrId) const
+    {
+        return hdrId == myId;
+    }
 
-      bool checkId(const std::string& hdrId) const {return hdrId==myId;}
+    void dump(std::ostream &out) const noexcept;
 
-      void dump(std::ostream& out) const noexcept;
+    /**
+     * @throw std::exception
+     * @throw FFStreamError
+     */
+    virtual void decode(const std::string &data);
 
-         /**
-          * @throw std::exception
-          * @throw FFStreamError
-          */
-      virtual void decode(const std::string& data);
-
-   protected:
-         /**
-          * @throw std::exception
-          * @throw FFStreamError
-          * @throw EndOfFile
-          */
-      virtual void reallyGetRecord(FFStream& ffs);
-   };
+  protected:
+    /**
+     * @throw std::exception
+     * @throw FFStreamError
+     * @throw EndOfFile
+     */
+    virtual void reallyGetRecord(FFStream &ffs);
+};
 } // namespace gnsstk
 
 #endif

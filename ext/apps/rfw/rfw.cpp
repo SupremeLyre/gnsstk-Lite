@@ -43,14 +43,14 @@
 #include "NewNavInc.h"
 #include <fstream>
 
-#include <unistd.h>
-#include <fcntl.h>   /* File control definitions */
 #include <errno.h>   /* Error number definitions */
+#include <fcntl.h>   /* File control definitions */
 #include <termios.h> /* POSIX terminal control definitions */
+#include <unistd.h>
 
-#include "StringUtils.hpp"
-#include "LoopedFramework.hpp"
 #include "CommandOption.hpp"
+#include "LoopedFramework.hpp"
+#include "StringUtils.hpp"
 #include "TimeNamedFileStream.hpp"
 
 #include "DeviceStream.hpp"
@@ -59,211 +59,207 @@ using namespace std;
 using namespace gnsstk;
 class RollingFileWriter : public gnsstk::BasicFramework
 {
-public:
-   RollingFileWriter(const std::string& applName) noexcept
-      : BasicFramework(applName,
-                       "Reads data from a stream and writes the data out to a"
-                       "TimeNamedFileStream."),
-        output("tmp%03j_%04Y.raw", std::ios::app|std::ios::out)
-   {}
+  public:
+    RollingFileWriter(const std::string &applName) noexcept
+        : BasicFramework(applName, "Reads data from a stream and writes the data out to a"
+                                   "TimeNamedFileStream."),
+          output("tmp%03j_%04Y.raw", std::ios::app | std::ios::out)
+    {
+    }
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
-   bool initialize(int argc, char *argv[]) noexcept
-   {
-      CommandOptionWithAnyArg inputOpt(
-         'i', "input",
-         "Where to get the data from. Can be a regular file, a serial "
-         "device (ser:/dev/ttyS0), a tcp port (tcp:hostname:port), or "
-         "standard input. The default is just to take standard input.");
+    bool initialize(int argc, char *argv[]) noexcept
+    {
+        CommandOptionWithAnyArg inputOpt('i', "input",
+                                         "Where to get the data from. Can be a regular file, a serial "
+                                         "device (ser:/dev/ttyS0), a tcp port (tcp:hostname:port), or "
+                                         "standard input. The default is just to take standard input.");
 
-      CommandOptionWithAnyArg passwordOpt(
-         '\0', "password",
-         "Provide a login password to tcp device.");
+        CommandOptionWithAnyArg passwordOpt('\0', "password", "Provide a login password to tcp device.");
 
-      CommandOptionWithAnyArg usernameOpt(
-         '\0', "username",
-         "Provide a login username to tcp device.");
+        CommandOptionWithAnyArg usernameOpt('\0', "username", "Provide a login username to tcp device.");
 
-      CommandOptionWithAnyArg sendStringOpt(
-         's', "send-string",
-         "A string to send to the device being recorded. For example to querry an "
-         "Ashtech Z(Y)-12 for as-broadcast ephemeris use the following string: "
-         "'$PASHQ,EPB'$'\\r\\n'");
+        CommandOptionWithAnyArg sendStringOpt('s', "send-string",
+                                              "A string to send to the device being recorded. For example to querry an "
+                                              "Ashtech Z(Y)-12 for as-broadcast ephemeris use the following string: "
+                                              "'$PASHQ,EPB'$'\\r\\n'");
 
-      CommandOptionWithAnyArg sendPeriodOpt(
-         'p', "send-period",
-         "The time (in seconds) to pause between sending of the send-strings. "
-         "If strings are specified, the default period is 60 seconds.");
+        CommandOptionWithAnyArg sendPeriodOpt('p', "send-period",
+                                              "The time (in seconds) to pause between sending of the send-strings. "
+                                              "If strings are specified, the default period is 60 seconds.");
 
-      CommandOptionWithAnyArg outputSpecOpt(
-         'o', "output",
-         "The file spec for writing the files. To have the output "
-         "go to stdout, specify - as the output file. The default file spec "
-         "is tmp%03j_%04Y.raw");
+        CommandOptionWithAnyArg outputSpecOpt('o', "output",
+                                              "The file spec for writing the files. To have the output "
+                                              "go to stdout, specify - as the output file. The default file spec "
+                                              "is tmp%03j_%04Y.raw");
 
-      CommandOptionRest extraOpt("File to process.");
+        CommandOptionRest extraOpt("File to process.");
 
-      outputSpecOpt.setMaxCount(1);
-      inputOpt.setMaxCount(1);
+        outputSpecOpt.setMaxCount(1);
+        inputOpt.setMaxCount(1);
 
-      if (!BasicFramework::initialize(argc,argv)) return false;
+        if (!BasicFramework::initialize(argc, argv))
+            return false;
 
-      if (debugLevel)
-         cout << "debugLevel: " << debugLevel << endl
-              << "verboseLevel: " << verboseLevel << endl;
+        if (debugLevel)
+            cout << "debugLevel: " << debugLevel << endl << "verboseLevel: " << verboseLevel << endl;
 
-      string fn;
-      if (inputOpt.getCount())
-         fn = inputOpt.getValue()[0];
-      else if (extraOpt.getCount())
-         fn = extraOpt.getValue()[0];
-      input.open(fn, ios::in);
+        string fn;
+        if (inputOpt.getCount())
+            fn = inputOpt.getValue()[0];
+        else if (extraOpt.getCount())
+            fn = extraOpt.getValue()[0];
+        input.open(fn, ios::in);
 
-      if (debugLevel)
-         cout << "Taking input from " << input.getTarget() << endl;
+        if (debugLevel)
+            cout << "Taking input from " << input.getTarget() << endl;
 
-      if (outputSpecOpt.getCount())
-      {
-         string spec = outputSpecOpt.getValue()[0];
-         output.setFilespec(spec);
-      }
+        if (outputSpecOpt.getCount())
+        {
+            string spec = outputSpecOpt.getValue()[0];
+            output.setFilespec(spec);
+        }
 
-      if (output.getFilespec() == "-")
-         output.setFilespec("<stdout>");
+        if (output.getFilespec() == "-")
+            output.setFilespec("<stdout>");
 
-      for (size_t i=0; i<sendStringOpt.getCount(); i++)
-         sendString.push_back(sendStringOpt.getValue()[i]);
+        for (size_t i = 0; i < sendStringOpt.getCount(); i++)
+            sendString.push_back(sendStringOpt.getValue()[i]);
 
-      for (size_t i=0; i<sendPeriodOpt.getCount(); i++)
-         sendPeriod.push_back(StringUtils::asInt(sendPeriodOpt.getValue()[i]));
+        for (size_t i = 0; i < sendPeriodOpt.getCount(); i++)
+            sendPeriod.push_back(StringUtils::asInt(sendPeriodOpt.getValue()[i]));
 
-      for (size_t i=sendPeriod.size(); i< sendString.size(); i++)
-         sendPeriod.push_back(60);
+        for (size_t i = sendPeriod.size(); i < sendString.size(); i++)
+            sendPeriod.push_back(60);
 
-      output.debugLevel = debugLevel;
+        output.debugLevel = debugLevel;
 
-      if (passwordOpt.getCount())
-         password = passwordOpt.getValue()[0];
+        if (passwordOpt.getCount())
+            password = passwordOpt.getValue()[0];
 
-      if (usernameOpt.getCount())
-         username = usernameOpt.getValue()[0];
+        if (usernameOpt.getCount())
+            username = usernameOpt.getValue()[0];
 
-      if (debugLevel)
-      {
-         cout << "Using " << output.getFilespec()
-              << " for output files" << endl;
-         if (username != "" || password != "")
-            cout << "Sending username:" << username
-                 << ", password:" << password
-                 << " for login." << endl;
-         for (size_t i=0; i<sendString.size(); i++)
-         {
-            cout << "Send period:" << sendPeriod[i] << endl;
-            StringUtils::hexDumpData(cout, sendString[i]);
-         }
-      }
+        if (debugLevel)
+        {
+            cout << "Using " << output.getFilespec() << " for output files" << endl;
+            if (username != "" || password != "")
+                cout << "Sending username:" << username << ", password:" << password << " for login." << endl;
+            for (size_t i = 0; i < sendString.size(); i++)
+            {
+                cout << "Send period:" << sendPeriod[i] << endl;
+                StringUtils::hexDumpData(cout, sendString[i]);
+            }
+        }
 
-      return true;
-   }
+        return true;
+    }
 #pragma clang diagnostic pop
-protected:
-   virtual void spinUp()
-   {}
+  protected:
+    virtual void spinUp()
+    {
+    }
 
-   virtual void process()
-   {
-      const int sendSize=sendString.size();
-      vector<CommonTime> lastSendTime(sendSize);
+    virtual void process()
+    {
+        const int sendSize = sendString.size();
+        vector<CommonTime> lastSendTime(sendSize);
 
-      bool use_stdout = output.getFilespec() == "<stdout>";
-      const size_t max_len=512;
-      char data[max_len];
+        bool use_stdout = output.getFilespec() == "<stdout>";
+        const size_t max_len = 512;
+        char data[max_len];
 
-      if (username != "" || password != "")
-      {
-         string str;
-         while (input)
-         {
-            input.read(data, 1);
-            str += data[0];
-            if (str.find("login: ") != string::npos)
+        if (username != "" || password != "")
+        {
+            string str;
+            while (input)
             {
-               if (debugLevel)
-                  cout << "got login prompt" << endl;
-               input << username << endl;
-               str = "";
+                input.read(data, 1);
+                str += data[0];
+                if (str.find("login: ") != string::npos)
+                {
+                    if (debugLevel)
+                        cout << "got login prompt" << endl;
+                    input << username << endl;
+                    str = "";
+                }
+                if (str.find("Password: ") != string::npos)
+                {
+                    if (debugLevel)
+                        cout << "got password prompt" << endl;
+                    input << password << endl;
+                    break;
+                }
             }
-            if (str.find("Password: ") != string::npos)
+        }
+
+        while (input)
+        {
+            input.read(data, max_len);
+            if (debugLevel > 1)
+                cout << "process read: " << input.gcount() << " bytes read." << endl;
+            if (use_stdout)
             {
-               if (debugLevel)
-                  cout << "got password prompt" << endl;
-               input << password << endl;
-               break;
+                cout.write(data, input.gcount());
+                cout.flush();
             }
-         }
-      }
-
-      while (input)
-      {
-         input.read(data, max_len);
-         if (debugLevel > 1)
-            cout << "process read: " << input.gcount() << " bytes read." << endl;
-         if (use_stdout)
-         {
-            cout.write(data, input.gcount());
-            cout.flush();
-         }
-         else
-         {
-            output.updateFileName();
-            output.write(data, input.gcount());
-            output.flush();
-         }
-
-         CommonTime now = SystemTime();
-         for (int i=0; i<sendSize; i++)
-         {
-            if (now - lastSendTime[i] > sendPeriod[i])
+            else
             {
-               if (debugLevel)
-                  cout << "Sending: " << sendString[i] << endl;
-               input.write(sendString[i].c_str(), sendString[i].size());
-               lastSendTime[i] = now;
+                output.updateFileName();
+                output.write(data, input.gcount());
+                output.flush();
             }
-         }
-      }
-   }
 
-   virtual void shutDown()
-   {}
+            CommonTime now = SystemTime();
+            for (int i = 0; i < sendSize; i++)
+            {
+                if (now - lastSendTime[i] > sendPeriod[i])
+                {
+                    if (debugLevel)
+                        cout << "Sending: " << sendString[i] << endl;
+                    input.write(sendString[i].c_str(), sendString[i].size());
+                    lastSendTime[i] = now;
+                }
+            }
+        }
+    }
 
-private:
-   DeviceStream<std::fstream> input;
+    virtual void shutDown()
+    {
+    }
 
-   TimeNamedFileStream<ofstream> output;
+  private:
+    DeviceStream<std::fstream> input;
 
-   string username, password;
+    TimeNamedFileStream<ofstream> output;
 
-   vector<string> sendString;
-   vector<int> sendPeriod;
+    string username, password;
+
+    vector<string> sendString;
+    vector<int> sendPeriod;
 };
-
 
 int main(int argc, char *argv[])
 {
 #include "NewNavInit.h"
-   try
-   {
-      RollingFileWriter crap(argv[0]);
-      if (!crap.initialize(argc, argv))
-         exit(0);
-      crap.run();
-   }
-   catch (gnsstk::Exception &exc)
-   { cout << exc << endl; }
-   catch (std::exception &exc)
-   { cout << "Caught std::exception " << exc.what() << endl; }
-   catch (...)
-   { cout << "Caught unknown exception" << endl; }
+    try
+    {
+        RollingFileWriter crap(argv[0]);
+        if (!crap.initialize(argc, argv))
+            exit(0);
+        crap.run();
+    }
+    catch (gnsstk::Exception &exc)
+    {
+        cout << exc << endl;
+    }
+    catch (std::exception &exc)
+    {
+        cout << "Caught std::exception " << exc.what() << endl;
+    }
+    catch (...)
+    {
+        cout << "Caught unknown exception" << endl;
+    }
 }

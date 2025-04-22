@@ -44,144 +44,134 @@
 #ifndef GNSSTK_DCBDATAREADER_HPP
 #define GNSSTK_DCBDATAREADER_HPP
 
-#include <string>
 #include <map>
+#include <string>
 
 #include "Exception.hpp"
 #include "FFTextStream.hpp"
-#include "StringUtils.hpp"
 #include "SatID.hpp"
-
+#include "StringUtils.hpp"
 
 namespace gnsstk
 {
 
-      /// @ingroup formattedfile
-      //@{
+/// @ingroup formattedfile
+//@{
 
-      /** This is a class to read and DCB(Differences of Code Biases) data file
-       *  from CODE.
-       *
-       * You can find DCB data at:
-       *
-       *    ftp.unibe.ch/aiub/BSWUSER50/ORB   - daily P1-P2
-       *    ftp.unibe.ch/aiub/CODE            - monthly P1-P2 and P1-C1
-       *
-       *
-       *  You should use different objects to load different DCB files. A typical
-       *  way to use these classes follows:
-       *
-       * @code
-       *      // Declare some Antenna objects
-       *   DCBDataReader dcbP1P2("P1P21002_ALL.DCB");
-       *   DCBDataReader dcbP1C1("P1C11002.DCB");
-       *
-       *   double p1p2Sat1 = dcbP1P2.getDCB(1, SatelliteSystem::GPS);
-       *   double p1c1Sat1 = dcbP1C1.getDCB(1, SatelliteSystem::GPS);
-       *
-       *   double p1p2ALGO = dcbP1P2.getDCB("ALGO");
-       *
-       * @endcode
-       *
-       * @sa DCBDataReader.hpp
-       */
-   class DCBDataReader : public FFTextStream
-   {
-   public:
-         /// Default constructor
-      DCBDataReader()
-      {};
+/** This is a class to read and DCB(Differences of Code Biases) data file
+ *  from CODE.
+ *
+ * You can find DCB data at:
+ *
+ *    ftp.unibe.ch/aiub/BSWUSER50/ORB   - daily P1-P2
+ *    ftp.unibe.ch/aiub/CODE            - monthly P1-P2 and P1-C1
+ *
+ *
+ *  You should use different objects to load different DCB files. A typical
+ *  way to use these classes follows:
+ *
+ * @code
+ *      // Declare some Antenna objects
+ *   DCBDataReader dcbP1P2("P1P21002_ALL.DCB");
+ *   DCBDataReader dcbP1C1("P1C11002.DCB");
+ *
+ *   double p1p2Sat1 = dcbP1P2.getDCB(1, SatelliteSystem::GPS);
+ *   double p1c1Sat1 = dcbP1C1.getDCB(1, SatelliteSystem::GPS);
+ *
+ *   double p1p2ALGO = dcbP1P2.getDCB("ALGO");
+ *
+ * @endcode
+ *
+ * @sa DCBDataReader.hpp
+ */
+class DCBDataReader : public FFTextStream
+{
+  public:
+    /// Default constructor
+    DCBDataReader() {};
 
-         /** Common constructor. It will always open file for read and will
-          *  load DCB data in one pass.
-          *
-          * @param fn   DCB data file to read
-          *
-          */
-      DCBDataReader(const char* fn)
-         : FFTextStream(fn, std::ios::in)
-      { loadData(); };
+    /** Common constructor. It will always open file for read and will
+     *  load DCB data in one pass.
+     *
+     * @param fn   DCB data file to read
+     *
+     */
+    DCBDataReader(const char *fn) : FFTextStream(fn, std::ios::in)
+    {
+        loadData();
+    };
 
-
-         /** Common constructor. It will always open file for read and will
-          *  load DCB data in one pass.
-          *
-          * @param fn   DCB data file to read
-          *
-          */
-      DCBDataReader(const std::string& fn)
-         : FFTextStream(fn.c_str(), std::ios::in)
-      { loadData(); };
+    /** Common constructor. It will always open file for read and will
+     *  load DCB data in one pass.
+     *
+     * @param fn   DCB data file to read
+     *
+     */
+    DCBDataReader(const std::string &fn) : FFTextStream(fn.c_str(), std::ios::in)
+    {
+        loadData();
+    };
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
-         /// Method to open AND load DCB data file.
-      virtual void open(const char* fn);
+    /// Method to open AND load DCB data file.
+    virtual void open(const char *fn);
 
-
-         /// Method to open AND load DCB data file. It doesn't
-         /// clear data previously loaded.
-      virtual void open(const std::string& fn);
+    /// Method to open AND load DCB data file. It doesn't
+    /// clear data previously loaded.
+    virtual void open(const std::string &fn);
 #pragma clang diagnostic pop
 
-         /// Get DCB data of a satellite
-         /// @param    sat   the satellite you desired
-         /// @return         P1-P2 or P1-C1 depend what you have loaded
-      double getDCB( const SatID& sat);
+    /// Get DCB data of a satellite
+    /// @param    sat   the satellite you desired
+    /// @return         P1-P2 or P1-C1 depend what you have loaded
+    double getDCB(const SatID &sat);
 
-         /// Get DCB data of a satellite
-         /// @param    prn    the satellite id you desired
-         /// @param    system the satellite system you desired
-         /// @return          P1-P2 or P1-C1 depend what you have loaded
-      double getDCB(const int& prn,
-         const SatelliteSystem& system = SatelliteSystem::GPS);
+    /// Get DCB data of a satellite
+    /// @param    prn    the satellite id you desired
+    /// @param    system the satellite system you desired
+    /// @return          P1-P2 or P1-C1 depend what you have loaded
+    double getDCB(const int &prn, const SatelliteSystem &system = SatelliteSystem::GPS);
 
+    /// Get DCB data of a receiver
+    /// @param    station    the receiver name you desired
+    /// @param    system     the satellite system you desired
+    /// @return              P1-P2
+    double getDCB(const std::string &station, const SatelliteSystem &system = SatelliteSystem::GPS);
 
-         /// Get DCB data of a receiver
-         /// @param    station    the receiver name you desired
-         /// @param    system     the satellite system you desired
-         /// @return              P1-P2
-      double getDCB(const std::string& station,
-         const SatelliteSystem& system = SatelliteSystem::GPS);
+    /// Destructor
+    virtual ~DCBDataReader() {};
 
+  private:
+    // Map holding satellite DCB data
+    typedef std::map<SatID, double> SatDCBData;
 
-         /// Destructor
-      virtual ~DCBDataReader() {};
+    // Map holding receiver DCB data
+    typedef std::map<std::string, double> ReceiverDCBData;
 
+    /// A structure used to store daily DCB data
+    struct DailyDCBData
+    {
+        SatDCBData satDCB;
 
-   private:
+        ReceiverDCBData gpsDCB;
 
-         // Map holding satellite DCB data
-      typedef std::map< SatID, double > SatDCBData;
+        ReceiverDCBData glonassDCB;
+    };
 
-         // Map holding receiver DCB data
-      typedef std::map< std::string, double > ReceiverDCBData;
+    /// Object holding all of the DCB data
+    DailyDCBData allDCB;
 
-         /// A structure used to store daily DCB data
-      struct DailyDCBData
-      {
-         SatDCBData        satDCB;
+    /** Method to store ocean tide harmonics data in this class' data map
+     * @throw FFStreamError
+     * @throw StringUtils::StringException
+     */
+    virtual void loadData();
 
-         ReceiverDCBData   gpsDCB;
+}; // End of class 'DCBDataReader'
 
-         ReceiverDCBData   glonassDCB;
-      };
+//@}
 
-         /// Object holding all of the DCB data
-      DailyDCBData allDCB;
+} // End of namespace gnsstk
 
-
-         /** Method to store ocean tide harmonics data in this class' data map
-          * @throw FFStreamError
-          * @throw StringUtils::StringException
-          */
-      virtual void loadData();
-
-
-   };  // End of class 'DCBDataReader'
-
-       //@}
-
-}  // End of namespace gnsstk
-
-#endif  // GNSSTK_DCBDATAREADER_HPP
+#endif // GNSSTK_DCBDATAREADER_HPP

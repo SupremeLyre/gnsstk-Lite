@@ -36,8 +36,8 @@
 //
 //==============================================================================
 
-#include "StringUtils.hpp"
 #include "BinUtils.hpp"
+#include "StringUtils.hpp"
 
 #include "AshtechPBEN.hpp"
 #include "AshtechStream.hpp"
@@ -46,127 +46,113 @@
 using namespace std;
 
 namespace gnsstk
- {
-   const char* AshtechPBEN::myId = "PBN";
+{
+const char *AshtechPBEN::myId = "PBN";
 
-   //---------------------------------------------------------------------------
-   void AshtechPBEN::reallyGetRecord(FFStream& ffs)
-   {
-      AshtechStream& stream=dynamic_cast<AshtechStream&>(ffs);
+//---------------------------------------------------------------------------
+void AshtechPBEN::reallyGetRecord(FFStream &ffs)
+{
+    AshtechStream &stream = dynamic_cast<AshtechStream &>(ffs);
 
-      // make sure the object is reset before starting the search
-      clear(fmtbit | lenbit | crcbit);
-      string& rawData = stream.rawData;
+    // make sure the object is reset before starting the search
+    clear(fmtbit | lenbit | crcbit);
+    string &rawData = stream.rawData;
 
-      // If this object doesn't have an id set yet, assume that the streams
-      // most recent read id is what we need to be
-      if (id == "" && rawData.size()>=11 &&
-          rawData.substr(0,7) == preamble &&
-          rawData[10]==',')
-         id = rawData.substr(7,3);
+    // If this object doesn't have an id set yet, assume that the streams
+    // most recent read id is what we need to be
+    if (id == "" && rawData.size() >= 11 && rawData.substr(0, 7) == preamble && rawData[10] == ',')
+        id = rawData.substr(7, 3);
 
-      // If that didn't work, or this is object is not of the right type,
-      // then give up.
-      if (id == "" || !checkId(id))
-         return;
+    // If that didn't work, or this is object is not of the right type,
+    // then give up.
+    if (id == "" || !checkId(id))
+        return;
 
-      readBody(stream);
-   }
+    readBody(stream);
+}
 
-   //---------------------------------------------------------------------------
-   void AshtechPBEN::decode(const std::string& data)
-   {
-      using gnsstk::BinUtils::decodeVar;
+//---------------------------------------------------------------------------
+void AshtechPBEN::decode(const std::string &data)
+{
+    using gnsstk::BinUtils::decodeVar;
 
-      string str(data);
-      if (str.length() == 69)
-      {
-         ascii=false;
-         header      = str.substr(0,11); str.erase(0,11);
-         sow         = 1e-3 * decodeVar<int32_t>(str);
-         sitename    = str.substr(0,4); str.erase(0,4);
-         navx        = decodeVar<double>(str);
-         navy        = decodeVar<double>(str);
-         navz        = decodeVar<double>(str);
-         navt        = decodeVar<float>(str);
-         navxdot     = decodeVar<float>(str);
-         navydot     = decodeVar<float>(str);
-         navzdot     = decodeVar<float>(str);
-         navtdot     = decodeVar<float>(str);
-         pdop        = decodeVar<uint16_t>(str);
-         lat =  lon =  alt =  numSV =  hdop =  vdop =  tdop = 0;
+    string str(data);
+    if (str.length() == 69)
+    {
+        ascii = false;
+        header = str.substr(0, 11);
+        str.erase(0, 11);
+        sow = 1e-3 * decodeVar<int32_t>(str);
+        sitename = str.substr(0, 4);
+        str.erase(0, 4);
+        navx = decodeVar<double>(str);
+        navy = decodeVar<double>(str);
+        navz = decodeVar<double>(str);
+        navt = decodeVar<float>(str);
+        navxdot = decodeVar<float>(str);
+        navydot = decodeVar<float>(str);
+        navzdot = decodeVar<float>(str);
+        navtdot = decodeVar<float>(str);
+        pdop = decodeVar<uint16_t>(str);
+        lat = lon = alt = numSV = hdop = vdop = tdop = 0;
 
-         checksum = decodeVar<uint16_t>(str);
-         clear();
+        checksum = decodeVar<uint16_t>(str);
+        clear();
 
-         uint16_t csum=0;
-         int len=data.size()-3-11;
-         string body(data.substr(11, len));
-         while (body.size()>1)
+        uint16_t csum = 0;
+        int len = data.size() - 3 - 11;
+        string body(data.substr(11, len));
+        while (body.size() > 1)
             csum += decodeVar<uint16_t>(body);
 
-         if (csum != checksum)
-         {
+        if (csum != checksum)
+        {
             setstate(crcbit);
             if (debugLevel)
-               cout << "checksum error, computed:" << hex << csum
-                    << " received:" << checksum << dec << endl;
-         }
+                cout << "checksum error, computed:" << hex << csum << " received:" << checksum << dec << endl;
+        }
+    }
+    else
+    {
+        ascii = true;
+        header = str.substr(0, 11);
+        str.erase(0, 11);
+        stringstream iss(str);
+        double latMin, lonMin;
+        char c;
+        iss >> sow >> c >> navx >> c >> navy >> c >> navz >> c >> lat >> c >> latMin >> c >> lon >> c >> lonMin >> c >>
+            alt >> c >> navxdot >> c >> navydot >> c >> navzdot >> c >> numSV >> c;
+        getline(iss, sitename, ',');
+        iss >> pdop >> c >> hdop >> c >> vdop >> c >> tdop;
 
-      }
-      else
-      {
-         ascii=true;
-         header = str.substr(0,11); str.erase(0,11);
-         stringstream iss(str);
-         double latMin,lonMin;
-         char c;
-         iss >> sow >> c
-             >> navx>> c >> navy >> c >> navz >> c
-             >> lat >> c >> latMin >> c >> lon >> c >> lonMin >> c >> alt >> c
-             >> navxdot>> c  >> navydot>> c  >> navzdot >> c
-             >> numSV >> c;
-         getline(iss, sitename, ',');
-         iss >> pdop>> c  >> hdop>> c  >> vdop>> c  >> tdop;
+        // Note that there isn't a checksum on the PBNs
 
-         // Note that there isn't a checksum on the PBNs
-
-         lat += latMin / 60;
-         lon += lonMin / 60;
-         navt = navtdot = 0;
-         if (iss)
+        lat += latMin / 60;
+        lon += lonMin / 60;
+        navt = navtdot = 0;
+        if (iss)
             clear();
-      }
+    }
 
-      if (sow>FULLWEEK)
-         setstate(fmtbit);
-   }
+    if (sow > FULLWEEK)
+        setstate(fmtbit);
+}
 
-   //---------------------------------------------------------------------------
-   void AshtechPBEN::dump(ostream& out) const noexcept
-   {
-      ostringstream oss;
-      using gnsstk::StringUtils::asString;
-      using gnsstk::StringUtils::leftJustify;
+//---------------------------------------------------------------------------
+void AshtechPBEN::dump(ostream &out) const noexcept
+{
+    ostringstream oss;
+    using gnsstk::StringUtils::asString;
+    using gnsstk::StringUtils::leftJustify;
 
-      AshtechData::dump(out);
-      oss << getName() << "1:"
-          << " SOW:" << asString(sow, 1)
-          << " #SV:" << (int)numSV
-          << " PDOP:" << (int)pdop
-          << " ClkOff:" << asString(navt, 3)
-          << " ClkDft:" << asString(navtdot, 3)
-          << " sitename:" << sitename
-          << " " << (ascii?"ascii":"bin")
-          << endl
-          << getName() << "2:"
-          << " X:" << asString(navx, 1)
-          << " Y:" << asString(navy, 1)
-          << " Z:" << asString(navz, 1)
-          << " Vx:" << asString(navxdot, 3)
-          << " Vy:" << asString(navydot, 3)
-          << " Vz:" << asString(navzdot, 3)
-          << endl;
-      out << oss.str() << flush;
-   }
+    AshtechData::dump(out);
+    oss << getName() << "1:"
+        << " SOW:" << asString(sow, 1) << " #SV:" << (int)numSV << " PDOP:" << (int)pdop
+        << " ClkOff:" << asString(navt, 3) << " ClkDft:" << asString(navtdot, 3) << " sitename:" << sitename << " "
+        << (ascii ? "ascii" : "bin") << endl
+        << getName() << "2:"
+        << " X:" << asString(navx, 1) << " Y:" << asString(navy, 1) << " Z:" << asString(navz, 1)
+        << " Vx:" << asString(navxdot, 3) << " Vy:" << asString(navydot, 3) << " Vz:" << asString(navzdot, 3) << endl;
+    out << oss.str() << flush;
+}
 } // namespace gnsstk

@@ -46,113 +46,113 @@
 
 #include <string>
 
-#include "Exception.hpp"
 #include "CommonTime.hpp"
-#include "SystemTime.hpp"
+#include "Exception.hpp"
 #include "FFStream.hpp"
-#include "TimeString.hpp"
 #include "FileUtils.hpp"
+#include "SystemTime.hpp"
+#include "TimeString.hpp"
 
 namespace gnsstk
 {
-   /// @ingroup FFStream
-   //@{
+/// @ingroup FFStream
+//@{
 
-   template <class BaseStream>
-   class TimeNamedFileStream : public BaseStream
-   {
-   public:
+template <class BaseStream> class TimeNamedFileStream : public BaseStream
+{
+  public:
+    TimeNamedFileStream() : omode(std::ios::in), debugLevel(0)
+    {
+    }
+    TimeNamedFileStream(const std::string fs, std::ios::openmode mode = std::ios::in)
+        : debugLevel(0), filespec(fs), omode(mode)
+    {
+    }
+    virtual ~TimeNamedFileStream(void) {};
 
-      TimeNamedFileStream()
-         : omode(std::ios::in), debugLevel(0)
-      {}
-      TimeNamedFileStream(
-         const std::string fs,
-         std::ios::openmode mode = std::ios::in)
-         : debugLevel(0), filespec(fs), omode(mode)
-      {}
-      virtual ~TimeNamedFileStream(void) {};
+    /// overrides open to just set the filespec, Note that this does
+    /// not actually open a file
+    virtual void open(const char *fs, std::ios::openmode mode = std::ios::in)
+    {
+        setFilespec(fs);
+        omode = mode;
+    }
 
+    void setFilespec(const std::string fs)
+    {
+        filespec = fs;
+        currentFilename = "";
+    }
 
-      /// overrides open to just set the filespec, Note that this does
-      /// not actually open a file
-      virtual void open(const char* fs, std::ios::openmode mode = std::ios::in)
-      {
-         setFilespec(fs);
-         omode = mode;
-      }
+    std::string getFilespec(void) const
+    {
+        return filespec;
+    }
 
+    // Get the filename of the current file
+    std::string getCurrentFilename(void) const
+    {
+        return currentFilename;
+    }
 
-      void setFilespec(const std::string fs)
-      { filespec=fs; currentFilename=""; }
+    // Return the time used to generate the current file name
+    CommonTime getCurrentTime(void) const
+    {
+        return currentTime;
+    }
 
-
-      std::string getFilespec(void) const
-      { return filespec; }
-
-
-      // Get the filename of the current file
-      std::string getCurrentFilename(void) const
-      { return currentFilename; }
-
-
-      // Return the time used to generate the current file name
-      CommonTime getCurrentTime(void) const
-      { return currentTime; }
-
-
-      // Update the file name, returns true if the file name changed
-      bool updateFileName(const CommonTime& t=SystemTime())
-      {
-         const std::string newFilename=printTime(t,filespec);
-         if (currentFilename.size() > 0 and newFilename == currentFilename)
-         {
+    // Update the file name, returns true if the file name changed
+    bool updateFileName(const CommonTime &t = SystemTime())
+    {
+        const std::string newFilename = printTime(t, filespec);
+        if (currentFilename.size() > 0 and newFilename == currentFilename)
+        {
             currentTime = t;
             return false;
-         }
+        }
 
-         if (currentFilename.size() > 0)
-         {
+        if (currentFilename.size() > 0)
+        {
             if (debugLevel)
-               std::cout << "Closing " << currentFilename << std::endl;
+                std::cout << "Closing " << currentFilename << std::endl;
             BaseStream::close();
-         }
-         currentFilename = newFilename;
-         currentTime = t;
+        }
+        currentFilename = newFilename;
+        currentTime = t;
 
-         std::string::size_type i = newFilename.rfind('/');
-         std::string dir(newFilename.substr(0, i));
-         if (dir.size())
-         {
+        std::string::size_type i = newFilename.rfind('/');
+        std::string dir(newFilename.substr(0, i));
+        if (dir.size())
+        {
             if (debugLevel)
-               std::cout << "Creating directory " << dir << std::endl;
+                std::cout << "Creating directory " << dir << std::endl;
             gnsstk::FileUtils::makeDir(dir, 0755);
-         }
+        }
 
-         BaseStream::open(currentFilename.c_str(), omode);
-         if (debugLevel)
+        BaseStream::open(currentFilename.c_str(), omode);
+        if (debugLevel)
             std::cout << "Opened " << currentFilename << std::endl;
 
-         return true;
-      }
+        return true;
+    }
 
-      int debugLevel;
+    int debugLevel;
 
-   private:
-      /// Pattern on which to create new files
-      std::string filespec;
+  private:
+    /// Pattern on which to create new files
+    std::string filespec;
 
-      /// Name of the current output file.
-      std::string currentFilename;
+    /// Name of the current output file.
+    std::string currentFilename;
 
-      /// The time used to generate currentFilename
-      CommonTime currentTime;
+    /// The time used to generate currentFilename
+    CommonTime currentTime;
 
-      // The flags to use when opening the files
-      std::ios::openmode omode;
-   }; // end class TimeNamedFileStream
+    // The flags to use when opening the files
+    std::ios::openmode omode;
+}; // end class TimeNamedFileStream
 
-   //@}
-}  // end namespace gnsstk
+//@}
+} // end namespace gnsstk
 
 #endif // GNSSTK_TIME_NAMED_FILE_STREAM_HPP

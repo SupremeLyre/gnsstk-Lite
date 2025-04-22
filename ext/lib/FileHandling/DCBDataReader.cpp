@@ -48,177 +48,164 @@ using namespace std;
 namespace gnsstk
 {
 
-      // Method to store load ocean tide harmonics data in this class'
-      // data map
-   void DCBDataReader::loadData()
-   {
+// Method to store load ocean tide harmonics data in this class'
+// data map
+void DCBDataReader::loadData()
+{
 
-      try
-      {
-         allDCB.satDCB.clear();
-         allDCB.gpsDCB.clear();
-         allDCB.glonassDCB.clear();
+    try
+    {
+        allDCB.satDCB.clear();
+        allDCB.gpsDCB.clear();
+        allDCB.glonassDCB.clear();
 
-            // a buffer
-         string line;
+        // a buffer
+        string line;
 
-            // read first line
-         formattedGetLine(line, true);
+        // read first line
+        formattedGetLine(line, true);
 
-            // Let's skip 6 lines
-         for(int i=0; i<6; i++) formattedGetLine(line, true);
-
-
-            // Now, let's read data
-         while(1)
-         {
+        // Let's skip 6 lines
+        for (int i = 0; i < 6; i++)
             formattedGetLine(line, true);
 
-            if(line.length() < 46) continue;
+        // Now, let's read data
+        while (1)
+        {
+            formattedGetLine(line, true);
 
-            string sysFlag = line.substr(0,1);
+            if (line.length() < 46)
+                continue;
 
-            int satPRN = StringUtils::asInt(line.substr(1,2));
+            string sysFlag = line.substr(0, 1);
 
-            string station = StringUtils::strip(line.substr(6,4));
+            int satPRN = StringUtils::asInt(line.substr(1, 2));
 
-            const double dcbVal = StringUtils::asDouble(line.substr(26,9));
-            //const double dcbRms = StringUtils::asDouble(line.substr(38,9));
+            string station = StringUtils::strip(line.substr(6, 4));
 
-            if(station.length() < 4)       // this is satellite DCB data
+            const double dcbVal = StringUtils::asDouble(line.substr(26, 9));
+            // const double dcbRms = StringUtils::asDouble(line.substr(38,9));
+
+            if (station.length() < 4) // this is satellite DCB data
             {
 
-               SatID sat;
-               if(sysFlag == "G")
-               {
-                  sat = SatID(satPRN,SatelliteSystem::GPS);
-               }
-               else if(sysFlag == "R")
-               {
-                  sat = SatID(satPRN,SatelliteSystem::Glonass);
-               }
-               else
-               {
-                  // Unexpected and we do nothing here
+                SatID sat;
+                if (sysFlag == "G")
+                {
+                    sat = SatID(satPRN, SatelliteSystem::GPS);
+                }
+                else if (sysFlag == "R")
+                {
+                    sat = SatID(satPRN, SatelliteSystem::Glonass);
+                }
+                else
+                {
+                    // Unexpected and we do nothing here
+                }
 
-
-               }
-
-               allDCB.satDCB[sat] = dcbVal;
-
+                allDCB.satDCB[sat] = dcbVal;
             }
-            else                           // this is receiver DCB data
+            else // this is receiver DCB data
             {
-               if(sysFlag == "G")
-               {
-                  allDCB.gpsDCB[station] = dcbVal;
-               }
-               else if(sysFlag == "R")
-               {
-                  allDCB.glonassDCB[station] = dcbVal;
-               }
-               else
-               {
-                  // Unexpected and we do nothing here
-
-               }
+                if (sysFlag == "G")
+                {
+                    allDCB.gpsDCB[station] = dcbVal;
+                }
+                else if (sysFlag == "R")
+                {
+                    allDCB.glonassDCB[station] = dcbVal;
+                }
+                else
+                {
+                    // Unexpected and we do nothing here
+                }
             }
 
-         }  // End of 'while(1)'
+        } // End of 'while(1)'
 
-      }  // End of try block
-      catch (EndOfFile& e)
-      {
+    } // End of try block
+    catch (EndOfFile &e)
+    {
 
-            // We should close this data stream before returning
-         (*this).close();
+        // We should close this data stream before returning
+        (*this).close();
 
-         return;
-      }
-      catch (...)
-      {
+        return;
+    }
+    catch (...)
+    {
 
-         // We should close this data stream before returning
-         (*this).close();
+        // We should close this data stream before returning
+        (*this).close();
 
-         return;
+        return;
+    }
 
-      }
+} // End of 'DCBDataReader::loadData()'
 
+// Method to open AND load DCB data file.
+void DCBDataReader::open(const char *fn)
+{
 
-   }  // End of 'DCBDataReader::loadData()'
+    // We need to be sure current data stream is closed
+    (*this).close();
 
+    // Open data stream
+    FFTextStream::open(fn, std::ios::in);
+    loadData();
 
+    return;
 
-      // Method to open AND load DCB data file.
-   void DCBDataReader::open(const char* fn)
-   {
+} // End of method 'DCBDataReader::open()'
 
-      // We need to be sure current data stream is closed
-      (*this).close();
+// Method to open AND load DCB data file. It doesn't
+// clear data previously loaded.
+void DCBDataReader::open(const std::string &fn)
+{
 
-      // Open data stream
-      FFTextStream::open(fn, std::ios::in);
-      loadData();
+    // We need to be sure current data stream is closed
+    (*this).close();
 
-      return;
+    // Open data stream
+    FFTextStream::open(fn.c_str(), std::ios::in);
+    loadData();
 
-   }  // End of method 'DCBDataReader::open()'
+    return;
+} // End of method 'DCBDataReader::open()'
 
+// return P1-P2 or P1-C1 depend what you have loaded
+double DCBDataReader::getDCB(const SatID &sat)
+{
+    return allDCB.satDCB[sat];
+}
 
+// Get DCB data of a satellite
+// return P1-P2 or P1-C1 depend what you have loaded
+double DCBDataReader::getDCB(const int &prn, const SatelliteSystem &system)
+{
+    SatID sat(prn, system);
+    return allDCB.satDCB[sat];
+}
 
-      // Method to open AND load DCB data file. It doesn't
-      // clear data previously loaded.
-   void DCBDataReader::open(const std::string& fn)
-   {
+// Get DCB data of aReceiver
+// it return P1-P2
+double DCBDataReader::getDCB(const std::string &station, const SatelliteSystem &system)
+{
 
-      // We need to be sure current data stream is closed
-      (*this).close();
+    if (system == SatelliteSystem::GPS)
+    {
+        return allDCB.gpsDCB[station];
+    }
+    else if (system == SatelliteSystem::Glonass)
+    {
+        return allDCB.glonassDCB[station];
+    }
+    else
+    {
+        // Unexpected and return 0
+        return 0.0;
+    }
 
-      // Open data stream
-      FFTextStream::open(fn.c_str(), std::ios::in);
-      loadData();
+} // End of 'double DCBDataReader::getDCB(const string& station...'
 
-      return;
-   }  // End of method 'DCBDataReader::open()'
-
-      // return P1-P2 or P1-C1 depend what you have loaded
-   double DCBDataReader::getDCB(const SatID& sat)
-   {
-      return allDCB.satDCB[sat];
-   }
-
-      // Get DCB data of a satellite
-      // return P1-P2 or P1-C1 depend what you have loaded
-   double DCBDataReader::getDCB(const int& prn,
-      const SatelliteSystem& system)
-   {
-      SatID sat(prn,system);
-      return allDCB.satDCB[sat];
-   }
-
-      // Get DCB data of aReceiver
-      // it return P1-P2
-   double DCBDataReader::getDCB(const std::string& station,
-                                const SatelliteSystem& system)
-   {
-
-      if(system == SatelliteSystem::GPS)
-      {
-         return allDCB.gpsDCB[station];
-      }
-      else if(system == SatelliteSystem::Glonass)
-      {
-         return allDCB.glonassDCB[station];
-      }
-      else
-      {
-            // Unexpected and return 0
-         return 0.0;
-      }
-
-   }  // End of 'double DCBDataReader::getDCB(const string& station...'
-
-
-
-}  // End of namespace gnsstk
+} // End of namespace gnsstk

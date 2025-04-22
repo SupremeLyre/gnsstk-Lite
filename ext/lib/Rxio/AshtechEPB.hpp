@@ -44,8 +44,8 @@
 #ifndef ASHTECHEPB_HPP
 #define ASHTECHEPB_HPP
 
-#include "gnsstk_export.h"
 #include "AshtechData.hpp"
+#include "gnsstk_export.h"
 
 #ifdef SWIG
 %immutable gnsstk::AshtechEPB::myId;
@@ -53,43 +53,48 @@
 
 namespace gnsstk
 {
-   class AshtechEPB : public AshtechData
-   {
-   public:
+class AshtechEPB : public AshtechData
+{
+  public:
+    AshtechEPB() {};
 
-      AshtechEPB() {};
+    std::string header; // 11 characters exactly
 
-      std::string header; // 11 characters exactly
+    unsigned prn;
 
-      unsigned prn;
+    // Note that an extra element is allocated so these can be
+    // numbered as they are in the IS-GPS-200. Therefore
+    // element 0 of each index is not used.
+    long word[4][11];
 
-      // Note that an extra element is allocated so these can be
-      // numbered as they are in the IS-GPS-200. Therefore
-      // element 0 of each index is not used.
-      long     word[4][11];
+    GNSSTK_EXPORT static const char *myId;
 
-      GNSSTK_EXPORT static const char* myId;
+    virtual std::string getName() const
+    {
+        return "epb";
+    }
 
-      virtual std::string getName() const {return "epb";}
+    bool checkId(const std::string &hdrId) const
+    {
+        return hdrId == myId;
+    }
 
-      bool checkId(const std::string& hdrId) const {return hdrId==myId;}
+    void dump(std::ostream &out) const noexcept;
 
-      void dump(std::ostream& out) const noexcept;
+    /**
+     * @throw std::exception
+     * @throw FFStreamError
+     */
+    virtual void decode(const std::string &data);
 
-         /**
-          * @throw std::exception
-          * @throw FFStreamError
-          */
-      virtual void decode(const std::string& data);
-
-   protected:
-         /**
-          * @throw std::exception
-          * @throw FFStreamError
-          * @throw EndOfFile
-          */
-      virtual void reallyGetRecord(FFStream& ffs);
-   };
+  protected:
+    /**
+     * @throw std::exception
+     * @throw FFStreamError
+     * @throw EndOfFile
+     */
+    virtual void reallyGetRecord(FFStream &ffs);
+};
 
 } // namespace gnsstk
 

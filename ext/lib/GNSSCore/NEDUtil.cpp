@@ -38,7 +38,7 @@
 
 //
 //
-//#include <stdio.h>
+// #include <stdio.h>
 
 // gnsstk
 #include "NEDUtil.hpp"
@@ -46,70 +46,67 @@
 namespace gnsstk
 {
 
-//using namespace std;
+// using namespace std;
 
-NEDUtil::NEDUtil(const double refLatRad,
-                 const double refLonRad)
+NEDUtil::NEDUtil(const double refLatRad, const double refLonRad)
 {
-   compute( refLatRad, refLonRad );
+    compute(refLatRad, refLonRad);
 }
 
 //
 //
-void NEDUtil::compute( const double refLat,
-                       const double refLon )
+void NEDUtil::compute(const double refLat, const double refLon)
 {
-   rotMat.resize(3,3);
-   rotMat (0,0) =  -std::sin(refLat)*std::cos(refLon);
-   rotMat (1,0) =  -std::sin(refLon);
-   rotMat (2,0) =  -std::cos(refLat)*std::cos(refLon);
-   rotMat (0,1) =  -std::sin(refLat)*std::sin(refLon);
-   rotMat (1,1) =   std::cos(refLon);
-   rotMat (2,1) =  -std::cos(refLat)*std::sin(refLon);
-   rotMat (0,2) =   std::cos(refLat);
-   rotMat (1,2) =   0.0;
-   rotMat (2,2) =  -std::sin(refLat);
+    rotMat.resize(3, 3);
+    rotMat(0, 0) = -std::sin(refLat) * std::cos(refLon);
+    rotMat(1, 0) = -std::sin(refLon);
+    rotMat(2, 0) = -std::cos(refLat) * std::cos(refLon);
+    rotMat(0, 1) = -std::sin(refLat) * std::sin(refLon);
+    rotMat(1, 1) = std::cos(refLon);
+    rotMat(2, 1) = -std::cos(refLat) * std::sin(refLon);
+    rotMat(0, 2) = std::cos(refLat);
+    rotMat(1, 2) = 0.0;
+    rotMat(2, 2) = -std::sin(refLat);
 }
 
-void NEDUtil::updatePosition( const double refLatRad,
-                              const double refLonRad )
+void NEDUtil::updatePosition(const double refLatRad, const double refLonRad)
 {
-   compute( refLatRad, refLonRad );
+    compute(refLatRad, refLonRad);
 }
 
-gnsstk::Vector<double> NEDUtil::convertToNED( const gnsstk::Vector<double>& inV ) const
+gnsstk::Vector<double> NEDUtil::convertToNED(const gnsstk::Vector<double> &inV) const
 {
-   gnsstk::Vector<double> outV(3);
+    gnsstk::Vector<double> outV(3);
 
-   if (inV.size()!=3)
-   {
-      gnsstk::Exception e("Incompatible dimensions for Vector");
-      GNSSTK_THROW(e);
-   }
-   outV = rotMat * inV;
-   return(outV);
+    if (inV.size() != 3)
+    {
+        gnsstk::Exception e("Incompatible dimensions for Vector");
+        GNSSTK_THROW(e);
+    }
+    outV = rotMat * inV;
+    return (outV);
 }
 
-gnsstk::Triple NEDUtil::convertToNED( const gnsstk::Triple& inVec ) const
+gnsstk::Triple NEDUtil::convertToNED(const gnsstk::Triple &inVec) const
 {
-   gnsstk::Vector<double> v(3);
-   v[0] = inVec[0];
-   v[1] = inVec[1];
-   v[2] = inVec[2];
+    gnsstk::Vector<double> v(3);
+    v[0] = inVec[0];
+    v[1] = inVec[1];
+    v[2] = inVec[2];
 
-   gnsstk::Vector<double> vOut = convertToNED( v );
-   gnsstk::Triple outVec( vOut[0], vOut[1], vOut[2] );
-   return(outVec);
+    gnsstk::Vector<double> vOut = convertToNED(v);
+    gnsstk::Triple outVec(vOut[0], vOut[1], vOut[2]);
+    return (outVec);
 }
 
-gnsstk::Xvt NEDUtil::convertToNED( const gnsstk::Xvt& in ) const
+gnsstk::Xvt NEDUtil::convertToNED(const gnsstk::Xvt &in) const
 {
-   gnsstk::Xvt out;
-   out.clkbias = in.clkbias;
-   out.relcorr = in.relcorr;
-   out.clkdrift = in.clkdrift;
-   out.x = convertToNED( in.x );
-   out.v = convertToNED( in.v );
-   return(out);
+    gnsstk::Xvt out;
+    out.clkbias = in.clkbias;
+    out.relcorr = in.relcorr;
+    out.clkdrift = in.clkdrift;
+    out.x = convertToNED(in.x);
+    out.v = convertToNED(in.v);
+    return (out);
 }
-}     // end namespace gnsstk
+} // end namespace gnsstk
