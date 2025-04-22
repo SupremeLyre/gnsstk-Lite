@@ -39,14 +39,14 @@
 #ifndef GNSSTK_NAVID_HPP
 #define GNSSTK_NAVID_HPP
 
-#include <iostream>
-#include <iomanip>
-#include <sstream>
 #include "gps_constants.hpp"
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 
-#include "SatID.hpp"
-#include "ObsID.hpp"
 #include "NavType.hpp"
+#include "ObsID.hpp"
+#include "SatID.hpp"
 
 /**
  * @file NavID.hpp
@@ -55,82 +55,100 @@
 
 namespace gnsstk
 {
-      /// @ingroup GNSSEph
-      //@{
+/// @ingroup GNSSEph
+//@{
 
-   class NavID
-   {
-   public:
-         /// empty constructor, creates an invalid object
-      NavID() { navType=NavType::Unknown; }
+class NavID
+{
+  public:
+    /// empty constructor, creates an invalid object
+    NavID()
+    {
+        navType = NavType::Unknown;
+    }
 
-         /// explicit constructor, no defaults
-         /// WARNING: This constructor has proven insufficient
-         /// for BeiDou.  The BDS ICD requires that PRN 1-5
-         /// use format D2 and PRN 6-30 use format D1.  That
-         /// appears to not be followed in all cases.   Therefore
-         /// users need to differentiate D1/D2 outside NavID
-         /// and use the explicit constructor
-         ///      NavID( NavType::<xxxxx> )
-         /// to instatiate a BeiDou-related NavID.
-      NavID( const SatID& sidr, const ObsID& oidr );
+    /// explicit constructor, no defaults
+    /// WARNING: This constructor has proven insufficient
+    /// for BeiDou.  The BDS ICD requires that PRN 1-5
+    /// use format D2 and PRN 6-30 use format D1.  That
+    /// appears to not be followed in all cases.   Therefore
+    /// users need to differentiate D1/D2 outside NavID
+    /// and use the explicit constructor
+    ///      NavID( NavType::<xxxxx> )
+    /// to instatiate a BeiDou-related NavID.
+    NavID(const SatID &sidr, const ObsID &oidr);
 
-      NavID( const NavType nt) { navType = nt; }
+    NavID(const NavType nt)
+    {
+        navType = nt;
+    }
 
-      NavID( const std::string& s );
+    NavID(const std::string &s);
 
-         /// Convenience output method.
-      void dump(std::ostream& s) const
-      {
-         s << convertNavTypeToString(navType);
-      }
+    /// Convenience output method.
+    void dump(std::ostream &s) const
+    {
+        s << convertNavTypeToString(navType);
+    }
 
-         /// operator == for NavID
-      bool operator==(const NavID& right) const
-      { return (navType == right.navType); }
+    /// operator == for NavID
+    bool operator==(const NavID &right) const
+    {
+        return (navType == right.navType);
+    }
 
-         /// operator != for NavID
-      bool operator!=(const NavID& right) const
-      { return !(operator==(right)); }
+    /// operator != for NavID
+    bool operator!=(const NavID &right) const
+    {
+        return !(operator==(right));
+    }
 
-         /// operator < for NavID : order by system, then number
-      bool operator<(const NavID& right) const
-      {  return (navType<right.navType); }
+    /// operator < for NavID : order by system, then number
+    bool operator<(const NavID &right) const
+    {
+        return (navType < right.navType);
+    }
 
-         /// operator > for NavID
-      bool operator>(const NavID& right) const
-      {  return (!operator<(right) && !operator==(right)); }
+    /// operator > for NavID
+    bool operator>(const NavID &right) const
+    {
+        return (!operator<(right) && !operator==(right));
+    }
 
-         /// operator <= for NavID
-      bool operator<=(const NavID& right) const
-      { return (operator<(right) || operator==(right)); }
+    /// operator <= for NavID
+    bool operator<=(const NavID &right) const
+    {
+        return (operator<(right) || operator==(right));
+    }
 
-         /// operator >= for NavID
-      bool operator>=(const NavID& right) const
-      { return !(operator<(right)); }
+    /// operator >= for NavID
+    bool operator>=(const NavID &right) const
+    {
+        return !(operator<(right));
+    }
 
-      NavType navType;   ///< navType for this satellite
-   }; // class NavID
+    NavType navType; ///< navType for this satellite
+}; // class NavID
 
-      /// stream output for NavID
-   inline std::ostream& operator<<(std::ostream& s, const NavID& p)
-   {
-      p.dump(s);
-      return s;
-   }
+/// stream output for NavID
+inline std::ostream &operator<<(std::ostream &s, const NavID &p)
+{
+    p.dump(s);
+    return s;
+}
 
-      //@}
+//@}
 
-   namespace StringUtils
-   {
-         /// @ingroup StringUtils
-      inline std::string asString(const NavID& p)
-      {
-         std::ostringstream oss;
-         p.dump(oss);
-         return oss.str();
-      }
-   }
+namespace StringUtils
+{
+/// @ingroup StringUtils
+inline std::string asString(const NavID &p)
+{
+    std::ostringstream oss;
+    p.dump(oss);
+    return oss.str();
+}
+} // namespace StringUtils
 
 } // namespace gnsstk
 

@@ -41,33 +41,28 @@
 
 namespace gnsstk
 {
-   NavFilterKey ::
-   NavFilterKey()
-         : stationID(""),
-           rxID(""),
-           carrier(CarrierBand::Unknown),
-           code(TrackingCode::Unknown)
-   {
-   }
+NavFilterKey ::NavFilterKey() : stationID(""), rxID(""), carrier(CarrierBand::Unknown), code(TrackingCode::Unknown)
+{
+}
 
-   void NavFilterKey::dump(std::ostream& s) const
-   {
-         // Use civil time format to accommodate multi-GNSS
-      s << gnsstk::printTime(timeStamp,"%02m/%02d/%4Y %02H:%02M:%04.1f ");
-      s << std::setw(3) << prn << " " << stationID;
-      if (rxID.length())
-      {
-         s << "/" << rxID;
-      }
-      s << " ";
-      s << gnsstk::ObsID::cbDesc[carrier] << ", " << gnsstk::ObsID::tcDesc[code] << " ";
-   }
+void NavFilterKey::dump(std::ostream &s) const
+{
+    // Use civil time format to accommodate multi-GNSS
+    s << gnsstk::printTime(timeStamp, "%02m/%02d/%4Y %02H:%02M:%04.1f ");
+    s << std::setw(3) << prn << " " << stationID;
+    if (rxID.length())
+    {
+        s << "/" << rxID;
+    }
+    s << " ";
+    s << gnsstk::ObsID::cbDesc[carrier] << ", " << gnsstk::ObsID::tcDesc[code] << " ";
+}
 
-   std::ostream& operator<<(std::ostream& s, const NavFilterKey& nfk)
-   {
-      nfk.dump(s);
-      return s;
-   }
+std::ostream &operator<<(std::ostream &s, const NavFilterKey &nfk)
+{
+    nfk.dump(s);
+    return s;
+}
 
 /* don't use this...
    bool NavFilterKey ::
@@ -84,4 +79,4 @@ namespace gnsstk
       return false;
    }
 */
-}
+} // namespace gnsstk

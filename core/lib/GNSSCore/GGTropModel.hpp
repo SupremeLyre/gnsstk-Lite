@@ -36,7 +36,6 @@
 //
 //==============================================================================
 
-
 #ifndef GG_TROP_MODEL_HPP
 #define GG_TROP_MODEL_HPP
 
@@ -44,64 +43,61 @@
 
 namespace gnsstk
 {
-   /** Tropospheric model based on Goad and Goodman(1974),
-    * "A Modified Hopfield Tropospheric Refraction Correction Model," Paper
-    * presented at the Fall Annual Meeting of the American Geophysical Union,
-    * San Francisco, December 1974, as presented in Leick, "GPS Satellite Surveying,"
-    * Wiley, NY, 1990, Chapter 9 (note particularly Table 9.1).
-    */
-   class GGTropModel : public TropModel
-   {
-   public:
-         /// Empty constructor
-      GGTropModel();
+/** Tropospheric model based on Goad and Goodman(1974),
+ * "A Modified Hopfield Tropospheric Refraction Correction Model," Paper
+ * presented at the Fall Annual Meeting of the American Geophysical Union,
+ * San Francisco, December 1974, as presented in Leick, "GPS Satellite Surveying,"
+ * Wiley, NY, 1990, Chapter 9 (note particularly Table 9.1).
+ */
+class GGTropModel : public TropModel
+{
+  public:
+    /// Empty constructor
+    GGTropModel();
 
-         /** Creates a trop model, with weather observation input
-          * @param wx the weather to use for this correction.
-          * @throw InvalidParameter
-          */
-      GGTropModel(const WxObservation& wx);
+    /** Creates a trop model, with weather observation input
+     * @param wx the weather to use for this correction.
+     * @throw InvalidParameter
+     */
+    GGTropModel(const WxObservation &wx);
 
-         /** Create a tropospheric model from explicit weather data
-          * @param T temperature in degrees Celsius
-          * @param P atmospheric pressure in millibars
-          * @param H relative humidity in percent
-          * @throw InvalidParameter
-          */
-      GGTropModel(const double& T,
-                  const double& P,
-                  const double& H);
+    /** Create a tropospheric model from explicit weather data
+     * @param T temperature in degrees Celsius
+     * @param P atmospheric pressure in millibars
+     * @param H relative humidity in percent
+     * @throw InvalidParameter
+     */
+    GGTropModel(const double &T, const double &P, const double &H);
 
-         /// @copydoc TropModel::name()
-      virtual std::string name()
-      { return std::string("GG"); }
+    /// @copydoc TropModel::name()
+    virtual std::string name()
+    {
+        return std::string("GG");
+    }
 
-         /// @copydoc TropModel::dry_zenith_delay() const
-      virtual double dry_zenith_delay() const;
+    /// @copydoc TropModel::dry_zenith_delay() const
+    virtual double dry_zenith_delay() const;
 
-         /// @copydoc TropModel::wet_zenith_delay() const
-      virtual double wet_zenith_delay() const;
+    /// @copydoc TropModel::wet_zenith_delay() const
+    virtual double wet_zenith_delay() const;
 
-         /// @copydoc TropModel::dry_mapping_function(double) const
-      virtual double dry_mapping_function(double elevation) const;
+    /// @copydoc TropModel::dry_mapping_function(double) const
+    virtual double dry_mapping_function(double elevation) const;
 
-         /// @copydoc TropModel::wet_mapping_function(double) const
-      virtual double wet_mapping_function(double elevation) const;
+    /// @copydoc TropModel::wet_mapping_function(double) const
+    virtual double wet_mapping_function(double elevation) const;
 
-         /// @copydoc TropModel::setWeather(const double&,const double&,const double&)
-      virtual void setWeather(const double& T,
-                              const double& P,
-                              const double& H);
+    /// @copydoc TropModel::setWeather(const double&,const double&,const double&)
+    virtual void setWeather(const double &T, const double &P, const double &H);
 
-         /// @copydoc TropModel::setWeather(const WxObservation&)
-      virtual void setWeather(const WxObservation& wx);
+    /// @copydoc TropModel::setWeather(const WxObservation&)
+    virtual void setWeather(const WxObservation &wx);
 
-   private:
-      double Cdrydelay;
-      double Cwetdelay;
-      double Cdrymap;
-      double Cwetmap;
-
-   };
-}
+  private:
+    double Cdrydelay;
+    double Cwetdelay;
+    double Cdrymap;
+    double Cwetmap;
+};
+} // namespace gnsstk
 #endif

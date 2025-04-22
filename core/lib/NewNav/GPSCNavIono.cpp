@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -37,34 +36,27 @@
 //
 //==============================================================================
 #include "GPSCNavIono.hpp"
+#include "FreqConv.hpp"
 #include "TimeString.hpp"
 #include "YDSTime.hpp"
-#include "FreqConv.hpp"
 
 using namespace std;
 
 namespace gnsstk
 {
-   GPSCNavIono ::
-   GPSCNavIono()
-         : pre(0),
-           alert(false)
-   {
-   }
-
-
-   bool GPSCNavIono ::
-   validate() const
-   {
-      return (KlobucharIonoNavData::validate() && ((pre == 0) || (pre == 0x8b)));
-   }
-
-
-   CommonTime GPSCNavIono ::
-   getUserTime() const
-   {
-      if (signal.nav == NavType::GPSCNAVL2)
-         return timeStamp + 12.0;
-      return timeStamp + 6.0;
-   }
+GPSCNavIono ::GPSCNavIono() : pre(0), alert(false)
+{
 }
+
+bool GPSCNavIono ::validate() const
+{
+    return (KlobucharIonoNavData::validate() && ((pre == 0) || (pre == 0x8b)));
+}
+
+CommonTime GPSCNavIono ::getUserTime() const
+{
+    if (signal.nav == NavType::GPSCNAVL2)
+        return timeStamp + 12.0;
+    return timeStamp + 6.0;
+}
+} // namespace gnsstk

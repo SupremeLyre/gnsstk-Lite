@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,45 +38,45 @@
 #ifndef GNSSTK_ORBITDATABDS_HPP
 #define GNSSTK_ORBITDATABDS_HPP
 
-#include "OrbitDataKepler.hpp"
 #include "CGCS2000Ellipsoid.hpp"
+#include "OrbitDataKepler.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Base class for all BeiDou broadcast orbit data.
-   class OrbitDataBDS : public OrbitDataKepler
-   {
-   public:
-      OrbitDataBDS()
-      {}
+/// Base class for all BeiDou broadcast orbit data.
+class OrbitDataBDS : public OrbitDataKepler
+{
+  public:
+    OrbitDataBDS()
+    {
+    }
 
-         /** Compute the satellite's position and velocity at a time.
-          * @note Defaults to using the BeiDou ellipsoid parameters.
-          * @param[in] when The time at which to compute the xvt.
-          * @param[out] xvt The resulting computed position/velocity.
-          * @param[in] oid Ignored at this level, only used in derived classes.
-          * @return true if successful, false if required nav data was
-          *   unavailable. */
-      bool getXvt(const CommonTime& when, Xvt& xvt,
-                  const ObsID& oid = ObsID()) override
-      {
-         CGCS2000Ellipsoid ell;
-         return OrbitDataKepler::getXvt(when, ell, xvt, oid);
-      }
+    /** Compute the satellite's position and velocity at a time.
+     * @note Defaults to using the BeiDou ellipsoid parameters.
+     * @param[in] when The time at which to compute the xvt.
+     * @param[out] xvt The resulting computed position/velocity.
+     * @param[in] oid Ignored at this level, only used in derived classes.
+     * @return true if successful, false if required nav data was
+     *   unavailable. */
+    bool getXvt(const CommonTime &when, Xvt &xvt, const ObsID &oid = ObsID()) override
+    {
+        CGCS2000Ellipsoid ell;
+        return OrbitDataKepler::getXvt(when, ell, xvt, oid);
+    }
 
-         /** Compute satellite relativity correction (sec) at the given time.
-          * @param[in] when The time at which to get the relativity correction.
-          * @return the relativity correction in seconds.
-          */
-      double svRelativity(const CommonTime& when) const override
-      {
-         CGCS2000Ellipsoid ell;
-         return OrbitDataKepler::svRelativity(when, ell);
-      }
-   };
+    /** Compute satellite relativity correction (sec) at the given time.
+     * @param[in] when The time at which to get the relativity correction.
+     * @return the relativity correction in seconds.
+     */
+    double svRelativity(const CommonTime &when) const override
+    {
+        CGCS2000Ellipsoid ell;
+        return OrbitDataKepler::svRelativity(when, ell);
+    }
+};
 } // namespace gnsstk
 
 #endif // GNSSTK_ORBITDATABDS_HPP

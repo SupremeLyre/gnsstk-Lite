@@ -36,48 +36,35 @@
 //
 //==============================================================================
 
-
 #include "BCIonoCorrector.hpp"
 
 namespace gnsstk
 {
-   BCIonoCorrector ::
-   BCIonoCorrector(NavLibrary& nl)
-         : navLib(nl)
-   {
-      corrType = CorrectorType::Iono;
-   }
+BCIonoCorrector ::BCIonoCorrector(NavLibrary &nl) : navLib(nl)
+{
+    corrType = CorrectorType::Iono;
+}
 
+bool BCIonoCorrector ::getCorr(const Position &rxPos, const Position &svPos, const SatID &sat, const ObsID &obs,
+                               const CommonTime &when, NavType nav, double &corrOut)
+{
+    if (navLib.getIonoCorr(sat.system, when, rxPos, svPos, obs.band, corrOut, nav))
+    {
+        return true;
+    }
+    corrOut = std::numeric_limits<double>::quiet_NaN();
+    return false;
+}
 
-   bool BCIonoCorrector ::
-   getCorr(const Position& rxPos, const Position& svPos,
-           const SatID& sat, const ObsID& obs,
-           const CommonTime& when, NavType nav,
-           double& corrOut)
-   {
-      if (navLib.getIonoCorr(sat.system, when, rxPos, svPos, obs.band,
-                             corrOut, nav))
-      {
-         return true;
-      }
-      corrOut = std::numeric_limits<double>::quiet_NaN();
-      return false;
-   }
-
-
-   bool BCIonoCorrector ::
-   getCorr(const Position& rxPos, const Xvt& svPos,
-           const SatID& sat, const ObsID& obs,
-           const CommonTime& when, NavType nav,
-           double& corrOut)
-   {
-      Position svp(svPos.x);
-      if (navLib.getIonoCorr(sat.system, when, rxPos, svp, obs.band,
-                             corrOut, nav))
-      {
-         return true;
-      }
-      corrOut = std::numeric_limits<double>::quiet_NaN();
-      return false;
-   }
+bool BCIonoCorrector ::getCorr(const Position &rxPos, const Xvt &svPos, const SatID &sat, const ObsID &obs,
+                               const CommonTime &when, NavType nav, double &corrOut)
+{
+    Position svp(svPos.x);
+    if (navLib.getIonoCorr(sat.system, when, rxPos, svp, obs.band, corrOut, nav))
+    {
+        return true;
+    }
+    corrOut = std::numeric_limits<double>::quiet_NaN();
+    return false;
+}
 } // namespace gnsstk

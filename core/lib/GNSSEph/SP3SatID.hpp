@@ -39,9 +39,9 @@
 #ifndef GNSSTK_SP3_SATID_HPP
 #define GNSSTK_SP3_SATID_HPP
 
+#include <iomanip>
 #include <iostream>
 #include <sstream>
-#include <iomanip>
 
 #include "Exception.hpp"
 #include "SatID.hpp"
@@ -55,117 +55,129 @@
 
 namespace gnsstk
 {
-      /// @todo determine if this really belongs with the SP3 files
+/// @todo determine if this really belongs with the SP3 files
 
-      /// @ingroup FileHandling
-      //@{
+/// @ingroup FileHandling
+//@{
 
-   class SP3SatID : public SatID
-   {
-   public:
+class SP3SatID : public SatID
+{
+  public:
+    /// empty constructor, creates an invalid object
+    SP3SatID() = default;
 
-         /// empty constructor, creates an invalid object
-      SP3SatID() = default;
+    /// explicit constructor, no defaults, SP3 systems only
+    SP3SatID(int p, SatelliteSystem s) noexcept;
 
-         /// explicit constructor, no defaults, SP3 systems only
-      SP3SatID(int p, SatelliteSystem s) noexcept;
+    /** constructor from string
+     * @throw Exception
+     */
+    SP3SatID(const std::string &str)
+    {
+        try
+        {
+            fromString(str);
+        }
+        catch (Exception &e)
+        {
+            GNSSTK_RETHROW(e);
+        }
+    }
 
-         /** constructor from string
-          * @throw Exception
-          */
-      SP3SatID(const std::string& str)
-      {
-         try { fromString(str); }
-         catch(Exception& e) { GNSSTK_RETHROW(e); }
-      }
+    /// cast SatID to SP3SatID
+    SP3SatID(const SatID &sat) noexcept : SatID(sat)
+    {
+        validate();
+    }
 
-         /// cast SatID to SP3SatID
-      SP3SatID(const SatID& sat) noexcept
-            : SatID(sat)
-      { validate(); }
+    /// set the fill character used in output
+    /// return the current fill character
+    char setfill(char c) noexcept
+    {
+        char csave = fillchar;
+        fillchar = c;
+        return csave;
+    }
 
-         /// set the fill character used in output
-         /// return the current fill character
-      char setfill(char c) noexcept
-      { char csave=fillchar; fillchar=c; return csave; }
+    /// get the fill character used in output
+    char getfill() noexcept
+    {
+        return fillchar;
+    }
 
-         /// get the fill character used in output
-      char getfill() noexcept
-      { return fillchar; }
+    // operator=, copy constructor and destructor built by compiler
 
-         // operator=, copy constructor and destructor built by compiler
+    /// operator == for SP3SatID
+    bool operator==(const SP3SatID &right) const
+    {
+        return ((system == right.system) && (id == right.id));
+    }
 
-         /// operator == for SP3SatID
-      bool operator==(const SP3SatID& right) const
-      {
-         return ((system == right.system) && (id == right.id));
-      }
+    /// operator != for SP3SatID
+    bool operator!=(const SP3SatID &right) const
+    {
+        return !(operator==(right));
+    }
 
-         /// operator != for SP3SatID
-      bool operator!=(const SP3SatID& right) const
-      {
-         return !(operator==(right));
-      }
-
-         /// operator < (less than) for SP3SatID : order by system, then number
-      bool operator<(const SP3SatID& right) const
-      {
-         if(system==right.system)
+    /// operator < (less than) for SP3SatID : order by system, then number
+    bool operator<(const SP3SatID &right) const
+    {
+        if (system == right.system)
             return (id < right.id);
-         return (system < right.system);
-      }
+        return (system < right.system);
+    }
 
-         /// operator > (greater than) for SP3SatID
-      bool operator>(const SP3SatID& right) const
-      {
-         return (!operator<(right) && !operator==(right));
-      }
+    /// operator > (greater than) for SP3SatID
+    bool operator>(const SP3SatID &right) const
+    {
+        return (!operator<(right) && !operator==(right));
+    }
 
-         /// operator >= (greater than or equal) for SP3SatID
-      bool operator>=(const SP3SatID& right) const
-      {
-         return (!operator<(right));
-      }
+    /// operator >= (greater than or equal) for SP3SatID
+    bool operator>=(const SP3SatID &right) const
+    {
+        return (!operator<(right));
+    }
 
-         /// operator <= (less than or equal) for SP3SatID
-      bool operator<=(const SP3SatID& right) const
-      {
-         return (!operator>(right));
-      }
+    /// operator <= (less than or equal) for SP3SatID
+    bool operator<=(const SP3SatID &right) const
+    {
+        return (!operator>(right));
+    }
 
-         /// return a character based on the system
-         /// return the single-character system descriptor
-         /// @note return only SP3 types, for non-SP3 systems return '?'
-      char systemChar() const noexcept;
+    /// return a character based on the system
+    /// return the single-character system descriptor
+    /// @note return only SP3 types, for non-SP3 systems return '?'
+    char systemChar() const noexcept;
 
-      std::string systemString() const noexcept;
+    std::string systemString() const noexcept;
 
-         /** read from string
-          * @note GPS is default system (no or unknown system char)
-          * @throw Exception
-          */
-      void fromString(const std::string s);
+    /** read from string
+     * @note GPS is default system (no or unknown system char)
+     * @throw Exception
+     */
+    void fromString(const std::string s);
 
-         /// convert to string
-      std::string toString() const noexcept;
+    /// convert to string
+    std::string toString() const noexcept;
 
-   private:
-         /// If an unsupported system is used, set to unknown and PRN -1.
-      void validate();
+  private:
+    /// If an unsupported system is used, set to unknown and PRN -1.
+    void validate();
 
-         /// fill character used during stream output
-      GNSSTK_EXPORT static char fillchar;
+    /// fill character used during stream output
+    GNSSTK_EXPORT static char fillchar;
 
-   }; // class SP3SatID
+}; // class SP3SatID
 
-      /// stream output for SP3SatID
-   inline std::ostream& operator<<(std::ostream& s, const SP3SatID& sat)
-   {
-      s << sat.toString();
-      return s;
-   }
+/// stream output for SP3SatID
+inline std::ostream &operator<<(std::ostream &s, const SP3SatID &sat)
+{
+    s << sat.toString();
+    return s;
+}
 
-      //@}
+//@}
 
 } // namespace gnsstk
 

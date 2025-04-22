@@ -44,22 +44,21 @@
 #ifndef GNSSTK_GPS_CONSTANTS_HPP
 #define GNSSTK_GPS_CONSTANTS_HPP
 
-
 namespace gnsstk
 {
-   /** @addtogroup ephemcalc */
-   //@{
+/** @addtogroup ephemcalc */
+//@{
 
-   /** The maximum number of active satellites in the GPS
-       * constellation.(Old version of MAX_PRN_GPS) */
-   const long MAX_PRN        = 32;
+/** The maximum number of active satellites in the GPS
+ * constellation.(Old version of MAX_PRN_GPS) */
+const long MAX_PRN = 32;
 
-      /** The maximum number of active satellites in the GPS
-       * constellation. */
-   const long MAX_PRN_GPS    = 32;
+/** The maximum number of active satellites in the GPS
+ * constellation. */
+const long MAX_PRN_GPS = 32;
 
-   //@}
+//@}
 
-} // namespace
+} // namespace gnsstk
 
 #endif

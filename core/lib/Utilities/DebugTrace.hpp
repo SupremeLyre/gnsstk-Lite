@@ -39,59 +39,60 @@
 #ifndef GNSSTK_DEBUGTRACE_HPP
 #define GNSSTK_DEBUGTRACE_HPP
 
-#include <atomic>
-#include <sstream>
-#include <iomanip>
 #include "gnsstk_export.h"
+#include <atomic>
+#include <iomanip>
+#include <sstream>
 
 namespace gnsstk
 {
-      /** Class for debugging output.
-       *
-       * Use DEBUGTRACE_FUNCTION at the start of a function to have
-       * trace output at the start and at the return from the function
-       * with the name of that function.  Indentation is increased to
-       * indicate call stack.
-       *
-       * Use DEBUGTRACE with an argument containing stream operations to
-       * output any debugging information as desired.
-       *
-       * Use DEBUGTRACE_ENABLE to enable the trace output at run-time.
-       * By default, the trace output is disabled.
-       *
-       * Define the macro "DEBUG_NO_TRACE" to completely disable tracing
-       * in the library and applications, which can be used to improve
-       * performance if no tracing is desired.
-       *
-       * Generally speaking, the class should not be used directly,
-       * instead use the macros described above.
-       *
-       * @note Although a mutex is used to serialize access to the
-       * indent data member, no attempt is currently made to
-       * differentiate indentation levels across multiple threads.  As
-       * such, the indentation may get confusing in a multi-thread
-       * application.
-       */
-   class DebugTrace
-   {
-   public:
-         /** Start a function trace by printing the function name and indenting.
-          * @param[in] funcName the name of the function to print when
-          *   entering and leaving. */
-      DebugTrace(const std::string funcName);
-      ~DebugTrace();
-         /// If enabled is true, print \c s to stderr.
-      static void trace(const std::string& s);
-         /// If true, debugging/trace output will be printed to stderr.
-      GNSSTK_EXPORT static std::atomic<bool> enabled;
-   private:
-         /** Save the name of the function so that the destructor
-          * knows what to print. */
-      std::string functionName;
-         /// How many spaces to indent the trace output.
-      static std::atomic<unsigned> indent;
-   };
-}
+/** Class for debugging output.
+ *
+ * Use DEBUGTRACE_FUNCTION at the start of a function to have
+ * trace output at the start and at the return from the function
+ * with the name of that function.  Indentation is increased to
+ * indicate call stack.
+ *
+ * Use DEBUGTRACE with an argument containing stream operations to
+ * output any debugging information as desired.
+ *
+ * Use DEBUGTRACE_ENABLE to enable the trace output at run-time.
+ * By default, the trace output is disabled.
+ *
+ * Define the macro "DEBUG_NO_TRACE" to completely disable tracing
+ * in the library and applications, which can be used to improve
+ * performance if no tracing is desired.
+ *
+ * Generally speaking, the class should not be used directly,
+ * instead use the macros described above.
+ *
+ * @note Although a mutex is used to serialize access to the
+ * indent data member, no attempt is currently made to
+ * differentiate indentation levels across multiple threads.  As
+ * such, the indentation may get confusing in a multi-thread
+ * application.
+ */
+class DebugTrace
+{
+  public:
+    /** Start a function trace by printing the function name and indenting.
+     * @param[in] funcName the name of the function to print when
+     *   entering and leaving. */
+    DebugTrace(const std::string funcName);
+    ~DebugTrace();
+    /// If enabled is true, print \c s to stderr.
+    static void trace(const std::string &s);
+    /// If true, debugging/trace output will be printed to stderr.
+    GNSSTK_EXPORT static std::atomic<bool> enabled;
+
+  private:
+    /** Save the name of the function so that the destructor
+     * knows what to print. */
+    std::string functionName;
+    /// How many spaces to indent the trace output.
+    static std::atomic<unsigned> indent;
+};
+} // namespace gnsstk
 
 // for windows, which doesn't define __PRETTY_FUNCTION__
 #ifdef WIN32
@@ -104,25 +105,22 @@ namespace gnsstk
 #define DEBUGTRACE_FUNCTION()
 #define DEBUGTRACE(EXPR)
 #else
-#define DEBUGTRACE_ENABLE()                                             \
-   {                                                                    \
-      gnsstk::DebugTrace::enabled = true;                               \
-      std::cerr << "WARNING: Tracing is enabled, expect slow performance" \
-                << std::endl;                                           \
-   }
-#define DEBUGTRACE_DISABLE()                     \
-   {                                             \
-      gnsstk::DebugTrace::enabled = false;       \
-   }
-#define DEBUGTRACE_FUNCTION()                                   \
-   gnsstk::DebugTrace gnsstkTraceObject(__PRETTY_FUNCTION__)
-#define DEBUGTRACE(EXPR)                                 \
-   {                                                     \
-      std::ostringstream os;                             \
-      os << "* " << std::fixed << std::setprecision(15)  \
-         << EXPR << std::endl;                           \
-      gnsstk::DebugTrace::trace(os.str());               \
-   }
+#define DEBUGTRACE_ENABLE()                                                                                            \
+    {                                                                                                                  \
+        gnsstk::DebugTrace::enabled = true;                                                                            \
+        std::cerr << "WARNING: Tracing is enabled, expect slow performance" << std::endl;                              \
+    }
+#define DEBUGTRACE_DISABLE()                                                                                           \
+    {                                                                                                                  \
+        gnsstk::DebugTrace::enabled = false;                                                                           \
+    }
+#define DEBUGTRACE_FUNCTION() gnsstk::DebugTrace gnsstkTraceObject(__PRETTY_FUNCTION__)
+#define DEBUGTRACE(EXPR)                                                                                               \
+    {                                                                                                                  \
+        std::ostringstream os;                                                                                         \
+        os << "* " << std::fixed << std::setprecision(15) << EXPR << std::endl;                                        \
+        gnsstk::DebugTrace::trace(os.str());                                                                           \
+    }
 #endif
 
 #endif // GNSSTK_DEBUGTRACE_HPP

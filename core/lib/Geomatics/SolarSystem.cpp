@@ -71,92 +71,89 @@ using namespace std;
 
 namespace gnsstk
 {
-   //---------------------------------------------------------------------------------
-      /* Compute the ECEF (terrestrial frame, relative to Earth's center) position
-         of a Solar System body at the input time, with units meters. param body
-         SolarSystem::Planet of interest (input) param time  Time of interest
-         (input) return ECEF Position of the body in meters. */
-   Position SolarSystem::ECEFPosition(const SolarSystemEphemeris::Planet body,
-                                      const EphTime& time)
-   {
-      try
-      {
-         Position Pos, Vel;
-         ECEFPositionVelocity(body, time, Pos, Vel);
-         return Pos;
-      }
-      catch (Exception& e)
-      {
-         GNSSTK_RETHROW(e);
-      }
-   }
+//---------------------------------------------------------------------------------
+/* Compute the ECEF (terrestrial frame, relative to Earth's center) position
+   of a Solar System body at the input time, with units meters. param body
+   SolarSystem::Planet of interest (input) param time  Time of interest
+   (input) return ECEF Position of the body in meters. */
+Position SolarSystem::ECEFPosition(const SolarSystemEphemeris::Planet body, const EphTime &time)
+{
+    try
+    {
+        Position Pos, Vel;
+        ECEFPositionVelocity(body, time, Pos, Vel);
+        return Pos;
+    }
+    catch (Exception &e)
+    {
+        GNSSTK_RETHROW(e);
+    }
+}
 
-   //---------------------------------------------------------------------------------
-      /* Compute the ECEF (terrestrial frame, relative to Earth's center) position
-         and velocity of a Solar System body at the input time, with units meters
-         and m/s. param body  SolarSystem::Planet of interest (input) param time
-         Time of interest, in system TDB (input) return double PV[6] containing
-         position XYZ components (PV[0-2]) in meters
-          and velocity XYZ components (PV[3-5]) in m/sec. */
-   void
-   SolarSystem::ECEFPositionVelocity(const SolarSystemEphemeris::Planet body,
-                                     const EphTime& time, Position& Pos,
-                                     Position& Vel)
-   {
-      try
-      {
-         int i;
-         double PV[6];
+//---------------------------------------------------------------------------------
+/* Compute the ECEF (terrestrial frame, relative to Earth's center) position
+   and velocity of a Solar System body at the input time, with units meters
+   and m/s. param body  SolarSystem::Planet of interest (input) param time
+   Time of interest, in system TDB (input) return double PV[6] containing
+   position XYZ components (PV[0-2]) in meters
+    and velocity XYZ components (PV[3-5]) in m/sec. */
+void SolarSystem::ECEFPositionVelocity(const SolarSystemEphemeris::Planet body, const EphTime &time, Position &Pos,
+                                       Position &Vel)
+{
+    try
+    {
+        int i;
+        double PV[6];
 
-            // get inertial frame position and velocity relative to Earth
-         EphTime ttag(time);
-         ttag.convertSystemTo(TimeSystem::TDB);
-         relativeInertialPositionVelocity(ttag.dMJD(), body, idEarth,
-                                          PV); // km,km/day
+        // get inertial frame position and velocity relative to Earth
+        EphTime ttag(time);
+        ttag.convertSystemTo(TimeSystem::TDB);
+        relativeInertialPositionVelocity(ttag.dMJD(), body, idEarth,
+                                         PV); // km,km/day
 
-            // copy into 3-vectors
-         Vector<double> iPos(3), iVel(3), tPos(3), tVel(3);
-         for (i = 0; i < 3; i++)
-         {
+        // copy into 3-vectors
+        Vector<double> iPos(3), iVel(3), tPos(3), tVel(3);
+        for (i = 0; i < 3; i++)
+        {
             iPos(i) = PV[i];
             iVel(i) = PV[i + 3];
-         }
+        }
 
-            // get EOP at time
-         ttag.convertSystemTo(TimeSystem::UTC);
-         EarthOrientation eo = EOPStore::getEOP(ttag.dMJD(), iersconv);
+        // get EOP at time
+        ttag.convertSystemTo(TimeSystem::UTC);
+        EarthOrientation eo = EOPStore::getEOP(ttag.dMJD(), iersconv);
 
-            // get transformation i-to-t = transpose(terrestrial-to-inertial)
-         Matrix<double> Rot = transpose(eo.ECEFtoInertial(time));
+        // get transformation i-to-t = transpose(terrestrial-to-inertial)
+        Matrix<double> Rot = transpose(eo.ECEFtoInertial(time));
 
-            // transform inertial to terrestrial
-         tPos = Rot * iPos;
-         tVel = Rot * iVel;
+        // transform inertial to terrestrial
+        tPos = Rot * iPos;
+        tVel = Rot * iVel;
 
-            // change units
-         tPos *= 1000.0;           // convert km to meters
-         tVel *= 1000.0 / 86400.0; // convert km/day to m/s
+        // change units
+        tPos *= 1000.0;           // convert km to meters
+        tVel *= 1000.0 / 86400.0; // convert km/day to m/s
 
-            // copy out
-         Pos = Position(tPos(0), tPos(1), tPos(2), Position::Cartesian);
-         Vel = Position(tVel(0), tVel(1), tVel(2), Position::Cartesian);
+        // copy out
+        Pos = Position(tPos(0), tPos(1), tPos(2), Position::Cartesian);
+        Vel = Position(tVel(0), tVel(1), tVel(2), Position::Cartesian);
 
-         return;
-      }
-      catch (Exception& e)
-      {
-         GNSSTK_RETHROW(e);
-      }
-      catch (exception& e)
-      {
-         Exception E("std except: " + string(e.what()));
-         GNSSTK_THROW(E);
-      }
-      catch (...)
-      {
-         Exception e("Unknown exception");
-         GNSSTK_THROW(e);
-      }
-   }
+        return;
+    }
+    catch (Exception &e)
+    {
+        GNSSTK_RETHROW(e);
+    }
+    catch (exception &e)
+    {
+        Exception E("std except: " + string(e.what()));
+        GNSSTK_THROW(E);
+    }
+    catch (...)
+    {
+        Exception e("Unknown exception");
+        GNSSTK_THROW(e);
+    }
+}
 
 } // end namespace gnsstk

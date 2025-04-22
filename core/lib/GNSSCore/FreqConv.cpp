@@ -40,35 +40,50 @@
 
 namespace gnsstk
 {
-   double getFrequency(CarrierBand band)
-   {
-      switch (band)
-      {
-         case CarrierBand::L1:    return FREQ_GPS_L1;
-         case CarrierBand::L2:    return FREQ_GPS_L2;
-         case CarrierBand::L5:    return FREQ_GPS_L5;
-         case CarrierBand::G1:    return FREQ_GLONASS_G1;
-         case CarrierBand::G1a:   return FREQ_GLONASS_G1a;
-         case CarrierBand::G2a:   return FREQ_GLONASS_G2a;
-         case CarrierBand::G2:    return FREQ_GLONASS_G2;
-         case CarrierBand::G3:    return FREQ_GLONASS_G3;
-         case CarrierBand::E5b:   return FREQ_GALILEO_E5b;
-         case CarrierBand::E5ab:  return FREQ_GALILEO_E5;
-         case CarrierBand::E6:    return FREQ_GALILEO_E6;
-         case CarrierBand::B1:    return FREQ_BEIDOU_B1;
-         case CarrierBand::B2:    return FREQ_BEIDOU_B2b;
-         case CarrierBand::B3:    return FREQ_BEIDOU_B3;
-         case CarrierBand::I9:    return FREQ_NAVIC_S;
-         default:                 return 0.0;
-      }
-   }
+double getFrequency(CarrierBand band)
+{
+    switch (band)
+    {
+    case CarrierBand::L1:
+        return FREQ_GPS_L1;
+    case CarrierBand::L2:
+        return FREQ_GPS_L2;
+    case CarrierBand::L5:
+        return FREQ_GPS_L5;
+    case CarrierBand::G1:
+        return FREQ_GLONASS_G1;
+    case CarrierBand::G1a:
+        return FREQ_GLONASS_G1a;
+    case CarrierBand::G2a:
+        return FREQ_GLONASS_G2a;
+    case CarrierBand::G2:
+        return FREQ_GLONASS_G2;
+    case CarrierBand::G3:
+        return FREQ_GLONASS_G3;
+    case CarrierBand::E5b:
+        return FREQ_GALILEO_E5b;
+    case CarrierBand::E5ab:
+        return FREQ_GALILEO_E5;
+    case CarrierBand::E6:
+        return FREQ_GALILEO_E6;
+    case CarrierBand::B1:
+        return FREQ_BEIDOU_B1;
+    case CarrierBand::B2:
+        return FREQ_BEIDOU_B2b;
+    case CarrierBand::B3:
+        return FREQ_BEIDOU_B3;
+    case CarrierBand::I9:
+        return FREQ_NAVIC_S;
+    default:
+        return 0.0;
+    }
+}
 
-
-   double getGamma(CarrierBand band1, CarrierBand band2)
-   {
-      double freq1 = getFrequency(band1);
-      double freq2 = getFrequency(band2);
-      double gammaRoot = freq1/freq2;
-      return gammaRoot * gammaRoot;
-   }
+double getGamma(CarrierBand band1, CarrierBand band2)
+{
+    double freq1 = getFrequency(band1);
+    double freq2 = getFrequency(band2);
+    double gammaRoot = freq1 / freq2;
+    return gammaRoot * gammaRoot;
+}
 } // namespace gnsstk

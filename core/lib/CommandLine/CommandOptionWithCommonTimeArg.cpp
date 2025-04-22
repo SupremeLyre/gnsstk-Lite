@@ -41,42 +41,42 @@
  * Command line options with time arguments
  */
 
+#include "CommandOptionWithCommonTimeArg.hpp"
 #include "StringUtils.hpp"
 #include "TimeString.hpp"
-#include "CommandOptionWithCommonTimeArg.hpp"
 
 using namespace std;
 
 namespace gnsstk
 {
-   string CommandOptionWithCommonTimeArg :: checkArguments()
-   {
-      string errstr = CommandOptionWithAnyArg::checkArguments();
+string CommandOptionWithCommonTimeArg ::checkArguments()
+{
+    string errstr = CommandOptionWithAnyArg::checkArguments();
 
-      if (errstr != string())
-         return errstr;
+    if (errstr != string())
+        return errstr;
 
-      vector<string>::size_type vecindex;
-      for(vecindex = 0; vecindex < value.size(); vecindex++)
-      {
-         if (timeSpec != string())
-         {
+    vector<string>::size_type vecindex;
+    for (vecindex = 0; vecindex < value.size(); vecindex++)
+    {
+        if (timeSpec != string())
+        {
             try
             {
-               CommonTime t;
-               scanTime(t, value[vecindex], timeSpec);
-               times.push_back(t);
+                CommonTime t;
+                scanTime(t, value[vecindex], timeSpec);
+                times.push_back(t);
             }
             catch (...)
             {
-               errstr += "\"" + value[vecindex] + "\" is not a valid time.";
+                errstr += "\"" + value[vecindex] + "\" is not a valid time.";
             }
-         }
-         else
+        }
+        else
             errstr += "\"" + value[vecindex] + "\" is not a valid time.";
-      }
+    }
 
-      return errstr;
-   }
+    return errstr;
+}
 
 } // namespace gnsstk

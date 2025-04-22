@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -40,65 +39,55 @@
 
 namespace gnsstk
 {
-   NavSignalID ::
-   NavSignalID()
-         : system(SatelliteSystem::Unknown),
-           nav(NavType::Unknown)
-   {
-   }
+NavSignalID ::NavSignalID() : system(SatelliteSystem::Unknown), nav(NavType::Unknown)
+{
+}
 
+NavSignalID ::NavSignalID(SatelliteSystem sys, CarrierBand car, TrackingCode track, NavType nmt, uint32_t mcode,
+                          uint32_t mcodeMask)
+    : system(sys), obs(gnsstk::ObservationType::NavMsg, car, track), nav(nmt)
+{
+    obs.setMcodeBits(mcode, mcodeMask);
+}
 
-   NavSignalID ::
-   NavSignalID(SatelliteSystem sys, CarrierBand car, TrackingCode track,
-               NavType nmt, uint32_t mcode, uint32_t mcodeMask)
-         : system(sys),
-           obs(gnsstk::ObservationType::NavMsg, car, track),
-           nav(nmt)
-   {
-      obs.setMcodeBits(mcode, mcodeMask);
-   }
-
-
-   NavSignalID ::
-   NavSignalID(SatelliteSystem sys, const ObsID& oid, NavType nmt)
-         : system(sys),
-           obs(oid),
-           nav(nmt)
-   {
-   }
-
+NavSignalID ::NavSignalID(SatelliteSystem sys, const ObsID &oid, NavType nmt) : system(sys), obs(oid), nav(nmt)
+{
+}
 
 // Use this macro in operator<< to figure out why things fail
 #if 0
-#define ORDERRET(RV) {                                                  \
-      std::cerr << "order() returning " << RV << " @ " << __LINE__      \
-                << std::endl;                                           \
-      return RV;                                                        \
-   }
+#define ORDERRET(RV)                                                                                                   \
+    {                                                                                                                  \
+        std::cerr << "order() returning " << RV << " @ " << __LINE__ << std::endl;                                     \
+        return RV;                                                                                                     \
+    }
 #else
 #define ORDERRET(RV) return RV;
 #endif
 
-   int NavSignalID ::
-   order(const NavSignalID& right) const
-   {
-      // std::cerr << __PRETTY_FUNCTION__ << std::endl;
-      if (system < right.system) ORDERRET(-1);
-      if (system > right.system) ORDERRET(1);
-      if (obs < right.obs) ORDERRET(-1);
-      if (right.obs < obs) ORDERRET(1);
-      if ((nav != NavType::Any) && (right.nav != NavType::Any))
-      {
-         if (nav < right.nav) ORDERRET(-1);
-         if (nav > right.nav) ORDERRET(1);
-      }
-      ORDERRET(0);
-   }
-
-
-   bool NavSignalID ::
-   isWild() const
-   {
-      return (obs.isWild() || (nav == NavType::Any));
-   }
+int NavSignalID ::order(const NavSignalID &right) const
+{
+    // std::cerr << __PRETTY_FUNCTION__ << std::endl;
+    if (system < right.system)
+        ORDERRET(-1);
+    if (system > right.system)
+        ORDERRET(1);
+    if (obs < right.obs)
+        ORDERRET(-1);
+    if (right.obs < obs)
+        ORDERRET(1);
+    if ((nav != NavType::Any) && (right.nav != NavType::Any))
+    {
+        if (nav < right.nav)
+            ORDERRET(-1);
+        if (nav > right.nav)
+            ORDERRET(1);
+    }
+    ORDERRET(0);
 }
+
+bool NavSignalID ::isWild() const
+{
+    return (obs.isWild() || (nav == NavType::Any));
+}
+} // namespace gnsstk

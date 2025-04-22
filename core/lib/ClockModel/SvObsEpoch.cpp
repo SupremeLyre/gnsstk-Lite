@@ -43,18 +43,17 @@ using namespace gnsstk;
 
 namespace gnsstk
 {
-      // These are just to facilitate debugging. The format of the data output
-      // is quite ad-hoc and may change.
-   std::ostream& operator<<(std::ostream& s, const SvObsEpoch& obs)
-      noexcept
-   {
-      SvObsEpoch::const_iterator i;
-      for (i=obs.begin(); i != obs.end(); i++)
-      {
-         if (i != obs.begin())
+// These are just to facilitate debugging. The format of the data output
+// is quite ad-hoc and may change.
+std::ostream &operator<<(std::ostream &s, const SvObsEpoch &obs) noexcept
+{
+    SvObsEpoch::const_iterator i;
+    for (i = obs.begin(); i != obs.end(); i++)
+    {
+        if (i != obs.begin())
             s << ", ";
-         s << i->first << ": " << i->second;
-      }
-      return s;
-   }
-}  // namespace
+        s << i->first << ": " << i->second;
+    }
+    return s;
+}
+} // namespace gnsstk

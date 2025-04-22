@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -44,72 +43,71 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Defines the class that provides the ability to convert
-       * GLONASS to/from UT1 (UTC Greenwich, to distinguish it from
-       * UTC(SU)), using data extracted from GLONASS navigation
-       * messages.
-       * The algorithm is sufficiently different from what's in
-       * StdNavTimeOffset (in that the time difference is between the
-       * ephemeris and almanac times rather than some reference time
-       * and the desired time) that it's implemented apart from
-       * StdNavTimeOffset. */
-   class GLOFNavUT1TimeOffset : public TimeOffsetData
-   {
-   public:
-         /// Initialize all data to 0.
-      GLOFNavUT1TimeOffset();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GLOFNavUT1TimeOffset>(*this); }
+/** Defines the class that provides the ability to convert
+ * GLONASS to/from UT1 (UTC Greenwich, to distinguish it from
+ * UTC(SU)), using data extracted from GLONASS navigation
+ * messages.
+ * The algorithm is sufficiently different from what's in
+ * StdNavTimeOffset (in that the time difference is between the
+ * ephemeris and almanac times rather than some reference time
+ * and the desired time) that it's implemented apart from
+ * StdNavTimeOffset. */
+class GLOFNavUT1TimeOffset : public TimeOffsetData
+{
+  public:
+    /// Initialize all data to 0.
+    GLOFNavUT1TimeOffset();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GLOFNavUT1TimeOffset>(*this);
+    }
 
-         /** Print the contents of this object in a human-readable
-          * format.
-          * @param[in,out] s The stream to write the data to.
-          * @param[in] dl The level of detail the output should contain. */
-      void dump(std::ostream& s, DumpDetail dl) const override;
+    /** Print the contents of this object in a human-readable
+     * format.
+     * @param[in,out] s The stream to write the data to.
+     * @param[in] dl The level of detail the output should contain. */
+    void dump(std::ostream &s, DumpDetail dl) const override;
 
-         /** Print the contents of this object in a terse format.
-          * @param[in,out] s The stream to write the data to. */
-      void dumpTerse(std::ostream& s) const;
+    /** Print the contents of this object in a terse format.
+     * @param[in,out] s The stream to write the data to. */
+    void dumpTerse(std::ostream &s) const;
 
-         /** Get the offset, in seconds, to apply to times when
-          * converting them from fromSys to toSys.
-          * @param[in] fromSys The time system to convert from.
-          * @param[in] toSys The time system to convert to.
-          * @param[in] when The time being converted, in the same time
-          *   system as fromSys.
-          * @param[out] offset The offset in seconds where
-          *   when(toSys)=when(fromSys)-offset.
-          * @throw AssertionFailure if when's time system is not fromSys.
-          * @return true if an offset is available, false if not. */
-      bool getOffset(TimeSystem fromSys, TimeSystem toSys,
-                     const CommonTime& when, double& offset)
-         const override;
+    /** Get the offset, in seconds, to apply to times when
+     * converting them from fromSys to toSys.
+     * @param[in] fromSys The time system to convert from.
+     * @param[in] toSys The time system to convert to.
+     * @param[in] when The time being converted, in the same time
+     *   system as fromSys.
+     * @param[out] offset The offset in seconds where
+     *   when(toSys)=when(fromSys)-offset.
+     * @throw AssertionFailure if when's time system is not fromSys.
+     * @return true if an offset is available, false if not. */
+    bool getOffset(TimeSystem fromSys, TimeSystem toSys, const CommonTime &when, double &offset) const override;
 
-         /** The set of time system conversions this class is capable of making.
-          * @return a set of supported time system conversion to/from pairs. */
-      TimeCvtSet getConversions() const override;
+    /** The set of time system conversions this class is capable of making.
+     * @return a set of supported time system conversion to/from pairs. */
+    TimeCvtSet getConversions() const override;
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
+    double tauc; ///< Non-integer correction between UTC(SU) and GLONASS.
+    double B1;   ///< Time bias in seconds.
+    double B2;   ///< Time drift in s/s.
+    unsigned KP; ///< Leap second indicator.
+    unsigned NT; ///< Ephemeris days since leap year.
+    unsigned NA; ///< Almanac days since leap year.
+};
 
-      double tauc; ///< Non-integer correction between UTC(SU) and GLONASS.
-      double B1;   ///< Time bias in seconds.
-      double B2;   ///< Time drift in s/s.
-      unsigned KP; ///< Leap second indicator.
-      unsigned NT; ///< Ephemeris days since leap year.
-      unsigned NA; ///< Almanac days since leap year.
-   };
+//@}
 
-      //@}
-
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GLOFNAVUT1TIMEOFFSET_HPP

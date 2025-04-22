@@ -45,102 +45,104 @@
 
 namespace gnsstk
 {
-      /**
-       Class format holds 3 flags for format, width and precision; use with
-       std ostream operator << */
-   class format
-   {
-      int form;   /// 0=general,1=float,2=scientific, default is 1
-      int wide;   ///< width in char
-      int prec;   ///< precision in char
+/**
+ Class format holds 3 flags for format, width and precision; use with
+ std ostream operator << */
+class format
+{
+    int form; /// 0=general,1=float,2=scientific, default is 1
+    int wide; ///< width in char
+    int prec; ///< precision in char
 
-   public:
-         /// Constructor
-      explicit format(int w, int p, int f = 1) : form(f), wide(w), prec(p) {}
+  public:
+    /// Constructor
+    explicit format(int w, int p, int f = 1) : form(f), wide(w), prec(p)
+    {
+    }
 
-         /// Set format to scientific
-      format& scientific()
-      {
-         form = 2;
-         return *this;
-      }
+    /// Set format to scientific
+    format &scientific()
+    {
+        form = 2;
+        return *this;
+    }
 
-         /// Set format to scientific
-      format& sci()
-      {
-         form = 2;
-         return *this;
-      }
+    /// Set format to scientific
+    format &sci()
+    {
+        form = 2;
+        return *this;
+    }
 
-         /// Set format to fixed
-      format& fixed()
-      {
-         form = 1;
-         return *this;
-      }
+    /// Set format to fixed
+    format &fixed()
+    {
+        form = 1;
+        return *this;
+    }
 
-         /// Set format to fixed
-      format& fix()
-      {
-         form = 1;
-         return *this;
-      }
+    /// Set format to fixed
+    format &fix()
+    {
+        form = 1;
+        return *this;
+    }
 
-         /// Set format to general
-      format& general()
-      {
-         form = 0;
-         return *this;
-      }
+    /// Set format to general
+    format &general()
+    {
+        form = 0;
+        return *this;
+    }
 
-         /// Set format to general
-      format& gen()
-      {
-         form = 0;
-         return *this;
-      }
+    /// Set format to general
+    format &gen()
+    {
+        form = 0;
+        return *this;
+    }
 
-         /// Set width to w characters
-      format& width(int w)
-      {
-         wide = w;
-         return *this;
-      }
+    /// Set width to w characters
+    format &width(int w)
+    {
+        wide = w;
+        return *this;
+    }
 
-         /// Set width to w characters
-      format& w(int w)
-      {
-         wide = w;
-         return *this;
-      }
+    /// Set width to w characters
+    format &w(int w)
+    {
+        wide = w;
+        return *this;
+    }
 
-         /// Set precision to p digits
-      format& precision(int p)
-      {
-         prec = p;
-         return *this;
-      }
+    /// Set precision to p digits
+    format &precision(int p)
+    {
+        prec = p;
+        return *this;
+    }
 
-         /// Set precision to p digits
-      format& p(int p)
-      {
-         prec = p;
-         return *this;
-      }
+    /// Set precision to p digits
+    format &p(int p)
+    {
+        prec = p;
+        return *this;
+    }
 
-         /// Set both width and precision
-      format& wp(int w, int p)
-      {
-         prec = p;
-         wide = w;
-         return *this;
-      }
+    /// Set both width and precision
+    format &wp(int w, int p)
+    {
+        prec = p;
+        wide = w;
+        return *this;
+    }
 
-         /// ostream operator for format
-      friend std::ostream& operator<<(std::ostream& os, const format& f);
+    /// ostream operator for format
+    friend std::ostream &operator<<(std::ostream &os, const format &f);
 
-   }; // end class format
+}; // end class format
 
-   //---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 } // namespace gnsstk
 #endif

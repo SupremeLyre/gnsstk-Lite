@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -37,25 +36,22 @@
 //
 //==============================================================================
 #include "GalINavIono.hpp"
+#include "FreqConv.hpp"
 #include "TimeString.hpp"
 #include "YDSTime.hpp"
-#include "FreqConv.hpp"
 
 using namespace std;
 
 namespace gnsstk
 {
-   GalINavIono ::
-   GalINavIono()
-   {
-      weekFmt = "%4L(%4l)";
-      msgLenSec = 2.0;
-   }
-
-
-   bool GalINavIono ::
-   validate() const
-   {
-      return true;
-   }
+GalINavIono ::GalINavIono()
+{
+    weekFmt = "%4L(%4l)";
+    msgLenSec = 2.0;
 }
+
+bool GalINavIono ::validate() const
+{
+    return true;
+}
+} // namespace gnsstk

@@ -39,69 +39,69 @@
 #ifndef GNSSTK_REFRAMERLZ_HPP
 #define GNSSTK_REFRAMERLZ_HPP
 
-#include "RefFrameSys.hpp"
 #include "CommonTime.hpp"
+#include "RefFrameSys.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup geodeticgroup
-      //@{
+/// @ingroup geodeticgroup
+//@{
 
-      /// Reference frame realizations.  For general systems, see RefFrameSys.
-   enum class RefFrameRlz
-   {
-      Unknown,       ///< Unknown system or uninitialized value.
-      WGS84G0,       ///< WGS84, the original 1987 version.
-      WGS84G730,     ///< WGS84, GPS week 730 version
-      WGS84G873,     ///< WGS84, GPS week 873 version
-      WGS84G1150,    ///< WGS84, GPS week 1150 version
-      WGS84G1674,    ///< WGS84, GPS week 1674 version
-      WGS84G1762,    ///< WGS84, GPS week 1762 version
-      WGS84G2139,    ///< WGS84, GPS week 2139 version
-      ITRF94,        ///< ITRF, 1994 version
-      ITRF96,        ///< ITRF, 1996 version
-      ITRF97,        ///< ITRF, 1997 version
-      ITRF2000,      ///< ITRF, 2000 version
-      ITRF2005,      ///< ITRF, 2005 version
-      ITRF2008,      ///< ITRF, 2008 version
-      ITRF2014,      ///< ITRF, 2014 version
-      ITRF2020,      ///< ITRF, 2020 version
-      PZ90Y2007,     ///< PZ90 (GLONASS), 2007 version
-      PZ90KGS,       ///< PZ90 the "original"
-      CGCS2000Y2008, ///< CGCS200 (BDS)
-      Last           ///< Used to verify that all items are described at compile time
-   };
+/// Reference frame realizations.  For general systems, see RefFrameSys.
+enum class RefFrameRlz
+{
+    Unknown,       ///< Unknown system or uninitialized value.
+    WGS84G0,       ///< WGS84, the original 1987 version.
+    WGS84G730,     ///< WGS84, GPS week 730 version
+    WGS84G873,     ///< WGS84, GPS week 873 version
+    WGS84G1150,    ///< WGS84, GPS week 1150 version
+    WGS84G1674,    ///< WGS84, GPS week 1674 version
+    WGS84G1762,    ///< WGS84, GPS week 1762 version
+    WGS84G2139,    ///< WGS84, GPS week 2139 version
+    ITRF94,        ///< ITRF, 1994 version
+    ITRF96,        ///< ITRF, 1996 version
+    ITRF97,        ///< ITRF, 1997 version
+    ITRF2000,      ///< ITRF, 2000 version
+    ITRF2005,      ///< ITRF, 2005 version
+    ITRF2008,      ///< ITRF, 2008 version
+    ITRF2014,      ///< ITRF, 2014 version
+    ITRF2020,      ///< ITRF, 2020 version
+    PZ90Y2007,     ///< PZ90 (GLONASS), 2007 version
+    PZ90KGS,       ///< PZ90 the "original"
+    CGCS2000Y2008, ///< CGCS200 (BDS)
+    Last           ///< Used to verify that all items are described at compile time
+};
 
-      /** Define an iterator so C++11 can do things like
-       * for (RefFrameRlz i : RefFrameRlzIterator()) */
-   typedef EnumIterator<RefFrameRlz, RefFrameRlz::Unknown, RefFrameRlz::Last> RefFrameRlzIterator;
+/** Define an iterator so C++11 can do things like
+ * for (RefFrameRlz i : RefFrameRlzIterator()) */
+typedef EnumIterator<RefFrameRlz, RefFrameRlz::Unknown, RefFrameRlz::Last> RefFrameRlzIterator;
 
-      /** Return the system for a given reference frame realization.
-       * @param[in] rlz The reference frame realization whose system
-       *   is requested.
-       * @return the matching RefFrameSys (or Unknown if for some
-       *   reason there isn't one). */
-   RefFrameSys getRefFrameSys(RefFrameRlz rlz) noexcept;
+/** Return the system for a given reference frame realization.
+ * @param[in] rlz The reference frame realization whose system
+ *   is requested.
+ * @return the matching RefFrameSys (or Unknown if for some
+ *   reason there isn't one). */
+RefFrameSys getRefFrameSys(RefFrameRlz rlz) noexcept;
 
-      /** Return the realization for a given reference frame system and time.
-       * @param[in] sys The reference frame system whose realization
-       *   is requested.
-       * @param[in] when The time at which the reference frame realization
-       *   would have been in use.  Expected to be in UTC time system.
-       * @throw InvalidRequest if when is not in UTC.
-       * @return the matching RefFrameRlz (or Unknown if for some
-       *   reason there isn't one). */
-   RefFrameRlz getRefFrameRlz(RefFrameSys sys, const CommonTime& when);
+/** Return the realization for a given reference frame system and time.
+ * @param[in] sys The reference frame system whose realization
+ *   is requested.
+ * @param[in] when The time at which the reference frame realization
+ *   would have been in use.  Expected to be in UTC time system.
+ * @throw InvalidRequest if when is not in UTC.
+ * @return the matching RefFrameRlz (or Unknown if for some
+ *   reason there isn't one). */
+RefFrameRlz getRefFrameRlz(RefFrameSys sys, const CommonTime &when);
 
-   namespace StringUtils
-   {
-         /// Convert a RefFrameRlz to a whitespace-free string name.
-      std::string asString(RefFrameRlz e) noexcept;
-         /// Convert a string name to an RefFrameRlz
-      RefFrameRlz asRefFrameRlz(const std::string& s) noexcept;
-   }
+namespace StringUtils
+{
+/// Convert a RefFrameRlz to a whitespace-free string name.
+std::string asString(RefFrameRlz e) noexcept;
+/// Convert a string name to an RefFrameRlz
+RefFrameRlz asRefFrameRlz(const std::string &s) noexcept;
+} // namespace StringUtils
 
-      //@}
+//@}
 
 } // namespace gnsstk
 

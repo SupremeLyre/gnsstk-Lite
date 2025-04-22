@@ -50,127 +50,120 @@
 #include "Exception.hpp"
 #include "StringUtils.hpp"
 
-
 namespace gnsstk
 {
-      /// @ingroup TimeHandling
-      //@{
+/// @ingroup TimeHandling
+//@{
 
-   class TimeRange
-   {
-   public:
+class TimeRange
+{
+  public:
+    NEW_EXCEPTION_CLASS(TimeRangeException, Exception);
 
-      NEW_EXCEPTION_CLASS(TimeRangeException, Exception);
+    typedef std::pair<CommonTime, CommonTime> DTPair;
 
-      typedef std::pair<CommonTime, CommonTime> DTPair;
+    TimeRange();
 
-      TimeRange();
+    /**
+     * @throw TimeRangeException
+     */
+    TimeRange(const CommonTime &startDT, const CommonTime &endDT, const bool startInclusive = true,
+              const bool endInclusive = true);
 
-         /**
-          * @throw TimeRangeException
-          */
-      TimeRange(const CommonTime& startDT,
-                const CommonTime& endDT,
-                const bool startInclusive=true,
-                const bool endInclusive=true);
+    /** To cover potential use with RiseSetTimeList
+     * @throw TimeRangeException
+     */
+    TimeRange(DTPair dtPair, const bool startInclusive = true, const bool endInclusive = true);
 
-         /** To cover potential use with RiseSetTimeList
-          * @throw TimeRangeException
-          */
-      TimeRange(DTPair dtPair,
-                const bool startInclusive=true,
-                const bool endInclusive=true);
+    /// Copy construtor
+    TimeRange(const TimeRange &tr);
 
-         /// Copy construtor
-      TimeRange(const TimeRange& tr);
+    ~TimeRange() {};
 
-      ~TimeRange( ) {};
+    // Accessors
+    CommonTime getStart() const
+    {
+        return start;
+    }
+    CommonTime getEnd() const
+    {
+        return end;
+    }
 
-         // Accessors
-      CommonTime getStart() const { return start; }
-      CommonTime getEnd() const { return end; }
+    /**
+     * @throw TimeRangeException
+     */
+    void set(const CommonTime &startDT, const CommonTime &endDT, const bool startInclusive = true,
+             const bool endInclusive = true);
 
-         /**
-          * @throw TimeRangeException
-          */
-      void set( const CommonTime& startDT,
-                const CommonTime& endDT,
-                const bool startInclusive=true,
-                const bool endInclusive=true );
+    /** Return true is testDT is within the TimeRange.  Whether
+     * the boundaries are included is in accordance with the
+     * indications provided in includeStartTime and
+     * includeEndTime. */
+    bool inRange(const CommonTime &testDT) const;
 
-         /** Return true is testDT is within the TimeRange.  Whether
-          * the boundaries are included is in accordance with the
-          * indications provided in includeStartTime and
-          * includeEndTime. */
-      bool inRange( const CommonTime& testDT ) const;
+    /// Equivalence means all members are identical.
+    bool operator==(const TimeRange &right) const;
 
-         /// Equivalence means all members are identical.
-      bool operator==(const TimeRange& right) const;
+    /**
+     * Included to enable use in maps/sets.  This
+     * operator returns true if the start time of
+     * left is less than start time of right, regardless
+     * of end time.
+     */
+    bool operator<(const TimeRange &right) const;
 
-         /**
-          * Included to enable use in maps/sets.  This
-          * operator returns true if the start time of
-          * left is less than start time of right, regardless
-          * of end time.
-          */
-      bool operator<(const TimeRange& right) const;
+    /** True if start/end of this object are both prior
+     * to start of "right" */
+    bool isPriorTo(const TimeRange &right) const;
 
-         /** True if start/end of this object are both prior
-          * to start of "right" */
-      bool isPriorTo( const TimeRange& right ) const;
+    /** @return true if this.start < right.end and
+     * this.end > right.start */
+    bool overlaps(const TimeRange &right) const;
 
-         /** @return true if this.start < right.end and
-          * this.end > right.start */
-      bool overlaps( const TimeRange& right ) const;
+    /** @return true if this.start >= right.start and
+     * this.end <= right.end */
+    bool isSubsetOf(const TimeRange &right) const;
 
-         /** @return true if this.start >= right.start and
-          * this.end <= right.end */
-      bool isSubsetOf( const TimeRange& right ) const;
+    /** True if start/end of this object are both after the end
+     * of "right" */
+    bool isAfter(const TimeRange &right) const;
 
-         /** True if start/end of this object are both after the end
-          * of "right" */
-      bool isAfter( const TimeRange& right ) const;
+    /** Formatted string input.
+     * Assume string has
+     *  \li possible white space followed by
+     *  \li optional '[' or '(' (assume '['),
+     *  \li followed by a valid CommonTime string corresponding to fmt,
+     *  \li followed by a ','
+     *  \li followed by a valid CommonTime string corresponding to fmt,
+     *  \li followed by an optional ']' or ')' (assume ']').
+     * @throw TimeRangeException
+     * @throw StringUtils::StringException */
+    TimeRange &setToString(const std::string &str, const std::string &fmt);
 
-         /** Formatted string input.
-          * Assume string has
-          *  \li possible white space followed by
-          *  \li optional '[' or '(' (assume '['),
-          *  \li followed by a valid CommonTime string corresponding to fmt,
-          *  \li followed by a ','
-          *  \li followed by a valid CommonTime string corresponding to fmt,
-          *  \li followed by an optional ']' or ')' (assume ']').
-          * @throw TimeRangeException
-          * @throw StringUtils::StringException */
-      TimeRange& setToString( const std::string& str,
-                              const std::string& fmt);
+    /** Formatted print
+     * @throw StringUtils::StringException
+     */
+    std::string printf(const std::string formatArg = "%02m/%02d/%02y %02H:%02M:%02S") const;
 
-         /** Formatted print
-          * @throw StringUtils::StringException
-          */
-      std::string printf(const std::string formatArg="%02m/%02d/%02y %02H:%02M:%02S" ) const;
+    /// Dump method.
+    std::string dump(const std::string formatArg = "%02m/%02d/%02y %02H:%02M:%02S") const;
 
-         /// Dump method.
-      std::string dump(const std::string formatArg="%02m/%02d/%02y %02H:%02M:%02S" ) const;
+  protected:
+    CommonTime start;
+    CommonTime end;
+    bool includeStartTime;
+    bool includeEndTime;
 
-   protected:
-      CommonTime start;
-      CommonTime end;
-      bool includeStartTime;
-      bool includeEndTime;
+    /**
+     * @throw TimeRangeException
+     */
+    void init(const CommonTime &startDT, const CommonTime &endDT, const bool startInclusive = true,
+              const bool endInclusive = true);
+};
 
-         /**
-          * @throw TimeRangeException
-          */
-      void init(const CommonTime& startDT,
-                const CommonTime& endDT,
-                const bool startInclusive=true,
-                const bool endInclusive=true);
+//@}
 
-   };
-
-      //@}
-
-}   // end namespace
+} // namespace gnsstk
 
 #endif
-

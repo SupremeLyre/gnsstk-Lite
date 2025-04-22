@@ -39,37 +39,35 @@
 #ifndef GNSSTK_COMMANDOPTIONNAVENUMHELP_HPP
 #define GNSSTK_COMMANDOPTIONNAVENUMHELP_HPP
 
-#include <iostream>
 #include "CommandOption.hpp"
+#include <iostream>
 
 namespace gnsstk
 {
-      /** Command-line optino to provide help information for
-       * specifying codes, carrier frequencies and other common
-       * enumerations used throughout the NewNav code. */
-   class CommandOptionNavEnumHelp : public CommandOptionHelp
-   {
-   public:
-       /** Constructor.
-          * @param[in] shOpt The one character command line option.
-          *   Set to 0 if unused.
-          * @param[in] loOpt The long command option.  Set to
-          *   std::string() if unused.
-          * @param[in] desc A string describing what this option does.
-          */ 
-      CommandOptionNavEnumHelp(const char shOpt,
-                               const std::string& loOpt,
-                               const std::string& desc = std::string(
-                                  "Get help for enums, specify one of system,"
-                                  " obstype, carrier, range, antenna, navtype,"
-                                  " navmsgtype, health, validity, order,"
-                                  " detail"));
+/** Command-line optino to provide help information for
+ * specifying codes, carrier frequencies and other common
+ * enumerations used throughout the NewNav code. */
+class CommandOptionNavEnumHelp : public CommandOptionHelp
+{
+  public:
+    /** Constructor.
+     * @param[in] shOpt The one character command line option.
+     *   Set to 0 if unused.
+     * @param[in] loOpt The long command option.  Set to
+     *   std::string() if unused.
+     * @param[in] desc A string describing what this option does.
+     */
+    CommandOptionNavEnumHelp(const char shOpt, const std::string &loOpt,
+                             const std::string &desc = std::string("Get help for enums, specify one of system,"
+                                                                   " obstype, carrier, range, antenna, navtype,"
+                                                                   " navmsgtype, health, validity, order,"
+                                                                   " detail"));
 
-         /** Print the requested help information.
-          * @param[in] out The stream to which the help text will be printed.
-          * @param[in] pretty Unused in this child class. */
-      void printHelp(std::ostream& out, bool pretty = true) override;
-   };
-}
+    /** Print the requested help information.
+     * @param[in] out The stream to which the help text will be printed.
+     * @param[in] pretty Unused in this child class. */
+    void printHelp(std::ostream &out, bool pretty = true) override;
+};
+} // namespace gnsstk
 
 #endif // GNSSTK_COMMANDOPTIONNAVENUMHELP_HPP

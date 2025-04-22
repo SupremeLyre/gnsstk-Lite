@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -42,38 +41,44 @@
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(GPSSVConfig g) noexcept
-      {
-         switch (g)
-         {
-            case GPSSVConfig::noInfo:    return "NoInfo";
-            case GPSSVConfig::blockIIR:  return "BlockIIR";
-            case GPSSVConfig::blockIIRM: return "BlockIIRM";
-            case GPSSVConfig::blockIIF:  return "BlockIIF";
-            case GPSSVConfig::blockIII:  return "BlockIII";
-            case GPSSVConfig::blockIIIF: return "BlockIIIF";
-            default:                     return "???";
-         } // switch (g)
-      } // asString(GPSSVConfig)
+namespace StringUtils
+{
+std::string asString(GPSSVConfig g) noexcept
+{
+    switch (g)
+    {
+    case GPSSVConfig::noInfo:
+        return "NoInfo";
+    case GPSSVConfig::blockIIR:
+        return "BlockIIR";
+    case GPSSVConfig::blockIIRM:
+        return "BlockIIRM";
+    case GPSSVConfig::blockIIF:
+        return "BlockIIF";
+    case GPSSVConfig::blockIII:
+        return "BlockIII";
+    case GPSSVConfig::blockIIIF:
+        return "BlockIIIF";
+    default:
+        return "???";
+    } // switch (g)
+} // asString(GPSSVConfig)
 
-
-      GPSSVConfig asGPSSVConfig(const std::string& s) noexcept
-      {
-         if (s == "NoInfo")
-            return GPSSVConfig::noInfo;
-         if (s == "BlockIIR")
-            return GPSSVConfig::blockIIR;
-         if (s == "BlockIIRM")
-            return GPSSVConfig::blockIIRM;
-         if (s == "BlockIIF")
-            return GPSSVConfig::blockIIF;
-         if (s == "BlockIII")
-            return GPSSVConfig::blockIII;
-         if (s == "BlockIIIF")
-            return GPSSVConfig::blockIIIF;
-         return GPSSVConfig::noInfo;
-      } // asGPSSVConfig(string)
-   } // namespace StringUtils
+GPSSVConfig asGPSSVConfig(const std::string &s) noexcept
+{
+    if (s == "NoInfo")
+        return GPSSVConfig::noInfo;
+    if (s == "BlockIIR")
+        return GPSSVConfig::blockIIR;
+    if (s == "BlockIIRM")
+        return GPSSVConfig::blockIIRM;
+    if (s == "BlockIIF")
+        return GPSSVConfig::blockIIF;
+    if (s == "BlockIII")
+        return GPSSVConfig::blockIII;
+    if (s == "BlockIIIF")
+        return GPSSVConfig::blockIIIF;
+    return GPSSVConfig::noInfo;
+} // asGPSSVConfig(string)
+} // namespace StringUtils
 } // namespace gnsstk

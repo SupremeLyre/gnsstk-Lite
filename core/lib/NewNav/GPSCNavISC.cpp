@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -37,133 +36,112 @@
 //
 //==============================================================================
 #include "GPSCNavISC.hpp"
+#include "FreqConv.hpp"
 #include "TimeString.hpp"
 #include "YDSTime.hpp"
-#include "FreqConv.hpp"
 
 using namespace std;
 
 namespace gnsstk
 {
-   GPSCNavISC ::
-   GPSCNavISC()
-         : pre(0),
-           alert(false),
-           iscL1CA(std::numeric_limits<double>::quiet_NaN()),
-           iscL2C(std::numeric_limits<double>::quiet_NaN()),
-           iscL5I5(std::numeric_limits<double>::quiet_NaN()),
-           iscL5Q5(std::numeric_limits<double>::quiet_NaN())
-   {
-         // ignore refOids/validOids as they're not used
-   }
-
-
-   void GPSCNavISC ::
-   dumpCorrections(std::ostream& s) const
-   {
-      const ios::fmtflags oldFlags = s.flags();
-      s << "           CORRECTION"
-        << endl << endl
-        << scientific << setprecision(8) << setfill(' ')
-        << setw(20) << left << "Tgd:" << setw(15) << isc << endl
-        << setw(20) << left << "ISC_L1C/A:" << setw(15) << iscL1CA << endl
-        << setw(20) << left << "ISC_L2C:" << setw(15) << iscL2C << endl
-        << setw(20) << left << "ISC_L5I5:" << setw(15) << iscL5I5 << endl
-        << setw(20) << left << "ISC_L5Q5:" << setw(15) << iscL5Q5 << endl;
-      s.flags(oldFlags);
-   }
-
-
-   bool GPSCNavISC ::
-   validate() const
-   {
-      return ((pre == 0) || (pre == 0x8b));
-   }
-
-
-   CommonTime GPSCNavISC ::
-   getUserTime() const
-   {
-      if (signal.nav == NavType::GPSCNAVL2)
-         return timeStamp + 12.0;
-      return timeStamp + 6.0;
-   }
-
-
-   bool GPSCNavISC ::
-   getISC(const ObsID& oid, double& corr) const
-   {
-         // reminder: InterSigCorr::isc is used to store Tgd
-      switch (oid.band)
-      {
-         case CarrierBand::L1:
-            if (oid.code == TrackingCode::CA)
-            {
-               corr = iscL1CA - isc;
-               return true;
-            }
-            break;
-         case CarrierBand::L2:
-            switch (oid.code)
-            {
-               case TrackingCode::L2CM:
-               case TrackingCode::L2CL:
-               case TrackingCode::L2CML:
-                  corr = iscL2C - isc;
-                  return true;
-            }
-            break;
-         case CarrierBand::L5:
-               // note this is only described in IS-GPS-705
-            switch (oid.code)
-            {
-               case TrackingCode::L5I:
-                  corr = iscL5I5 - isc;
-                  return true;
-               case TrackingCode::L5Q:
-                  corr = iscL5Q5 - isc;
-                  return true;
-            }
-            break;
-      }
-      return false;
-   }
-
-
-   bool GPSCNavISC ::
-   getISC(const ObsID& oid1, const ObsID& oid2, double& corr)
-      const
-   {
-         // reminder: InterSigCorr::isc is used to store Tgd
-      if ((oid1.band == CarrierBand::L1) &&
-          (oid1.code == TrackingCode::CA) &&
-          (oid2.band == CarrierBand::L5))
-      {
-            // per IS-GPS-705 20.3.3.3.1.2.2
-         double gamma15 = getGamma(oid1.band,oid2.band);
-         if (oid2.code == TrackingCode::L5I)
-         {
-            corr = ((iscL5I5 - (gamma15 * iscL1CA)) / (1-gamma15)) - isc;
-            return true;
-         }
-         else if (oid2.code == TrackingCode::L5Q)
-         {
-            corr = ((iscL5Q5 - (gamma15 * iscL1CA)) / (1-gamma15)) - isc;
-            return true;
-         }
-      }
-      else if ((oid1.band == CarrierBand::L1) &&
-               (oid1.code == TrackingCode::CA) &&
-               (oid2.band == CarrierBand::L2) &&
-               ((oid2.code == TrackingCode::L2CM) ||
-                (oid2.code == TrackingCode::L2CL) ||
-                (oid2.code == TrackingCode::L2CML)))
-      {
-            // per IS-GPS-200 30.3.3.3.1.1.2
-         double gamma12 = getGamma(oid1.band,oid2.band);
-         corr = ((iscL2C - (gamma12 * iscL1CA)) / (1-gamma12)) - isc;
-         return true;
-      }
-      return false;
-   }
+GPSCNavISC ::GPSCNavISC()
+    : pre(0), alert(false), iscL1CA(std::numeric_limits<double>::quiet_NaN()),
+      iscL2C(std::numeric_limits<double>::quiet_NaN()), iscL5I5(std::numeric_limits<double>::quiet_NaN()),
+      iscL5Q5(std::numeric_limits<double>::quiet_NaN())
+{
+    // ignore refOids/validOids as they're not used
 }
+
+void GPSCNavISC ::dumpCorrections(std::ostream &s) const
+{
+    const ios::fmtflags oldFlags = s.flags();
+    s << "           CORRECTION" << endl
+      << endl
+      << scientific << setprecision(8) << setfill(' ') << setw(20) << left << "Tgd:" << setw(15) << isc << endl
+      << setw(20) << left << "ISC_L1C/A:" << setw(15) << iscL1CA << endl
+      << setw(20) << left << "ISC_L2C:" << setw(15) << iscL2C << endl
+      << setw(20) << left << "ISC_L5I5:" << setw(15) << iscL5I5 << endl
+      << setw(20) << left << "ISC_L5Q5:" << setw(15) << iscL5Q5 << endl;
+    s.flags(oldFlags);
+}
+
+bool GPSCNavISC ::validate() const
+{
+    return ((pre == 0) || (pre == 0x8b));
+}
+
+CommonTime GPSCNavISC ::getUserTime() const
+{
+    if (signal.nav == NavType::GPSCNAVL2)
+        return timeStamp + 12.0;
+    return timeStamp + 6.0;
+}
+
+bool GPSCNavISC ::getISC(const ObsID &oid, double &corr) const
+{
+    // reminder: InterSigCorr::isc is used to store Tgd
+    switch (oid.band)
+    {
+    case CarrierBand::L1:
+        if (oid.code == TrackingCode::CA)
+        {
+            corr = iscL1CA - isc;
+            return true;
+        }
+        break;
+    case CarrierBand::L2:
+        switch (oid.code)
+        {
+        case TrackingCode::L2CM:
+        case TrackingCode::L2CL:
+        case TrackingCode::L2CML:
+            corr = iscL2C - isc;
+            return true;
+        }
+        break;
+    case CarrierBand::L5:
+        // note this is only described in IS-GPS-705
+        switch (oid.code)
+        {
+        case TrackingCode::L5I:
+            corr = iscL5I5 - isc;
+            return true;
+        case TrackingCode::L5Q:
+            corr = iscL5Q5 - isc;
+            return true;
+        }
+        break;
+    }
+    return false;
+}
+
+bool GPSCNavISC ::getISC(const ObsID &oid1, const ObsID &oid2, double &corr) const
+{
+    // reminder: InterSigCorr::isc is used to store Tgd
+    if ((oid1.band == CarrierBand::L1) && (oid1.code == TrackingCode::CA) && (oid2.band == CarrierBand::L5))
+    {
+        // per IS-GPS-705 20.3.3.3.1.2.2
+        double gamma15 = getGamma(oid1.band, oid2.band);
+        if (oid2.code == TrackingCode::L5I)
+        {
+            corr = ((iscL5I5 - (gamma15 * iscL1CA)) / (1 - gamma15)) - isc;
+            return true;
+        }
+        else if (oid2.code == TrackingCode::L5Q)
+        {
+            corr = ((iscL5Q5 - (gamma15 * iscL1CA)) / (1 - gamma15)) - isc;
+            return true;
+        }
+    }
+    else if ((oid1.band == CarrierBand::L1) && (oid1.code == TrackingCode::CA) && (oid2.band == CarrierBand::L2) &&
+             ((oid2.code == TrackingCode::L2CM) || (oid2.code == TrackingCode::L2CL) ||
+              (oid2.code == TrackingCode::L2CML)))
+    {
+        // per IS-GPS-200 30.3.3.3.1.1.2
+        double gamma12 = getGamma(oid1.band, oid2.band);
+        corr = ((iscL2C - (gamma12 * iscL1CA)) / (1 - gamma12)) - isc;
+        return true;
+    }
+    return false;
+}
+} // namespace gnsstk

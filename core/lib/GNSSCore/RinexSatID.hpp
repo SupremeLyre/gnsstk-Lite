@@ -39,13 +39,13 @@
 #ifndef GNSSTK_RINEX_SATID_HPP
 #define GNSSTK_RINEX_SATID_HPP
 
+#include <iomanip>
 #include <iostream>
 #include <sstream>
-#include <iomanip>
 
-#include "gnsstk_export.h"
 #include "Exception.hpp"
 #include "SatID.hpp"
+#include "gnsstk_export.h"
 
 /**
  * @file RinexSatID.hpp
@@ -55,98 +55,101 @@
 
 namespace gnsstk
 {
-      /// @todo determine if this really belongs with the RINEX files
+/// @todo determine if this really belongs with the RINEX files
 
-      /// @ingroup FileHandling
-      //@{
+/// @ingroup FileHandling
+//@{
 
-   class RinexSatID : public SatID
-   {
-   public:
-         /// Empty constructor; creates an invalid object (Unknown, ID = -1).
-      RinexSatID() = default;
+class RinexSatID : public SatID
+{
+  public:
+    /// Empty constructor; creates an invalid object (Unknown, ID = -1).
+    RinexSatID() = default;
 
-         /// Explicit constructor, no defaults, RINEX systems only.
-      RinexSatID(int p, SatelliteSystem s)
-         noexcept;
+    /// Explicit constructor, no defaults, RINEX systems only.
+    RinexSatID(int p, SatelliteSystem s) noexcept;
 
-         /** Constructor from a string.
-          * @throw Exception
-          */
-      RinexSatID(const std::string& str)
-      {
-         try { fromString(str); }
-         catch(Exception& e) { GNSSTK_RETHROW(e); }
-      }
+    /** Constructor from a string.
+     * @throw Exception
+     */
+    RinexSatID(const std::string &str)
+    {
+        try
+        {
+            fromString(str);
+        }
+        catch (Exception &e)
+        {
+            GNSSTK_RETHROW(e);
+        }
+    }
 
-         /// Cast a SatID to a RinexSatID.
-      RinexSatID(const SatID& sat)
-         noexcept
-            : SatID(sat)
-      { validate(); }
+    /// Cast a SatID to a RinexSatID.
+    RinexSatID(const SatID &sat) noexcept : SatID(sat)
+    {
+        validate();
+    }
 
-         /// Set the fill character used in output and
-         /// return the current fill character.
-      char setfill(char c)
-         noexcept
-      { char csave = fillchar; fillchar = c; return csave; }
+    /// Set the fill character used in output and
+    /// return the current fill character.
+    char setfill(char c) noexcept
+    {
+        char csave = fillchar;
+        fillchar = c;
+        return csave;
+    }
 
+    /// Get the fill character used in output.
+    char getfill() const noexcept
+    {
+        return fillchar;
+    }
 
-         /// Get the fill character used in output.
-      char getfill() const
-         noexcept
-      { return fillchar; }
+    // operator=, copy constructor and destructor built by compiler
 
-         // operator=, copy constructor and destructor built by compiler
+    /** Return the single-character system descriptor.
+     * @note return only RINEX types, for non-RINEX systems return '?'
+     */
+    char systemChar() const noexcept;
 
+    /* Return the system name as a string.
+     * @note Return only RINEX types or 'Unknown'.
+     */
+    std::string systemString() const noexcept;
 
-         /** Return the single-character system descriptor.
-          * @note return only RINEX types, for non-RINEX systems return '?'
-          */
-      char systemChar() const
-         noexcept;
+    /** Return the system name as a string of length 3.
+     * @note Return only RINEX types or 'Unknown'.
+     */
+    std::string systemString3() const noexcept;
 
-         /* Return the system name as a string.
-          * @note Return only RINEX types or 'Unknown'.
-          */
-      std::string systemString() const
-         noexcept;
+    /** Set the RinexSatID from a string (1 character plus
+     * 2-digit integer).
+     * @note GPS is default system (no or unknown system char)
+     * @throw Exception
+     */
+    void fromString(const std::string &s);
 
-         /** Return the system name as a string of length 3.
-          * @note Return only RINEX types or 'Unknown'.
-          */
-      std::string systemString3() const
-         noexcept;
+    /** Convert the RinexSatID to string (1 character plus
+     * 2-digit integer). */
+    std::string toString() const noexcept;
 
-         /** Set the RinexSatID from a string (1 character plus
-          * 2-digit integer).
-          * @note GPS is default system (no or unknown system char)
-          * @throw Exception
-          */
-      void fromString(const std::string& s);
+  private:
+    /// If an unsupported system is used, set to unknown and PRN -1.
+    void validate();
 
-         /** Convert the RinexSatID to string (1 character plus
-          * 2-digit integer). */
-      std::string toString() const
-         noexcept;
+    GNSSTK_EXPORT
+    static char fillchar; ///< Fill character used during stream output.
 
-   private:
-         /// If an unsupported system is used, set to unknown and PRN -1.
-      void validate();
+}; // class RinexSatID
 
-      GNSSTK_EXPORT
-      static char fillchar;  ///< Fill character used during stream output.
+/// Stream output for RinexSatID.
+inline std::ostream &operator<<(std::ostream &s, const RinexSatID &sat)
+{
+    s << sat.toString();
+    return s;
+}
 
-   }; // class RinexSatID
-
-      /// Stream output for RinexSatID.
-   inline std::ostream& operator<<(std::ostream& s, const RinexSatID& sat)
-   {
-      s << sat.toString();
-      return s;
-   }
-
-      //@}
+//@}
 
 } // namespace gnsstk
 

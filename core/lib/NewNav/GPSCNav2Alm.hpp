@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -44,52 +43,55 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Class containing data elements unique to GPS CNav2 midi almanac.
-   class GPSCNav2Alm : public OrbitDataGPS
-   {
-   public:
-         /** Midi almanac inclination offset, this + delta i = i0,
-          * defined in IS-GPS-800. */
-      GNSSTK_EXPORT static const double refi0GPS;
-         /** Midi almanac inclination offset, this + delta i = i0,
-          * defined in IS-QZSS-PNT-004. */
-      GNSSTK_EXPORT static const double refi0QZSS;
+/// Class containing data elements unique to GPS CNav2 midi almanac.
+class GPSCNav2Alm : public OrbitDataGPS
+{
+  public:
+    /** Midi almanac inclination offset, this + delta i = i0,
+     * defined in IS-GPS-800. */
+    GNSSTK_EXPORT static const double refi0GPS;
+    /** Midi almanac inclination offset, this + delta i = i0,
+     * defined in IS-QZSS-PNT-004. */
+    GNSSTK_EXPORT static const double refi0QZSS;
 
-         /// Sets the nav message type.
-      GPSCNav2Alm();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GPSCNav2Alm>(*this); }
+    /// Sets the nav message type.
+    GPSCNav2Alm();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GPSCNav2Alm>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @todo implement some checking.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @todo implement some checking.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-         /** Override dumpHarmonics to hide them in output since GPS
-          * CNav2 almanacs don't contain this data. */
-      void dumpHarmonics(std::ostream& s) const override
-      {}
+    /** Override dumpHarmonics to hide them in output since GPS
+     * CNav2 almanacs don't contain this data. */
+    void dumpHarmonics(std::ostream &s) const override
+    {
+    }
 
-         /// Fill the beginFit and endFit values for this object.
-      void fixFit();
+    /// Fill the beginFit and endFit values for this object.
+    void fixFit();
 
-         /// @note The health flags are true if unhealthy.
-      bool healthL1;      ///< L1 signal health.
-      bool healthL2;      ///< L2 signal health.
-      bool healthL5;      ///< L5 signal health.
-      double deltai;      ///< Inclination in rad relative to 0.3*pi rad.
-      unsigned wna;       ///< Reference week for toa.
-      double toa;         ///< Convenience storage of unqualified toa.
-   };
+    /// @note The health flags are true if unhealthy.
+    bool healthL1; ///< L1 signal health.
+    bool healthL2; ///< L2 signal health.
+    bool healthL5; ///< L5 signal health.
+    double deltai; ///< Inclination in rad relative to 0.3*pi rad.
+    unsigned wna;  ///< Reference week for toa.
+    double toa;    ///< Convenience storage of unqualified toa.
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GPSCNAV2ALM_HPP

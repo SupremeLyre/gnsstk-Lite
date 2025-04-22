@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -41,70 +40,61 @@
 
 namespace gnsstk
 {
-   void CorrectionResults ::
-   addResult(const CorrectionResult& res)
-   {
-      results.push_back(res);
-   }
+void CorrectionResults ::addResult(const CorrectionResult &res)
+{
+    results.push_back(res);
+}
 
+const CorrectionResultList &CorrectionResults ::getResults() const
+{
+    return results;
+}
 
-   const CorrectionResultList& CorrectionResults ::
-   getResults() const
-   {
-      return results;
-   }
-
-
-   double CorrectionResults ::
-   getCorrSum(CorrDupHandling dups) const
-   {
-      double rv = 0.0;
-         // Collected results (intermediate stage for dealing with duplicates)
-      std::map<CorrectorType, double> coll;
-      for (const auto& res : results)
-      {
-         switch (dups)
-         {
-               // Computation is already done at this point, so treat
-               // ComputeFirst and UseFirst the same here.
-            case CorrDupHandling::ComputeFirst:
-            case CorrDupHandling::UseFirst:
-               if (coll.find(res.source->corrType) == coll.end())
-               {
-                     // This is the first result of this type, so add it.
-                  coll[res.source->corrType] = res.result;
-               }
-               break;
-            case CorrDupHandling::ComputeLast:
-                  // Just add the result, and it will automatically
-                  // end up with the last result in the map.
-               coll[res.source->corrType] = res.result;
-               break;
-            default:
+double CorrectionResults ::getCorrSum(CorrDupHandling dups) const
+{
+    double rv = 0.0;
+    // Collected results (intermediate stage for dealing with duplicates)
+    std::map<CorrectorType, double> coll;
+    for (const auto &res : results)
+    {
+        switch (dups)
+        {
+            // Computation is already done at this point, so treat
+            // ComputeFirst and UseFirst the same here.
+        case CorrDupHandling::ComputeFirst:
+        case CorrDupHandling::UseFirst:
+            if (coll.find(res.source->corrType) == coll.end())
             {
-               InvalidParameter exc("Invalid CorrDupHandling value: " +
-                                    StringUtils::asString((int)dups));
-               GNSSTK_THROW(exc);
+                // This is the first result of this type, so add it.
+                coll[res.source->corrType] = res.result;
             }
-         }
-      }
-      if (coll.empty())
-      {
-            // no data, so return nan.
-         return std::numeric_limits<double>::quiet_NaN();
-      }
-      for (const auto& ci : coll)
-      {
-         rv += ci.second;
-      }
-      return rv;
-   }
+            break;
+        case CorrDupHandling::ComputeLast:
+            // Just add the result, and it will automatically
+            // end up with the last result in the map.
+            coll[res.source->corrType] = res.result;
+            break;
+        default: {
+            InvalidParameter exc("Invalid CorrDupHandling value: " + StringUtils::asString((int)dups));
+            GNSSTK_THROW(exc);
+        }
+        }
+    }
+    if (coll.empty())
+    {
+        // no data, so return nan.
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+    for (const auto &ci : coll)
+    {
+        rv += ci.second;
+    }
+    return rv;
+}
 
-
-   void CorrectionResults ::
-   clear()
-   {
-      results.clear();
-   }
+void CorrectionResults ::clear()
+{
+    results.clear();
+}
 
 } // namespace gnsstk

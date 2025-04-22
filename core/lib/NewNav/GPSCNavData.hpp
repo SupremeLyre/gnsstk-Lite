@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -44,69 +43,69 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Class that defines nav message data information that is
-       * shared between GPS CNav almanac and ephemeris messages. */
-   class GPSCNavData : public OrbitDataGPS
-   {
-   public:
-         /** Ephemeris/Reduced Almanac Aref value defined in
-          * IS-GPS-200 (meters). */
-      GNSSTK_EXPORT static const double refAGPS;
-         /** Ephemeris OMEGA dot reference value defined in IS-GPS-200
-          * (radians). */
-      GNSSTK_EXPORT static const double refOMEGAdotEphGPS;
-         /** Reduced almanac OMEGA dot reference value defined in IS-GPS-200
-          * (radians). */
-      GNSSTK_EXPORT static const double refOMEGAdotRedAlmGPS;
-         /** Midi almanac inclination offset, this + delta i = i0,
-          * defined in IS-GPS-200. */
-      GNSSTK_EXPORT static const double refi0GPS;
-         /** Reduced almanac delta i reference value defined in
-          * IS-GPS-200 (radians). */
-      GNSSTK_EXPORT static const double refdeltaiGPS;
-         /// Argument of perigee reference value (radians, guessed at).
-      GNSSTK_EXPORT static const double refwGPS;
-         /** Reduced almanac reference eccentricity for reduced
-          * almanac in IS-GPS-200. */
-      GNSSTK_EXPORT static const double refEccGPS;
+/** Class that defines nav message data information that is
+ * shared between GPS CNav almanac and ephemeris messages. */
+class GPSCNavData : public OrbitDataGPS
+{
+  public:
+    /** Ephemeris/Reduced Almanac Aref value defined in
+     * IS-GPS-200 (meters). */
+    GNSSTK_EXPORT static const double refAGPS;
+    /** Ephemeris OMEGA dot reference value defined in IS-GPS-200
+     * (radians). */
+    GNSSTK_EXPORT static const double refOMEGAdotEphGPS;
+    /** Reduced almanac OMEGA dot reference value defined in IS-GPS-200
+     * (radians). */
+    GNSSTK_EXPORT static const double refOMEGAdotRedAlmGPS;
+    /** Midi almanac inclination offset, this + delta i = i0,
+     * defined in IS-GPS-200. */
+    GNSSTK_EXPORT static const double refi0GPS;
+    /** Reduced almanac delta i reference value defined in
+     * IS-GPS-200 (radians). */
+    GNSSTK_EXPORT static const double refdeltaiGPS;
+    /// Argument of perigee reference value (radians, guessed at).
+    GNSSTK_EXPORT static const double refwGPS;
+    /** Reduced almanac reference eccentricity for reduced
+     * almanac in IS-GPS-200. */
+    GNSSTK_EXPORT static const double refEccGPS;
 
-         /** Ephemeris/Reduced Almanac Aref value defined in
-          * IS-QZSS (meters). */
-      GNSSTK_EXPORT static const double refAQZSS;
-         /// Ephemeris OMEGA dot reference value for QZSS (radians).
-      GNSSTK_EXPORT static const double refOMEGAdotEphQZSS;
-         /// Reduced almanac OMEGA dot reference value for QZSS (radians).
-      GNSSTK_EXPORT static const double refOMEGAdotRedAlmQZSS;
-         /** Midi almanac inclination offset, this + delta i = i0,
-          * defined in IS-QZSS. */
-      GNSSTK_EXPORT static const double refi0QZSS;
-         /** Reduced almanac delta i reference value defined in
-          * IS-QZSS (radians). */
-      GNSSTK_EXPORT static const double refdeltaiQZSS;
-         /// Argument of perigee reference value in IS-QZSS (radians).
-      GNSSTK_EXPORT static const double refwQZSS;
-         /** Reduced almanac reference eccentricity for reduced
-          * almanac in IS-QZSS-200. */
-      GNSSTK_EXPORT static const double refEccQZSS;
+    /** Ephemeris/Reduced Almanac Aref value defined in
+     * IS-QZSS (meters). */
+    GNSSTK_EXPORT static const double refAQZSS;
+    /// Ephemeris OMEGA dot reference value for QZSS (radians).
+    GNSSTK_EXPORT static const double refOMEGAdotEphQZSS;
+    /// Reduced almanac OMEGA dot reference value for QZSS (radians).
+    GNSSTK_EXPORT static const double refOMEGAdotRedAlmQZSS;
+    /** Midi almanac inclination offset, this + delta i = i0,
+     * defined in IS-QZSS. */
+    GNSSTK_EXPORT static const double refi0QZSS;
+    /** Reduced almanac delta i reference value defined in
+     * IS-QZSS (radians). */
+    GNSSTK_EXPORT static const double refdeltaiQZSS;
+    /// Argument of perigee reference value in IS-QZSS (radians).
+    GNSSTK_EXPORT static const double refwQZSS;
+    /** Reduced almanac reference eccentricity for reduced
+     * almanac in IS-QZSS-200. */
+    GNSSTK_EXPORT static const double refEccQZSS;
 
-         /// Initialize data members.
-      GPSCNavData();
+    /// Initialize data members.
+    GPSCNavData();
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-      uint32_t pre; ///< The preamble from the start of the subframe.
-      bool alert;   ///< Alert flag
-   };
+    uint32_t pre; ///< The preamble from the start of the subframe.
+    bool alert;   ///< Alert flag
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GPSCNAVDATA_HPP

@@ -51,81 +51,104 @@
 namespace gnsstk
 {
 
-      // Note that the regular operators don't have to be defined
-      // because of the conversion operator. This allows
-      //   ValidType<int> p=1;
-      //   p+=1;
-      // to use the regular int operators.
-      // Also note that the exception is declaired outside of the
-      // template class so there will only be one exception for all
-      // instantiations
+// Note that the regular operators don't have to be defined
+// because of the conversion operator. This allows
+//   ValidType<int> p=1;
+//   p+=1;
+// to use the regular int operators.
+// Also note that the exception is declaired outside of the
+// template class so there will only be one exception for all
+// instantiations
 
-   NEW_EXCEPTION_CLASS(InvalidValue, gnsstk::Exception);
+NEW_EXCEPTION_CLASS(InvalidValue, gnsstk::Exception);
 
-   template <class T>
-   class ValidType
-   {
-   public:
-      ValidType(const T& v):value(v),valid(true){}
-      ValidType():value(0),valid(false){}
+template <class T> class ValidType
+{
+  public:
+    ValidType(const T &v) : value(v), valid(true)
+    {
+    }
+    ValidType() : value(0), valid(false)
+    {
+    }
 
-      ValidType& operator=(const T& v) noexcept
-      { this->valid = true; this->value = v; return *this; }
+    ValidType &operator=(const T &v) noexcept
+    {
+        this->valid = true;
+        this->value = v;
+        return *this;
+    }
 
-      ValidType& operator+=(const T& r) noexcept{value+=r; return *this;}
-      ValidType& operator-=(const T& r) noexcept{value-=r; return *this;}
+    ValidType &operator+=(const T &r) noexcept
+    {
+        value += r;
+        return *this;
+    }
+    ValidType &operator-=(const T &r) noexcept
+    {
+        value -= r;
+        return *this;
+    }
 
-         /** A conversion operator, will throw an exception if the object
-          * is marked invalid.
-          * @throw InvalidValue
-          */
-      operator T() const
-      {
-         if (!this->is_valid()) throw InvalidValue();
-         return value;
-      }
+    /** A conversion operator, will throw an exception if the object
+     * is marked invalid.
+     * @throw InvalidValue
+     */
+    operator T() const
+    {
+        if (!this->is_valid())
+            throw InvalidValue();
+        return value;
+    }
 
-      bool operator==(const ValidType& r) const
-      {
-         return ((!this->valid && !r.valid) ||
-                 (this->valid && r.valid && this->value == r.value));
-      }
-      bool operator!=(const ValidType& r) const
-      { return !(*this == r); }
+    bool operator==(const ValidType &r) const
+    {
+        return ((!this->valid && !r.valid) || (this->valid && r.valid && this->value == r.value));
+    }
+    bool operator!=(const ValidType &r) const
+    {
+        return !(*this == r);
+    }
 
-      bool is_valid() const { return valid; }
-      T get_value() const { return value; }
+    bool is_valid() const
+    {
+        return valid;
+    }
+    T get_value() const
+    {
+        return value;
+    }
 
-      void set_valid(const bool& v) noexcept
-      { valid=v; }
+    void set_valid(const bool &v) noexcept
+    {
+        valid = v;
+    }
 
-   private:
-      T value;
-      bool valid;
-   };
+  private:
+    T value;
+    bool valid;
+};
 
-   typedef ValidType<float> vfloat;
-   typedef ValidType<double> vdouble;
-   typedef ValidType<char> vchar;
-   typedef ValidType<short> vshort;
-   typedef ValidType<int> vint;
-   typedef ValidType<long> vlong;
-   typedef ValidType<unsigned char> vuchar;
-   typedef ValidType<unsigned short> vushort;
-   typedef ValidType<unsigned int> vuint;
-   typedef ValidType<unsigned long> vulong;
+typedef ValidType<float> vfloat;
+typedef ValidType<double> vdouble;
+typedef ValidType<char> vchar;
+typedef ValidType<short> vshort;
+typedef ValidType<int> vint;
+typedef ValidType<long> vlong;
+typedef ValidType<unsigned char> vuchar;
+typedef ValidType<unsigned short> vushort;
+typedef ValidType<unsigned int> vuint;
+typedef ValidType<unsigned long> vulong;
 
-
-   template <class T>
-   std::ostream& operator<<(std::ostream& s, const ValidType<T>& r) noexcept
-   {
-      if (r.is_valid())
-         s << r.get_value();
-      else
-         s << "Unknown";
-      return s;
-   }
-
+template <class T> std::ostream &operator<<(std::ostream &s, const ValidType<T> &r) noexcept
+{
+    if (r.is_valid())
+        s << r.get_value();
+    else
+        s << "Unknown";
+    return s;
 }
+
+} // namespace gnsstk
 
 #endif

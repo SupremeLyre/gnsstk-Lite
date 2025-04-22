@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -36,64 +35,54 @@
 //                            release, distribution is unlimited.
 //
 //==============================================================================
-#include <cmath>
 #include "GalFNavISC.hpp"
 #include "FreqConv.hpp"
+#include <cmath>
 
 using namespace std;
 
 namespace gnsstk
 {
-   GalFNavISC ::
-   GalFNavISC()
-   {
-      weekFmt = "%4L(%4l)";
-         // Galileo F/NAV nominal page transmit time is 10 seconds per
-         // OS-SIS-ICD figure 14.
-      msgLenSec = 10.0;
-   }
-
-
-   void GalFNavISC ::
-   dumpCorrections(std::ostream& s) const
-   {
-      const ios::fmtflags oldFlags = s.flags();
-      s << "           CORRECTION"
-        << endl << endl
-        << scientific << setprecision(8) << setfill(' ')
-        << setw(20) << left << "BGD(E1,E5a):" << setw(15) << isc << endl;
-      s.flags(oldFlags);
-   }
-
-
-   bool GalFNavISC ::
-   validate() const
-   {
-      return !std::isnan(isc);
-   }
-
-
-   bool GalFNavISC ::
-   getISC(const ObsID& oid, double& corrOut)
-      const
-   {
-         // if isc is NaN, we definitely can't return anything.
-      if (std::isnan(isc))
-      {
-         return false;
-      }
-         /** @note Single-frequency E1 corrections cannot be obtained
-          * from F/NAV, only Single-frequency E5a corrections.  This
-          * is because F/NAV does not transmit on nor provide clock
-          * corrections for E1.  I/NAV must be used to get E1
-          * corrections.  See GalINavISC for more. */
-      if ((oid.band == CarrierBand::L5) && // same as E5a
-          ((oid.code == TrackingCode::E5aI) ||
-           (oid.code == TrackingCode::E5aQ)))
-      {
-         corrOut = -(getGamma(CarrierBand::L1,oid.band) * isc);
-         return true;
-      }
-      return false;
-   }
+GalFNavISC ::GalFNavISC()
+{
+    weekFmt = "%4L(%4l)";
+    // Galileo F/NAV nominal page transmit time is 10 seconds per
+    // OS-SIS-ICD figure 14.
+    msgLenSec = 10.0;
 }
+
+void GalFNavISC ::dumpCorrections(std::ostream &s) const
+{
+    const ios::fmtflags oldFlags = s.flags();
+    s << "           CORRECTION" << endl
+      << endl
+      << scientific << setprecision(8) << setfill(' ') << setw(20) << left << "BGD(E1,E5a):" << setw(15) << isc << endl;
+    s.flags(oldFlags);
+}
+
+bool GalFNavISC ::validate() const
+{
+    return !std::isnan(isc);
+}
+
+bool GalFNavISC ::getISC(const ObsID &oid, double &corrOut) const
+{
+    // if isc is NaN, we definitely can't return anything.
+    if (std::isnan(isc))
+    {
+        return false;
+    }
+    /** @note Single-frequency E1 corrections cannot be obtained
+     * from F/NAV, only Single-frequency E5a corrections.  This
+     * is because F/NAV does not transmit on nor provide clock
+     * corrections for E1.  I/NAV must be used to get E1
+     * corrections.  See GalINavISC for more. */
+    if ((oid.band == CarrierBand::L5) && // same as E5a
+        ((oid.code == TrackingCode::E5aI) || (oid.code == TrackingCode::E5aQ)))
+    {
+        corrOut = -(getGamma(CarrierBand::L1, oid.band) * isc);
+        return true;
+    }
+    return false;
+}
+} // namespace gnsstk

@@ -40,32 +40,28 @@
 
 namespace gnsstk
 {
-   LNavFilterData ::
-   LNavFilterData()
-         : sf(NULL)
-   {
-   }
-
-   void LNavFilterData::
-   dump(std::ostream& s) const
-   {
-         // This outputs the "common" information
-      NavFilterKey::dump(s);
-
-         // Add the 10 word subframe dump
-      s << std::hex << std::setfill('0');
-      for (unsigned j=0;j<10;j++)
-      {
-         s << "0x" << std::setw(8) << sf[j] << " ";
-      }
-      s << std::dec << std::setfill(' ') << " ";
-   }
-
-   std::ostream& operator<<(std::ostream& s, const LNavFilterData& nfd)
-   {
-      nfd.dump(s);
-      return s;
-   }
-
-
+LNavFilterData ::LNavFilterData() : sf(NULL)
+{
 }
+
+void LNavFilterData::dump(std::ostream &s) const
+{
+    // This outputs the "common" information
+    NavFilterKey::dump(s);
+
+    // Add the 10 word subframe dump
+    s << std::hex << std::setfill('0');
+    for (unsigned j = 0; j < 10; j++)
+    {
+        s << "0x" << std::setw(8) << sf[j] << " ";
+    }
+    s << std::dec << std::setfill(' ') << " ";
+}
+
+std::ostream &operator<<(std::ostream &s, const LNavFilterData &nfd)
+{
+    nfd.dump(s);
+    return s;
+}
+
+} // namespace gnsstk

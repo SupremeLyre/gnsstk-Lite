@@ -43,21 +43,23 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Given the widely varying contents of system-specific nav messages, no
-       * common data members or functionality can be defined here.  Define this
-       * solely to preserve a semantic inheritance tree. */
-   class SystemNavData : public NavData
-   {
-   public:
-         /// Set our message type to health so we don't have to in every leaf.
-      SystemNavData()
-      { signal.messageType = NavMessageType::System; }
-   };
+/** Given the widely varying contents of system-specific nav messages, no
+ * common data members or functionality can be defined here.  Define this
+ * solely to preserve a semantic inheritance tree. */
+class SystemNavData : public NavData
+{
+  public:
+    /// Set our message type to health so we don't have to in every leaf.
+    SystemNavData()
+    {
+        signal.messageType = NavMessageType::System;
+    }
+};
 
-      //@}
-}
+//@}
+} // namespace gnsstk
 
 #endif // GNSSTK_SYSTEMNAVDATA_HPP

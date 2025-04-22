@@ -43,96 +43,88 @@
 
 namespace gnsstk
 {
-   const int GPSWeek::MAX_WEEK=(CommonTime::END_LIMIT_JDAY-MJD_JDAY-GPS_EPOCH_MJD)/7;
+const int GPSWeek::MAX_WEEK = (CommonTime::END_LIMIT_JDAY - MJD_JDAY - GPS_EPOCH_MJD) / 7;
 
-   GPSWeek& GPSWeek::operator=(const GPSWeek& right)
-   {
-      week = right.week;
-      timeSystem = right.timeSystem;
-      return *this;
-   }
+GPSWeek &GPSWeek::operator=(const GPSWeek &right)
+{
+    week = right.week;
+    timeSystem = right.timeSystem;
+    return *this;
+}
 
-   std::string GPSWeek::printf( const std::string& fmt ) const
-   {
-      try
-      {
-         using gnsstk::StringUtils::formattedPrint;
-         std::string rv = fmt;
+std::string GPSWeek::printf(const std::string &fmt) const
+{
+    try
+    {
+        using gnsstk::StringUtils::formattedPrint;
+        std::string rv = fmt;
 
-         rv = formattedPrint( rv, getFormatPrefixInt() + "E",
-                              "Eu", getEpoch() );
-         rv = formattedPrint( rv, getFormatPrefixInt() + "F",
-                              "Fu", week );
-         rv = formattedPrint( rv, getFormatPrefixInt() + "G",
-                              "Gu", getWeek10() );
-         rv = formattedPrint( rv, getFormatPrefixInt() + "P",
-                              "Ps", StringUtils::asString(timeSystem).c_str() );
-         return rv;
-      }
-      catch( gnsstk::StringUtils::StringException& exc )
-      {
-         GNSSTK_RETHROW( exc );
-      }
-   }
+        rv = formattedPrint(rv, getFormatPrefixInt() + "E", "Eu", getEpoch());
+        rv = formattedPrint(rv, getFormatPrefixInt() + "F", "Fu", week);
+        rv = formattedPrint(rv, getFormatPrefixInt() + "G", "Gu", getWeek10());
+        rv = formattedPrint(rv, getFormatPrefixInt() + "P", "Ps", StringUtils::asString(timeSystem).c_str());
+        return rv;
+    }
+    catch (gnsstk::StringUtils::StringException &exc)
+    {
+        GNSSTK_RETHROW(exc);
+    }
+}
 
-   std::string GPSWeek::printError( const std::string& fmt ) const
-   {
-      try
-      {
-         using gnsstk::StringUtils::formattedPrint;
-         std::string rv = fmt;
+std::string GPSWeek::printError(const std::string &fmt) const
+{
+    try
+    {
+        using gnsstk::StringUtils::formattedPrint;
+        std::string rv = fmt;
 
-         rv = formattedPrint( rv, getFormatPrefixInt() + "E",
-                              "Es", getError().c_str() );
-         rv = formattedPrint( rv, getFormatPrefixInt() + "F",
-                              "Fs", getError().c_str() );
-         rv = formattedPrint( rv, getFormatPrefixInt() + "G",
-                              "Gs", getError().c_str() );
-         rv = formattedPrint( rv, getFormatPrefixInt() + "P",
-                              "Ps", getError().c_str() );
-         return rv;
-      }
-      catch( gnsstk::StringUtils::StringException& exc )
-      {
-         GNSSTK_RETHROW( exc );
-      }
-   }
+        rv = formattedPrint(rv, getFormatPrefixInt() + "E", "Es", getError().c_str());
+        rv = formattedPrint(rv, getFormatPrefixInt() + "F", "Fs", getError().c_str());
+        rv = formattedPrint(rv, getFormatPrefixInt() + "G", "Gs", getError().c_str());
+        rv = formattedPrint(rv, getFormatPrefixInt() + "P", "Ps", getError().c_str());
+        return rv;
+    }
+    catch (gnsstk::StringUtils::StringException &exc)
+    {
+        GNSSTK_RETHROW(exc);
+    }
+}
 
-      /**
-       * Set this object using the information provided in \a info.
-       * @param info the IdToValue object to which this object shall be set.
-       * @return true if this object was successfully set using the
-       *  data in \a info, false if not.
-       */
-   bool GPSWeek::setFromInfo( const IdToValue& info )
-   {
-      using namespace gnsstk::StringUtils;
+/**
+ * Set this object using the information provided in \a info.
+ * @param info the IdToValue object to which this object shall be set.
+ * @return true if this object was successfully set using the
+ *  data in \a info, false if not.
+ */
+bool GPSWeek::setFromInfo(const IdToValue &info)
+{
+    using namespace gnsstk::StringUtils;
 
-      for( IdToValue::const_iterator i = info.begin(); i != info.end(); i++ )
-      {
-            // based on the character, we know what to do...
-         switch ( i->first )
-         {
-            case 'E':
-               setEpoch( asInt( i->second ) );
-               break;
-            case 'F':
-               week = asInt( i->second );
-               break;
-            case 'G':
-               setWeek10( asInt( i->second ) );
-               break;
-            case 'P':
-               timeSystem = gnsstk::StringUtils::asTimeSystem(i->second);
-               break;
-            default:
-                  // do nothing
-               break;
-         };
+    for (IdToValue::const_iterator i = info.begin(); i != info.end(); i++)
+    {
+        // based on the character, we know what to do...
+        switch (i->first)
+        {
+        case 'E':
+            setEpoch(asInt(i->second));
+            break;
+        case 'F':
+            week = asInt(i->second);
+            break;
+        case 'G':
+            setWeek10(asInt(i->second));
+            break;
+        case 'P':
+            timeSystem = gnsstk::StringUtils::asTimeSystem(i->second);
+            break;
+        default:
+            // do nothing
+            break;
+        };
 
-      } // end of for loop
+    } // end of for loop
 
-      return true;
-   }
+    return true;
+}
 
-} // namespace
+} // namespace gnsstk

@@ -43,11 +43,11 @@
 
 namespace gnsstk
 {
-   Week& Week::operator=(const Week& right)
-   {
-      week = right.week;
-      timeSystem = right.timeSystem;
-      return *this;
-   }
+Week &Week::operator=(const Week &right)
+{
+    week = right.week;
+    timeSystem = right.timeSystem;
+    return *this;
+}
 
-} // namespace
+} // namespace gnsstk

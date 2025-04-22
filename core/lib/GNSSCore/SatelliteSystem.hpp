@@ -46,67 +46,70 @@
 #ifndef GNSSTK_SATELLITESYSTEM_HPP
 #define GNSSTK_SATELLITESYSTEM_HPP
 
-#include <string>
 #include "EnumIterator.hpp"
+#include <string>
 
 namespace gnsstk
 {
-      /// Supported satellite systems
-   enum class SatelliteSystem
-   {
-      Unknown,
-      GPS,
-      Galileo,
-      Glonass,
-      Geosync,
-      LEO,
-      Transit,
-      BeiDou,      ///< aka Compass
-      QZSS,
-      IRNSS,       ///< Official name changed from IRNSS to NavIC
-      Mixed,
-      UserDefined,
-      Last,        ///< Used to verify that all items are described at compile time
-   }; // enum class SatelliteSystem
+/// Supported satellite systems
+enum class SatelliteSystem
+{
+    Unknown,
+    GPS,
+    Galileo,
+    Glonass,
+    Geosync,
+    LEO,
+    Transit,
+    BeiDou, ///< aka Compass
+    QZSS,
+    IRNSS, ///< Official name changed from IRNSS to NavIC
+    Mixed,
+    UserDefined,
+    Last, ///< Used to verify that all items are described at compile time
+}; // enum class SatelliteSystem
 
-      /** Define an iterator so C++11 can do things like
-       * for (SatelliteSystem i : SatelliteSystemIterator()) */
-   typedef EnumIterator<SatelliteSystem, SatelliteSystem::Unknown, SatelliteSystem::Last> SatelliteSystemIterator;
+/** Define an iterator so C++11 can do things like
+ * for (SatelliteSystem i : SatelliteSystemIterator()) */
+typedef EnumIterator<SatelliteSystem, SatelliteSystem::Unknown, SatelliteSystem::Last> SatelliteSystemIterator;
 
-   namespace StringUtils
-   {
-         /// Convert a SatelliteSystem to a whitespace-free string name.
-      std::string asString(SatelliteSystem e) noexcept;
-         /// Convert a string name to an SatelliteSystem
-      SatelliteSystem asSatelliteSystem(const std::string& s) noexcept;
-   }
+namespace StringUtils
+{
+/// Convert a SatelliteSystem to a whitespace-free string name.
+std::string asString(SatelliteSystem e) noexcept;
+/// Convert a string name to an SatelliteSystem
+SatelliteSystem asSatelliteSystem(const std::string &s) noexcept;
+} // namespace StringUtils
 
-      /** Translate system enumeration to its string representation.
-       * @note The string representation is being used in file
-       *   formats, e.g. RawNavCSVHeader.  The string values should
-       *   not be changed if at all possible, as that would break
-       *   the ability to read older files.
-       * @note Any new systems should not contain spaces in the
-       *   string values.
-       * @note The translations here should precisely match those
-       *   in convertStringToSatelliteSystem.
-       * @param[in] s The system to get the string name of.
-       * @return A space-free string containing the name of the GNSS.
-       */
-   inline std::string convertSatelliteSystemToString(SatelliteSystem s)
-   { return StringUtils::asString(s); }
+/** Translate system enumeration to its string representation.
+ * @note The string representation is being used in file
+ *   formats, e.g. RawNavCSVHeader.  The string values should
+ *   not be changed if at all possible, as that would break
+ *   the ability to read older files.
+ * @note Any new systems should not contain spaces in the
+ *   string values.
+ * @note The translations here should precisely match those
+ *   in convertStringToSatelliteSystem.
+ * @param[in] s The system to get the string name of.
+ * @return A space-free string containing the name of the GNSS.
+ */
+inline std::string convertSatelliteSystemToString(SatelliteSystem s)
+{
+    return StringUtils::asString(s);
+}
 
-      /** Translate GNSS names as strings into system enumeration
-       * equivalents.
-       * @see convertSatelliteSystemToString
-       * @param[in] s The GNSS name to convert to enumeration.
-       * @return An enumeration equivalent of the given string.
-       *   Unknown is returned for any names that do not
-       *   exactly match known values.
-       */
-   inline SatelliteSystem convertStringToSatelliteSystem(
-      const std::string& s)
-   { return StringUtils::asSatelliteSystem(s); }
+/** Translate GNSS names as strings into system enumeration
+ * equivalents.
+ * @see convertSatelliteSystemToString
+ * @param[in] s The GNSS name to convert to enumeration.
+ * @return An enumeration equivalent of the given string.
+ *   Unknown is returned for any names that do not
+ *   exactly match known values.
+ */
+inline SatelliteSystem convertStringToSatelliteSystem(const std::string &s)
+{
+    return StringUtils::asSatelliteSystem(s);
+}
 
 } // namespace gnsstk
 

@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,51 +42,37 @@ using namespace std;
 
 namespace gnsstk
 {
-   BDSD2NavAlm ::
-   BDSD2NavAlm()
-         : pnum(0xff),
-           deltai(0.0),
-           toa(0.0),
-           healthBits(0xffff),
-           isDefault(false)
-   {
-      signal.messageType = NavMessageType::Almanac;
-      msgLenSec = 6.0;
-   }
-
-
-   bool BDSD2NavAlm ::
-   validate() const
-   {
-      return !isDefault && BDSD2NavData::validate();
-   }
-
-
-   void BDSD2NavAlm ::
-   fixFit()
-   {
-      beginFit = xmitTime;
-      endFit   = CommonTime::END_OF_TIME;
-      endFit.setTimeSystem(TimeSystem::BDT);
-   }
-
-
-   void BDSD2NavAlm ::
-   dumpSVStatus(std::ostream& s) const
-   {
-      const ios::fmtflags oldFlags = s.flags();
-      s.setf(ios::scientific, ios::floatfield);
-      s << "           PAGE OVERHEAD" << endl
-        << endl
-        << "                SOW    DOW:HH:MM:SS" << endl
-        << printTime(xmitTime,"Transmit   : %6.0g  %3a-%1w:%02H:%02M:%02S")
-        << endl
-        << endl
-        << "           SV STATUS" << endl
-        << endl
-        << "Health              : " << setw(9)
-        << static_cast<unsigned>(healthBits)
-        << " (" << gnsstk::StringUtils::asString(health) << ")" << endl;
-      s.flags(oldFlags);
-   }
+BDSD2NavAlm ::BDSD2NavAlm() : pnum(0xff), deltai(0.0), toa(0.0), healthBits(0xffff), isDefault(false)
+{
+    signal.messageType = NavMessageType::Almanac;
+    msgLenSec = 6.0;
 }
+
+bool BDSD2NavAlm ::validate() const
+{
+    return !isDefault && BDSD2NavData::validate();
+}
+
+void BDSD2NavAlm ::fixFit()
+{
+    beginFit = xmitTime;
+    endFit = CommonTime::END_OF_TIME;
+    endFit.setTimeSystem(TimeSystem::BDT);
+}
+
+void BDSD2NavAlm ::dumpSVStatus(std::ostream &s) const
+{
+    const ios::fmtflags oldFlags = s.flags();
+    s.setf(ios::scientific, ios::floatfield);
+    s << "           PAGE OVERHEAD" << endl
+      << endl
+      << "                SOW    DOW:HH:MM:SS" << endl
+      << printTime(xmitTime, "Transmit   : %6.0g  %3a-%1w:%02H:%02M:%02S") << endl
+      << endl
+      << "           SV STATUS" << endl
+      << endl
+      << "Health              : " << setw(9) << static_cast<unsigned>(healthBits) << " ("
+      << gnsstk::StringUtils::asString(health) << ")" << endl;
+    s.flags(oldFlags);
+}
+} // namespace gnsstk

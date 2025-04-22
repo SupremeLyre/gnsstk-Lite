@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -44,32 +43,34 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Defines the class that provide the ability to convert
-       * between Galileo and a supported time system (UTC, GPS), using
-       * data extracted from Galileo I/NAV messages. */
-   class GalINavTimeOffset : public StdNavTimeOffset
-   {
-   public:
-         /// Initialize all data to 0.
-      GalINavTimeOffset();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GalINavTimeOffset>(*this); }
+/** Defines the class that provide the ability to convert
+ * between Galileo and a supported time system (UTC, GPS), using
+ * data extracted from Galileo I/NAV messages. */
+class GalINavTimeOffset : public StdNavTimeOffset
+{
+  public:
+    /// Initialize all data to 0.
+    GalINavTimeOffset();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GalINavTimeOffset>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-      double tow;       ///< TOW field from word type 6.
-   };
+    double tow; ///< TOW field from word type 6.
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GALINAVUTCTIMEOFFSET_HPP

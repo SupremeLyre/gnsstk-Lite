@@ -39,38 +39,38 @@
 #ifndef GNSSTK_REFRAMESYS_HPP
 #define GNSSTK_REFRAMESYS_HPP
 
-#include <string>
 #include "EnumIterator.hpp"
+#include <string>
 
 namespace gnsstk
 {
-      /// @ingroup geodeticgroup
-      //@{
+/// @ingroup geodeticgroup
+//@{
 
-      /// Reference frame systems.  For specific realizations, see RefFrameRlz.
-   enum class RefFrameSys
-   {
-      Unknown,  ///< Unknown system or uninitialized value.
-      WGS84,    ///< The reference frame used by GPS.
-      ITRF,     ///< The reference frame used by Galileo.
-      PZ90,     ///< The reference frame used by Glonass.
-      CGCS2000, ///< The reference frame used by BeiDou.
-      Last      ///< Used to verify that all items are described at compile time
-   };
+/// Reference frame systems.  For specific realizations, see RefFrameRlz.
+enum class RefFrameSys
+{
+    Unknown,  ///< Unknown system or uninitialized value.
+    WGS84,    ///< The reference frame used by GPS.
+    ITRF,     ///< The reference frame used by Galileo.
+    PZ90,     ///< The reference frame used by Glonass.
+    CGCS2000, ///< The reference frame used by BeiDou.
+    Last      ///< Used to verify that all items are described at compile time
+};
 
-      /** Define an iterator so C++11 can do things like
-       * for (RefFrameSys i : RefFrameSysIterator()) */
-   typedef EnumIterator<RefFrameSys, RefFrameSys::Unknown, RefFrameSys::Last> RefFrameSysIterator;
+/** Define an iterator so C++11 can do things like
+ * for (RefFrameSys i : RefFrameSysIterator()) */
+typedef EnumIterator<RefFrameSys, RefFrameSys::Unknown, RefFrameSys::Last> RefFrameSysIterator;
 
-   namespace StringUtils
-   {
-         /// Convert a RefFrameSys to a whitespace-free string name.
-      std::string asString(RefFrameSys e) noexcept;
-         /// Convert a string name to an RefFrameSys
-      RefFrameSys asRefFrameSys(const std::string& s) noexcept;
-   }
+namespace StringUtils
+{
+/// Convert a RefFrameSys to a whitespace-free string name.
+std::string asString(RefFrameSys e) noexcept;
+/// Convert a string name to an RefFrameSys
+RefFrameSys asRefFrameSys(const std::string &s) noexcept;
+} // namespace StringUtils
 
-      //@}
+//@}
 
 } // namespace gnsstk
 

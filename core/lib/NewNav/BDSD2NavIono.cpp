@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -37,30 +36,22 @@
 //
 //==============================================================================
 #include "BDSD2NavIono.hpp"
+#include "FreqConv.hpp"
 #include "TimeString.hpp"
 #include "YDSTime.hpp"
-#include "FreqConv.hpp"
 
 using namespace std;
 
 namespace gnsstk
 {
-   BDSD2NavIono ::
-   BDSD2NavIono()
-         : pre(0),
-           rev(0),
-           fraID(0),
-           sow(0)
-   {
-      weekFmt = "%4D(%4e)";
-      msgLenSec = 6.0;
-   }
-
-
-   bool BDSD2NavIono ::
-   validate() const
-   {
-      return (KlobucharIonoNavData::validate() && ((pre == 0) || (pre == 0x712)) &&
-              (fraID == 1));
-   }
+BDSD2NavIono ::BDSD2NavIono() : pre(0), rev(0), fraID(0), sow(0)
+{
+    weekFmt = "%4D(%4e)";
+    msgLenSec = 6.0;
 }
+
+bool BDSD2NavIono ::validate() const
+{
+    return (KlobucharIonoNavData::validate() && ((pre == 0) || (pre == 0x712)) && (fraID == 1));
+}
+} // namespace gnsstk

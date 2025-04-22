@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,10 +38,10 @@
 #ifndef GNSSTK_NAVMESSAGETYPE_HPP
 #define GNSSTK_NAVMESSAGETYPE_HPP
 
-#include <string>
-#include <set>
-#include "gnsstk_export.h"
 #include "EnumIterator.hpp"
+#include "gnsstk_export.h"
+#include <set>
+#include <string>
 
 // SWIG kludge because SWIG doesn't drill down in include files, so it
 // doesn't know about GNSSTK_EXPORT defined in the above include file.
@@ -52,44 +51,44 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Identify different types of navigation message data.
-   enum class NavMessageType
-   {
-      Unknown,    ///< Message type is not known or is uninitialized.
-      Almanac,    ///< Low-precision orbits for other than the transmitting SV.
-      Ephemeris,  ///< Precision orbits for the transmitting SV.
-      TimeOffset, ///< Message containing information about time system offsets
-      Health,     ///< SV health status information message.
-      Clock,      ///< SV Clock offset data.  Currently only used by SP3.
-      Iono,       ///< Ionospheric correction data.
-      ISC,        ///< Inter-signal corrections.
-      System,     ///< GNSS system-specific messages
-      Last        ///< Used to create an iterator.
-   };
+/// Identify different types of navigation message data.
+enum class NavMessageType
+{
+    Unknown,    ///< Message type is not known or is uninitialized.
+    Almanac,    ///< Low-precision orbits for other than the transmitting SV.
+    Ephemeris,  ///< Precision orbits for the transmitting SV.
+    TimeOffset, ///< Message containing information about time system offsets
+    Health,     ///< SV health status information message.
+    Clock,      ///< SV Clock offset data.  Currently only used by SP3.
+    Iono,       ///< Ionospheric correction data.
+    ISC,        ///< Inter-signal corrections.
+    System,     ///< GNSS system-specific messages
+    Last        ///< Used to create an iterator.
+};
 
-      /** Define an iterator so C++11 can do things like
-       * for (NavMessageType i : NavMessageTypeIterator()) */
-   typedef EnumIterator<NavMessageType, NavMessageType::Unknown, NavMessageType::Last> NavMessageTypeIterator;
-      /// Set of message types, used by NavLibrary and NavDataFactory.
-   typedef std::set<NavMessageType> NavMessageTypeSet;
+/** Define an iterator so C++11 can do things like
+ * for (NavMessageType i : NavMessageTypeIterator()) */
+typedef EnumIterator<NavMessageType, NavMessageType::Unknown, NavMessageType::Last> NavMessageTypeIterator;
+/// Set of message types, used by NavLibrary and NavDataFactory.
+typedef std::set<NavMessageType> NavMessageTypeSet;
 
-      /** Convenient set of all valid (non-meta) message types.
-       * @note This is defined in NavStatic.cpp */
-   GNSSTK_EXPORT extern const NavMessageTypeSet allNavMessageTypes;
+/** Convenient set of all valid (non-meta) message types.
+ * @note This is defined in NavStatic.cpp */
+GNSSTK_EXPORT extern const NavMessageTypeSet allNavMessageTypes;
 
-   namespace StringUtils
-   {
-         /// Convert a NavMessageType to a whitespace-free string name.
-      std::string asString(NavMessageType e) noexcept;
-         /// Convert a string name to an NavMessageType
-      NavMessageType asNavMessageType(const std::string& s) noexcept;
-   }
+namespace StringUtils
+{
+/// Convert a NavMessageType to a whitespace-free string name.
+std::string asString(NavMessageType e) noexcept;
+/// Convert a string name to an NavMessageType
+NavMessageType asNavMessageType(const std::string &s) noexcept;
+} // namespace StringUtils
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_NAVMESSAGETYPE_HPP

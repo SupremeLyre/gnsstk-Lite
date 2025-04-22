@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,82 +38,85 @@
 #ifndef GNSSTK_GALFNAVALM_HPP
 #define GNSSTK_GALFNAVALM_HPP
 
-#include "OrbitDataGal.hpp"
 #include "GalHealthStatus.hpp"
+#include "OrbitDataGal.hpp"
 #include "gnsstk_export.h"
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Class containing data elements unique to Galileo F/NAV almanacs.
-   class GalFNavAlm : public OrbitDataGal
-   {
-   public:
-         /// A ref value defined in OS-SIS-ICD Table 75 (meters).
-      GNSSTK_EXPORT static const double refA;
-         /// inclination offset, refioffset + delta i = i0, defined in OS-SIS-ICD.
-      GNSSTK_EXPORT static const double refioffset;
+/// Class containing data elements unique to Galileo F/NAV almanacs.
+class GalFNavAlm : public OrbitDataGal
+{
+  public:
+    /// A ref value defined in OS-SIS-ICD Table 75 (meters).
+    GNSSTK_EXPORT static const double refA;
+    /// inclination offset, refioffset + delta i = i0, defined in OS-SIS-ICD.
+    GNSSTK_EXPORT static const double refioffset;
 
-         /// Sets the nav message type.
-      GalFNavAlm();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GalFNavAlm>(*this); }
+    /// Sets the nav message type.
+    GalFNavAlm();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GalFNavAlm>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @todo implement some checking.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @todo implement some checking.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-         /** Returns the time when the navigation message would have
-          * first been available to the user equipment, i.e. the time
-          * at which the final bit of a given broadcast navigation
-          * message is received.  This is used by
-          * NavDataFactoryWithStore::find() in User mode.
-          * @return transmit time of most recent message type of the pair + 10s.
-          */
-      CommonTime getUserTime() const override;
+    /** Returns the time when the navigation message would have
+     * first been available to the user equipment, i.e. the time
+     * at which the final bit of a given broadcast navigation
+     * message is received.  This is used by
+     * NavDataFactoryWithStore::find() in User mode.
+     * @return transmit time of most recent message type of the pair + 10s.
+     */
+    CommonTime getUserTime() const override;
 
-         /** Override dumpHarmonics to hide them in output since
-          * Galileo F/NAV almanacs don't contain this data. */
-      void dumpHarmonics(std::ostream& s) const override
-      {}
+    /** Override dumpHarmonics to hide them in output since
+     * Galileo F/NAV almanacs don't contain this data. */
+    void dumpHarmonics(std::ostream &s) const override
+    {
+    }
 
-         /// Fill the beginFit and endFit values for this object.
-      void fixFit();
+    /// Fill the beginFit and endFit values for this object.
+    void fixFit();
 
-         /** Set the SVHealth value "health" according to the health
-          * status variable hsE5a. */
-      void fixHealth();
+    /** Set the SVHealth value "health" according to the health
+     * status variable hsE5a. */
+    void fixHealth();
 
-         /** Dump SV status information (e.g. health).
-          * @param[in,out] s The stream to write the data to. */
-      void dumpSVStatus(std::ostream& s) const override;
+    /** Dump SV status information (e.g. health).
+     * @param[in,out] s The stream to write the data to. */
+    void dumpSVStatus(std::ostream &s) const override;
 
-         /** Transmit time of the second page type used in constructing
-          * the almanac, or the same as xmitTime if not split.  That is:
-          * SVID | xmitTime page type | xmit2 page type
-          * ---- | ------------------ | ---------------
-          * 1    | 5                  | 5
-          * 2    | 5                  | 6
-          * 3    | 6                  | 6
-          */
-      CommonTime xmit2;
-      double dAhalf;         ///< delta sqrt(A)
-      double deltai;         ///< Inclination in rad relative to 0.3*pi rad.
-      unsigned wna;          ///< Reference week for t0a.
-      double t0a;            ///< Convenience storage of unqualified t0a.
-      uint8_t ioda5;         ///< IODa for page type 5.
-      uint8_t ioda6;         ///< IODa for page type 6.
-      GalHealthStatus hsE5a; ///< Health status for E5a.
-   };
+    /** Transmit time of the second page type used in constructing
+     * the almanac, or the same as xmitTime if not split.  That is:
+     * SVID | xmitTime page type | xmit2 page type
+     * ---- | ------------------ | ---------------
+     * 1    | 5                  | 5
+     * 2    | 5                  | 6
+     * 3    | 6                  | 6
+     */
+    CommonTime xmit2;
+    double dAhalf;         ///< delta sqrt(A)
+    double deltai;         ///< Inclination in rad relative to 0.3*pi rad.
+    unsigned wna;          ///< Reference week for t0a.
+    double t0a;            ///< Convenience storage of unqualified t0a.
+    uint8_t ioda5;         ///< IODa for page type 5.
+    uint8_t ioda6;         ///< IODa for page type 6.
+    GalHealthStatus hsE5a; ///< Health status for E5a.
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GALFNAVALM_HPP

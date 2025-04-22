@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -37,39 +36,25 @@
 //
 //==============================================================================
 #include "GPSLNavISC.hpp"
+#include "FreqConv.hpp"
 #include "TimeString.hpp"
 #include "YDSTime.hpp"
-#include "FreqConv.hpp"
 
 using namespace std;
 
 namespace gnsstk
 {
-   GPSLNavISC ::
-   GPSLNavISC()
-         : pre(0),
-           tlm(0),
-           isf(false),
-           alert(false),
-           asFlag(false)
-   {
-      msgLenSec = 6.0;
-      iscLabel = "Tgd";
-      refOids = {ObsID(ObservationType::Unknown,
-                       gnsstk::CarrierBand::L1,
-                       gnsstk::TrackingCode::CA),
-                 ObsID(gnsstk::ObservationType::Unknown,
-                       gnsstk::CarrierBand::L1,
-                       gnsstk::TrackingCode::Y)};
-      validOids = {ObsID(ObservationType::Unknown,
-                         gnsstk::CarrierBand::L2,
-                         gnsstk::TrackingCode::Y)};
-   }
-
-
-   bool GPSLNavISC ::
-   validate() const
-   {
-      return ((pre == 0) || (pre == 0x8b));
-   }
+GPSLNavISC ::GPSLNavISC() : pre(0), tlm(0), isf(false), alert(false), asFlag(false)
+{
+    msgLenSec = 6.0;
+    iscLabel = "Tgd";
+    refOids = {ObsID(ObservationType::Unknown, gnsstk::CarrierBand::L1, gnsstk::TrackingCode::CA),
+               ObsID(gnsstk::ObservationType::Unknown, gnsstk::CarrierBand::L1, gnsstk::TrackingCode::Y)};
+    validOids = {ObsID(ObservationType::Unknown, gnsstk::CarrierBand::L2, gnsstk::TrackingCode::Y)};
 }
+
+bool GPSLNavISC ::validate() const
+{
+    return ((pre == 0) || (pre == 0x8b));
+}
+} // namespace gnsstk

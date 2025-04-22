@@ -45,87 +45,74 @@
 
 namespace gnsstk
 {
-   FFBinaryStream ::
-   FFBinaryStream()
-   {
-         // nothing to do
-   }
+FFBinaryStream ::FFBinaryStream()
+{
+    // nothing to do
+}
 
+FFBinaryStream ::~FFBinaryStream()
+{
+    // nothing to do
+}
 
-   FFBinaryStream ::
-   ~FFBinaryStream()
-   {
-         // nothing to do
-   }
+FFBinaryStream ::FFBinaryStream(const char *fn, std::ios::openmode mode) : FFStream(fn, mode | std::ios::binary)
+{
+}
 
+void FFBinaryStream ::open(const char *fn, std::ios::openmode mode)
+{
+    FFStream::open(fn, mode | std::ios::binary);
+}
 
-   FFBinaryStream ::
-   FFBinaryStream(const char* fn,
-                  std::ios::openmode mode)
-         : FFStream(fn, mode|std::ios::binary)
-   {
-   }
-
-
-   void FFBinaryStream ::
-   open(const char* fn, std::ios::openmode mode)
-   {
-      FFStream::open(fn, mode|std::ios::binary);
-   }
-
-
-   void FFBinaryStream ::
-   getData(char* buff, size_t length)
-   {
-      try
-      {
-         read(buff, length);
-      }
-      catch(std::exception& exc)
-      {
-         if (gcount() != (std::streamsize)length && eof())
-         {
+void FFBinaryStream ::getData(char *buff, size_t length)
+{
+    try
+    {
+        read(buff, length);
+    }
+    catch (std::exception &exc)
+    {
+        if (gcount() != (std::streamsize)length && eof())
+        {
             EndOfFile err("EOF encountered");
             GNSSTK_THROW(err);
-         }
-         else
-         {
+        }
+        else
+        {
             FFStreamError err(exc.what());
             std::cout << err << std::endl;
             GNSSTK_THROW(err);
-         }
-      }
-      catch(...)
-      {
-         FFStreamError err("Unknown exception");
-         GNSSTK_THROW(err);
-      }
-   } // end of getData(char*, size_t))
+        }
+    }
+    catch (...)
+    {
+        FFStreamError err("Unknown exception");
+        GNSSTK_THROW(err);
+    }
+} // end of getData(char*, size_t))
 
+void FFBinaryStream ::writeData(const char *buff, size_t length)
+{
+    try
+    {
+        write(buff, length);
+    }
+    catch (std::exception &exc)
+    {
+        FFStreamError err(exc.what());
+        GNSSTK_THROW(err);
+    }
+    catch (...)
+    {
+        FFStreamError err("Unknown exception");
+        GNSSTK_THROW(err);
+    }
 
-   void FFBinaryStream ::
-   writeData(const char* buff, size_t length)
-   {
-      try
-      {
-         write(buff, length);
-      }
-      catch(std::exception& exc)
-      {
-         FFStreamError err(exc.what());
-         GNSSTK_THROW(err);
-      }
-      catch(...)
-      {
-         FFStreamError err("Unknown exception");
-         GNSSTK_THROW(err);
-      }
-
-      if (fail() || bad())
-      {
-         FFStreamError err("Error writing data");
-         GNSSTK_THROW(err);
-      }
-      return;
-   } // end of writeData(const char*, size_t)
+    if (fail() || bad())
+    {
+        FFStreamError err("Error writing data");
+        GNSSTK_THROW(err);
+    }
+    return;
+} // end of writeData(const char*, size_t)
 } // namespace gnsstk

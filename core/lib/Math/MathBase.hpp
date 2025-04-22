@@ -43,7 +43,7 @@
 #define GNSSTK_MATH_BASE_HPP
 
 //@fix MSVC doesnt like std::sqrt or std::abs, and disabling
-//extensions allows abs(double) to be used instead of fabs()
+// extensions allows abs(double) to be used instead of fabs()
 #ifdef _MSC_VER
 #undef _MSC_EXTENSIONS
 #endif
@@ -66,14 +66,14 @@ namespace gnsstk
 {
 // do Doxygen elsewhere
 #ifdef _MSC_VER
-#define ABS(x)  ::abs(x)
+#define ABS(x) ::abs(x)
 #define SQRT(x) ::sqrt(x)
-#define MAX(x,y) std::max(x,y)
+#define MAX(x, y) std::max(x, y)
 #else
-#define ABS(x)  std::abs(x)
+#define ABS(x) std::abs(x)
 #define SQRT(x) std::sqrt(x)
-#define MAX(x,y) std::max(x,y)
+#define MAX(x, y) std::max(x, y)
 #endif
 
-}  // namespace gnsstk
+} // namespace gnsstk
 #endif

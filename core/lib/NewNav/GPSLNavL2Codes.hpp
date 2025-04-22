@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,34 +38,34 @@
 #ifndef GNSSTK_GPSLNAVL2CODES_HPP
 #define GNSSTK_GPSLNAVL2CODES_HPP
 
-#include <string>
 #include "EnumIterator.hpp"
+#include <string>
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Codes on L2 channel, per IS-GPS-200 20.3.3.3.1.2
-   enum class GPSLNavL2Codes
-   {
-      Unknown  =-1, ///< Unknown/Uninitialized value.
-      Invalid1 = 0, ///< Not a valid broadcast value.
-      Pcode    = 1, ///< P/Y-code is broadcast on L2.
-      CAcode   = 2, ///< C/A-code is broadcast on L2.
-      Invalid2 = 3, ///< Not a valid broadcast value.
-      Last,         ///< Used to verify that all items are described at compile time
-   };
+/// Codes on L2 channel, per IS-GPS-200 20.3.3.3.1.2
+enum class GPSLNavL2Codes
+{
+    Unknown = -1, ///< Unknown/Uninitialized value.
+    Invalid1 = 0, ///< Not a valid broadcast value.
+    Pcode = 1,    ///< P/Y-code is broadcast on L2.
+    CAcode = 2,   ///< C/A-code is broadcast on L2.
+    Invalid2 = 3, ///< Not a valid broadcast value.
+    Last,         ///< Used to verify that all items are described at compile time
+};
 
-      /** Define an iterator so C++11 can do things like
-       * for (GPSLNavL2Codes i : GPSLNavL2CodesIterator()) */
-   typedef EnumIterator<GPSLNavL2Codes, GPSLNavL2Codes::Unknown, GPSLNavL2Codes::Last> GPSLNavL2CodesIterator;
+/** Define an iterator so C++11 can do things like
+ * for (GPSLNavL2Codes i : GPSLNavL2CodesIterator()) */
+typedef EnumIterator<GPSLNavL2Codes, GPSLNavL2Codes::Unknown, GPSLNavL2Codes::Last> GPSLNavL2CodesIterator;
 
-   namespace StringUtils
-   {
-         /// Convert GPSLNavL2Codes to a printable string for dump().
-      std::string asString(GPSLNavL2Codes e);
-   }
+namespace StringUtils
+{
+/// Convert GPSLNavL2Codes to a printable string for dump().
+std::string asString(GPSLNavL2Codes e);
+} // namespace StringUtils
 
 } // namespace gnsstk
 

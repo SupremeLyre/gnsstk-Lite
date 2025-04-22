@@ -38,7 +38,6 @@
 
 #include "NavID.hpp"
 
-
 /**
  * @file NavID.cpp
  * gnsstk::NavID - navigation message-independent representation of a satellite.
@@ -46,182 +45,132 @@
 
 namespace gnsstk
 {
-      /// explicit constructor, no defaults
-   NavID::NavID( const SatID& sidr, const ObsID& oidr )
-   {
-         // Default case
-      navType = NavType::Unknown;
+/// explicit constructor, no defaults
+NavID::NavID(const SatID &sidr, const ObsID &oidr)
+{
+    // Default case
+    navType = NavType::Unknown;
 
-         //If SatID (sat system type) corresponds to GPS AND ObsID
-         //(carrier band) corresponds to either L1 OR L2 AND ObsID
-         //(tracking code) matches CA, P, Y, W, N, OR D then NavID
-         //corresponds to GPS LNAV.
-      switch (sidr.system)
-      {
-         case SatelliteSystem::GPS:
-         {
-            if (( oidr.band==CarrierBand::L1 || oidr.band==CarrierBand::L2 ) &&
-                ( oidr.code==TrackingCode::CA || oidr.code==TrackingCode::P ||
-                  oidr.code==TrackingCode::Y  || oidr.code==TrackingCode::Y ||
-                  oidr.code==TrackingCode::Ztracking  || oidr.code==TrackingCode::YCodeless ||
-                  oidr.code==TrackingCode::Semicodeless  ))
-            {
-               navType = NavType::GPSLNAV;
-            }
-            else if ( oidr.band==CarrierBand::L2 &&
-                      (oidr.code==TrackingCode::L2CM ||
-                       oidr.code==TrackingCode::L2CL ||
-                       oidr.code==TrackingCode::L2CML ))
-            {
-               navType = NavType::GPSCNAVL2;
-            }
-            else if ( oidr.band==CarrierBand::L5 &&
-                      (oidr.code==TrackingCode::L5I ||
-                       oidr.code==TrackingCode::L5Q ||
-                       oidr.code==TrackingCode::L5IQ ))
-            {
-               navType = NavType::GPSCNAVL5;
-            }
-            else if ( oidr.band==CarrierBand::L1 &&
-                      ( oidr.code==TrackingCode::L1CP ||
-                        oidr.code==TrackingCode::L1CD ||
-                        oidr.code==TrackingCode::L1CDP ) )
-            {
-               navType = NavType::GPSCNAV2;
-            }
-            else if ((oidr.band==CarrierBand::L1 ||
-                      oidr.band==CarrierBand::L2) &&
-                     oidr.code==TrackingCode::MDP )
-            {
-               navType = NavType::GPSMNAV;
-            }
-            break;
-         }
-         case SatelliteSystem::QZSS:
-         {
-            if ( oidr.band==CarrierBand::L1  &&
-                 oidr.code==TrackingCode::CA )
-            {
-               navType = NavType::GPSLNAV;
-            }
-            else if ( oidr.band==CarrierBand::L2 &&
-                      ( oidr.code==TrackingCode::L2CM  ||
-                        oidr.code==TrackingCode::L2CL ||
-                        oidr.code==TrackingCode::L2CML ))
-            {
-               navType = NavType::GPSCNAVL2;
-            }
-            else if ( oidr.band==CarrierBand::L5 &&
-                      ( oidr.code==TrackingCode::L5I ||
-                        oidr.code==TrackingCode::L5Q ||
-                        oidr.code==TrackingCode::L5IQ ))
-            {
-               navType = NavType::GPSCNAVL5;
-            }
-            else if ( oidr.band==CarrierBand::L1 &&
-                      ( oidr.code==TrackingCode::L1CP ||
-                        oidr.code==TrackingCode::L1CD ||
-                        oidr.code==TrackingCode::L1CDP ))
-            {
-               navType = NavType::GPSCNAV2;
-            }
-            break;
-         }
-         case SatelliteSystem::BeiDou:
-         {
-            if ( sidr.id>5 &&
-                 ( oidr.band==CarrierBand::B1   ||
-                   oidr.band==CarrierBand::B2   ||
-                   oidr.band==CarrierBand::B3 ) &&
-                 ( oidr.code==TrackingCode::B1I  ||
-                   oidr.code==TrackingCode::B1Q  ||
-                   oidr.code==TrackingCode::B1IQ ||
-                   oidr.code==TrackingCode::B2I  ||
-                   oidr.code==TrackingCode::B2Q  ||
-                   oidr.code==TrackingCode::B2IQ ||
-                   oidr.code==TrackingCode::B3I  ||
-                   oidr.code==TrackingCode::B3Q  ||
-                   oidr.code==TrackingCode::B3IQ ))
-            {
-               navType = NavType::BeiDou_D1;
-            }
-            else if ( sidr.id<=5 &&
-                      ( oidr.band==CarrierBand::B1   ||
-                        oidr.band==CarrierBand::B2   ||
-                        oidr.band==CarrierBand::B3 )&&
-                      ( oidr.code==TrackingCode::B1I  ||
-                        oidr.code==TrackingCode::B1Q  ||
-                        oidr.code==TrackingCode::B1IQ ||
-                        oidr.code==TrackingCode::B2I  ||
-                        oidr.code==TrackingCode::B2Q  ||
-                        oidr.code==TrackingCode::B2IQ ||
-                        oidr.code==TrackingCode::B3I  ||
-                        oidr.code==TrackingCode::B3Q  ||
-                        oidr.code==TrackingCode::B3IQ ))
-            {
-               navType = NavType::BeiDou_D2;
-            }
-            break;
-         }
-         case SatelliteSystem::Glonass:
-         {
-            if (( oidr.band==CarrierBand::G1 ||
-                  oidr.band==CarrierBand::G2 ) &&
-                ( oidr.code==TrackingCode::Standard ))
-            {
-               navType = NavType::GloCivilF;
-            }
-            else if ( oidr.band==CarrierBand::G3 &&
-                      ( oidr.code==TrackingCode::L3OCD ||
-                        oidr.code==TrackingCode::L3OCP ||
-                        oidr.code==TrackingCode::L3OCDP ))
-            {
-               navType = NavType::GloCivilC;
-            }
-            break;
-         }
-         case SatelliteSystem::Galileo:
-         {
-            if ( oidr.band==CarrierBand::L1 && oidr.code==TrackingCode::E1B )
-            {
-               navType = NavType::GalINAV;
-            }
-            else if ( oidr.band==CarrierBand::E5b  &&
-                      ( oidr.code==TrackingCode::E5bI ||
-                        oidr.code==TrackingCode::E5bIQ ))
-            {
-               navType = NavType::GalINAV;
-            }
-            else if ( oidr.band==CarrierBand::L5 &&      // This is Galileo E5a
-                      ( oidr.code==TrackingCode::E5aI ||
-                        oidr.code==TrackingCode::E5aIQ ))
-            {
-               navType = NavType::GalFNAV;
-            }
-            break;
-         }
-         case SatelliteSystem::IRNSS:
-         {
-            if ( oidr.band==CarrierBand::L5 &&
-                 ( oidr.code==TrackingCode::SPSL5 ||
-                   oidr.code==TrackingCode::RSL5D ||
-                   oidr.code==TrackingCode::RSL5P ||
-                   oidr.code==TrackingCode::RSL5DP ))
-            {
-               navType = NavType::IRNSS_SPS;
-            }
-            break;
-         }
-         default:
-            navType = NavType::Unknown;
-            break;
-      } // end of switch statement
-   }
+    // If SatID (sat system type) corresponds to GPS AND ObsID
+    //(carrier band) corresponds to either L1 OR L2 AND ObsID
+    //(tracking code) matches CA, P, Y, W, N, OR D then NavID
+    // corresponds to GPS LNAV.
+    switch (sidr.system)
+    {
+    case SatelliteSystem::GPS: {
+        if ((oidr.band == CarrierBand::L1 || oidr.band == CarrierBand::L2) &&
+            (oidr.code == TrackingCode::CA || oidr.code == TrackingCode::P || oidr.code == TrackingCode::Y ||
+             oidr.code == TrackingCode::Y || oidr.code == TrackingCode::Ztracking ||
+             oidr.code == TrackingCode::YCodeless || oidr.code == TrackingCode::Semicodeless))
+        {
+            navType = NavType::GPSLNAV;
+        }
+        else if (oidr.band == CarrierBand::L2 && (oidr.code == TrackingCode::L2CM || oidr.code == TrackingCode::L2CL ||
+                                                  oidr.code == TrackingCode::L2CML))
+        {
+            navType = NavType::GPSCNAVL2;
+        }
+        else if (oidr.band == CarrierBand::L5 &&
+                 (oidr.code == TrackingCode::L5I || oidr.code == TrackingCode::L5Q || oidr.code == TrackingCode::L5IQ))
+        {
+            navType = NavType::GPSCNAVL5;
+        }
+        else if (oidr.band == CarrierBand::L1 && (oidr.code == TrackingCode::L1CP || oidr.code == TrackingCode::L1CD ||
+                                                  oidr.code == TrackingCode::L1CDP))
+        {
+            navType = NavType::GPSCNAV2;
+        }
+        else if ((oidr.band == CarrierBand::L1 || oidr.band == CarrierBand::L2) && oidr.code == TrackingCode::MDP)
+        {
+            navType = NavType::GPSMNAV;
+        }
+        break;
+    }
+    case SatelliteSystem::QZSS: {
+        if (oidr.band == CarrierBand::L1 && oidr.code == TrackingCode::CA)
+        {
+            navType = NavType::GPSLNAV;
+        }
+        else if (oidr.band == CarrierBand::L2 && (oidr.code == TrackingCode::L2CM || oidr.code == TrackingCode::L2CL ||
+                                                  oidr.code == TrackingCode::L2CML))
+        {
+            navType = NavType::GPSCNAVL2;
+        }
+        else if (oidr.band == CarrierBand::L5 &&
+                 (oidr.code == TrackingCode::L5I || oidr.code == TrackingCode::L5Q || oidr.code == TrackingCode::L5IQ))
+        {
+            navType = NavType::GPSCNAVL5;
+        }
+        else if (oidr.band == CarrierBand::L1 && (oidr.code == TrackingCode::L1CP || oidr.code == TrackingCode::L1CD ||
+                                                  oidr.code == TrackingCode::L1CDP))
+        {
+            navType = NavType::GPSCNAV2;
+        }
+        break;
+    }
+    case SatelliteSystem::BeiDou: {
+        if (sidr.id > 5 &&
+            (oidr.band == CarrierBand::B1 || oidr.band == CarrierBand::B2 || oidr.band == CarrierBand::B3) &&
+            (oidr.code == TrackingCode::B1I || oidr.code == TrackingCode::B1Q || oidr.code == TrackingCode::B1IQ ||
+             oidr.code == TrackingCode::B2I || oidr.code == TrackingCode::B2Q || oidr.code == TrackingCode::B2IQ ||
+             oidr.code == TrackingCode::B3I || oidr.code == TrackingCode::B3Q || oidr.code == TrackingCode::B3IQ))
+        {
+            navType = NavType::BeiDou_D1;
+        }
+        else if (sidr.id <= 5 &&
+                 (oidr.band == CarrierBand::B1 || oidr.band == CarrierBand::B2 || oidr.band == CarrierBand::B3) &&
+                 (oidr.code == TrackingCode::B1I || oidr.code == TrackingCode::B1Q || oidr.code == TrackingCode::B1IQ ||
+                  oidr.code == TrackingCode::B2I || oidr.code == TrackingCode::B2Q || oidr.code == TrackingCode::B2IQ ||
+                  oidr.code == TrackingCode::B3I || oidr.code == TrackingCode::B3Q || oidr.code == TrackingCode::B3IQ))
+        {
+            navType = NavType::BeiDou_D2;
+        }
+        break;
+    }
+    case SatelliteSystem::Glonass: {
+        if ((oidr.band == CarrierBand::G1 || oidr.band == CarrierBand::G2) && (oidr.code == TrackingCode::Standard))
+        {
+            navType = NavType::GloCivilF;
+        }
+        else if (oidr.band == CarrierBand::G3 &&
+                 (oidr.code == TrackingCode::L3OCD || oidr.code == TrackingCode::L3OCP ||
+                  oidr.code == TrackingCode::L3OCDP))
+        {
+            navType = NavType::GloCivilC;
+        }
+        break;
+    }
+    case SatelliteSystem::Galileo: {
+        if (oidr.band == CarrierBand::L1 && oidr.code == TrackingCode::E1B)
+        {
+            navType = NavType::GalINAV;
+        }
+        else if (oidr.band == CarrierBand::E5b && (oidr.code == TrackingCode::E5bI || oidr.code == TrackingCode::E5bIQ))
+        {
+            navType = NavType::GalINAV;
+        }
+        else if (oidr.band == CarrierBand::L5 && // This is Galileo E5a
+                 (oidr.code == TrackingCode::E5aI || oidr.code == TrackingCode::E5aIQ))
+        {
+            navType = NavType::GalFNAV;
+        }
+        break;
+    }
+    case SatelliteSystem::IRNSS: {
+        if (oidr.band == CarrierBand::L5 && (oidr.code == TrackingCode::SPSL5 || oidr.code == TrackingCode::RSL5D ||
+                                             oidr.code == TrackingCode::RSL5P || oidr.code == TrackingCode::RSL5DP))
+        {
+            navType = NavType::IRNSS_SPS;
+        }
+        break;
+    }
+    default:
+        navType = NavType::Unknown;
+        break;
+    } // end of switch statement
+}
 
-
-   NavID::NavID( const std::string& s )
-         : navType(convertStringToNavType(s))
-   {
-   }
+NavID::NavID(const std::string &s) : navType(convertStringToNavType(s))
+{
+}
 } // namespace gnsstk
-

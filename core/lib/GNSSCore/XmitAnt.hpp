@@ -39,37 +39,37 @@
 #ifndef GNSSTK_XMITANT_HPP
 #define GNSSTK_XMITANT_HPP
 
-#include <string>
 #include "EnumIterator.hpp"
+#include <string>
 
 namespace gnsstk
 {
-      /** Enumerate satellite (pseudolite, etc.) transmitting antenna
-       * types.  Most will be "Standard", while a few satellites will
-       * have secondary "Regional" transmitters.  The secondary,
-       * "Regional" transmitter should NOT be confused with the
-       * primary transmitter for a regional system such as QZSS or
-       * NavIC. */
-   enum class XmitAnt
-   {
-      Unknown,   ///< Unitialized value.  Should always be first.
-      Any,       ///< When making comparisons in ObsID, matches any enumeration.
-      Standard,  ///< Transmitting antenna is the primary for that signal.
-      Regional,  ///< Transmitting antenna is secondary, regional coverage.
-      Last       ///< Used to verify that all items are described at compile time
-   }; // enum class XmitAnt
+/** Enumerate satellite (pseudolite, etc.) transmitting antenna
+ * types.  Most will be "Standard", while a few satellites will
+ * have secondary "Regional" transmitters.  The secondary,
+ * "Regional" transmitter should NOT be confused with the
+ * primary transmitter for a regional system such as QZSS or
+ * NavIC. */
+enum class XmitAnt
+{
+    Unknown,  ///< Unitialized value.  Should always be first.
+    Any,      ///< When making comparisons in ObsID, matches any enumeration.
+    Standard, ///< Transmitting antenna is the primary for that signal.
+    Regional, ///< Transmitting antenna is secondary, regional coverage.
+    Last      ///< Used to verify that all items are described at compile time
+}; // enum class XmitAnt
 
-      /** Define an iterator so C++11 can do things like
-       * for (XmitAnt i : XmitAntIterator()) */
-   typedef EnumIterator<XmitAnt, XmitAnt::Unknown, XmitAnt::Last> XmitAntIterator;
+/** Define an iterator so C++11 can do things like
+ * for (XmitAnt i : XmitAntIterator()) */
+typedef EnumIterator<XmitAnt, XmitAnt::Unknown, XmitAnt::Last> XmitAntIterator;
 
-   namespace StringUtils
-   {
-         /// Convert a XmitAnt to a whitespace-free string name.
-      std::string asString(XmitAnt e) noexcept;
-         /// Convert a string name to an XmitAnt
-      XmitAnt asXmitAnt(const std::string& s) noexcept;
-   }
+namespace StringUtils
+{
+/// Convert a XmitAnt to a whitespace-free string name.
+std::string asString(XmitAnt e) noexcept;
+/// Convert a string name to an XmitAnt
+XmitAnt asXmitAnt(const std::string &s) noexcept;
+} // namespace StringUtils
 } // namespace gnsstk
 
 #endif // GNSSTK_XMITANT_HPP

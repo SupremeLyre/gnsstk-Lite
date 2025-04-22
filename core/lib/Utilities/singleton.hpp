@@ -43,21 +43,28 @@
 
 namespace gnsstk
 {
-template <class T> class Singleton {
-public:
-   static T& Instance() {
-      static T theInstance;
-      return theInstance;
-   }
-protected:
-   Singleton() {}                            // c'tor protected
-   virtual ~Singleton() {}                   // d'tor virtual and protected
-private:
-   Singleton(Singleton const&);              // copy c'tor prohibited
-   Singleton& operator=(Singleton const&);   // operator= prohibited
+template <class T> class Singleton
+{
+  public:
+    static T &Instance()
+    {
+        static T theInstance;
+        return theInstance;
+    }
+
+  protected:
+    Singleton()
+    {
+    } // c'tor protected
+    virtual ~Singleton()
+    {
+    } // d'tor virtual and protected
+  private:
+    Singleton(Singleton const &);            // copy c'tor prohibited
+    Singleton &operator=(Singleton const &); // operator= prohibited
 };
-}
-#endif   //SINGLETON_TEMPLATE_INCLUDE
+} // namespace gnsstk
+#endif // SINGLETON_TEMPLATE_INCLUDE
 
 /* use this class like this:
 

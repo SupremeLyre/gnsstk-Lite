@@ -41,63 +41,63 @@
  * Command line options with time (class CommonTime) arguments
  */
 
+#include "CommandOptionWithTimeArg.hpp"
 #include "StringUtils.hpp"
 #include "TimeString.hpp"
-#include "CommandOptionWithTimeArg.hpp"
 
 using namespace std;
 
 namespace gnsstk
 {
-   string CommandOptionWithTimeArg :: checkArguments()
-   {
-      string errstr = CommandOptionWithAnyArg::checkArguments();
+string CommandOptionWithTimeArg ::checkArguments()
+{
+    string errstr = CommandOptionWithAnyArg::checkArguments();
 
-      if (errstr != string())
-         return errstr;
+    if (errstr != string())
+        return errstr;
 
-      vector<string>::size_type vecindex;
-      for(vecindex = 0; vecindex < value.size(); vecindex++)
-      {
-         string thisTimeSpec = getTimeSpec(vecindex);
-         if (thisTimeSpec != string())
-         {
-            try {
-               CommonTime t;
-               scanTime(t, value[vecindex], thisTimeSpec);
-               times.push_back(t);
+    vector<string>::size_type vecindex;
+    for (vecindex = 0; vecindex < value.size(); vecindex++)
+    {
+        string thisTimeSpec = getTimeSpec(vecindex);
+        if (thisTimeSpec != string())
+        {
+            try
+            {
+                CommonTime t;
+                scanTime(t, value[vecindex], thisTimeSpec);
+                times.push_back(t);
             }
             catch (...)
             {
-               errstr += "\"" + value[vecindex] + "\" is not a valid time.";
+                errstr += "\"" + value[vecindex] + "\" is not a valid time.";
             }
-         }
-         else
+        }
+        else
             errstr += "\"" + value[vecindex] + "\" is not a valid time.";
-      }
+    }
 
-      return errstr;
-   }
+    return errstr;
+}
 
-   string CommandOptionWithSimpleTimeArg :: getTimeSpec
-   (vector<string>::size_type index) const
-   {
-      int numwords = gnsstk::StringUtils::numWords(value[index]);
-      string thisTimeSpec;
-      switch (numwords)
-      {
-         case 1:
-            thisTimeSpec = "%m/%d/%Y";
-            break;
-         case 2:
-            thisTimeSpec = "%Y %j";
-            break;
-         case 3:
-            thisTimeSpec = "%Y %j %s";
-            break;
-      }
+string CommandOptionWithSimpleTimeArg ::getTimeSpec(vector<string>::size_type index) const
+{
+    int numwords = gnsstk::StringUtils::numWords(value[index]);
+    string thisTimeSpec;
+    switch (numwords)
+    {
+    case 1:
+        thisTimeSpec = "%m/%d/%Y";
+        break;
+    case 2:
+        thisTimeSpec = "%Y %j";
+        break;
+    case 3:
+        thisTimeSpec = "%Y %j %s";
+        break;
+    }
 
-      return thisTimeSpec;
-   }
+    return thisTimeSpec;
+}
 
 } // namespace gnsstk

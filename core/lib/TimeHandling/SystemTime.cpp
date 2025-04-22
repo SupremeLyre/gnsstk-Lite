@@ -36,29 +36,29 @@
 //
 //==============================================================================
 
-#include "gnsstkplatform.h"
 #include "SystemTime.hpp"
 #include "ANSITime.hpp"
-//#include <sys/time.h> // #include <ctime>      // for gettimeofday()
+#include "gnsstkplatform.h"
+// #include <sys/time.h> // #include <ctime>      // for gettimeofday()
 
 namespace gnsstk
 {
-   SystemTime& SystemTime::update()
-   {
+SystemTime &SystemTime::update()
+{
 #if defined(ANSI_ONLY)
-      time_t t;
-      time( &t );
-      *this = ANSITime( t );
+    time_t t;
+    time(&t);
+    *this = ANSITime(t);
 #elif defined(WIN32)
-      _timeb t;
-      _ftime( &t );
-      tv.tv_sec = t.time;
-      tv.tv_usec = t.millitm * 1000;
+    _timeb t;
+    _ftime(&t);
+    tv.tv_sec = t.time;
+    tv.tv_usec = t.millitm * 1000;
 #else
-      gettimeofday( &tv, NULL );
+    gettimeofday(&tv, NULL);
 #endif
 
-      return *this;
-   }
+    return *this;
+}
 
-} // namespace
+} // namespace gnsstk

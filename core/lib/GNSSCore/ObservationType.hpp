@@ -46,45 +46,45 @@
 #ifndef GNSSTK_OBSERVATIONTYPE_HPP
 #define GNSSTK_OBSERVATIONTYPE_HPP
 
-#include <string>
 #include "EnumIterator.hpp"
+#include <string>
 
 namespace gnsstk
 {
-      /// The type of observation, mostly used by ObsID.
-   enum class ObservationType
-   {
-      Unknown,
-      Any,       ///< Used to match any observation type
-      Range,     ///< pseudorange, in meters
-      Phase,     ///< accumulated phase, in cycles
-      Doppler,   ///< Doppler, in Hz
-      SNR,       ///< Signal strength, in dB-Hz
-      Channel,   ///< Channel number
-      DemodStat, ///< Demodulator status
-      Iono,      ///< Ionospheric delay
-      SSI,       ///< Signal Strength Indicator (RINEX)
-      LLI,       ///< Loss of Lock Indicator (RINEX)
-      TrackLen,  ///< Number of continuous epochs of 'good' tracking
-      NavMsg,    ///< Navigation Message data
-      RngStdDev, ///< pseudorange standard deviation, in meters
-      PhsStdDev, ///< phase standard deviation, in cycles
-      FreqIndx,  ///< GLONASS frequency offset index
-      Undefined, ///< Observation type is known to be undefined (as opposed to unknown)
-      Last,      ///< Used to verify that all items are described at compile time
-   }; // enum class ObservationType
+/// The type of observation, mostly used by ObsID.
+enum class ObservationType
+{
+    Unknown,
+    Any,       ///< Used to match any observation type
+    Range,     ///< pseudorange, in meters
+    Phase,     ///< accumulated phase, in cycles
+    Doppler,   ///< Doppler, in Hz
+    SNR,       ///< Signal strength, in dB-Hz
+    Channel,   ///< Channel number
+    DemodStat, ///< Demodulator status
+    Iono,      ///< Ionospheric delay
+    SSI,       ///< Signal Strength Indicator (RINEX)
+    LLI,       ///< Loss of Lock Indicator (RINEX)
+    TrackLen,  ///< Number of continuous epochs of 'good' tracking
+    NavMsg,    ///< Navigation Message data
+    RngStdDev, ///< pseudorange standard deviation, in meters
+    PhsStdDev, ///< phase standard deviation, in cycles
+    FreqIndx,  ///< GLONASS frequency offset index
+    Undefined, ///< Observation type is known to be undefined (as opposed to unknown)
+    Last,      ///< Used to verify that all items are described at compile time
+}; // enum class ObservationType
 
-      /** Define an iterator so C++11 can do things like
-       * for (ObservationType i : ObservationTypeIterator()) */
-   typedef EnumIterator<ObservationType, ObservationType::Unknown, ObservationType::Last> ObservationTypeIterator;
+/** Define an iterator so C++11 can do things like
+ * for (ObservationType i : ObservationTypeIterator()) */
+typedef EnumIterator<ObservationType, ObservationType::Unknown, ObservationType::Last> ObservationTypeIterator;
 
-   namespace StringUtils
-   {
-         /// Convert a ObservationType to a whitespace-free string name.
-      std::string asString(ObservationType e) noexcept;
-         /// Convert a string name to an ObservationType
-      ObservationType asObservationType(const std::string& s) noexcept;
-   }
+namespace StringUtils
+{
+/// Convert a ObservationType to a whitespace-free string name.
+std::string asString(ObservationType e) noexcept;
+/// Convert a string name to an ObservationType
+ObservationType asObservationType(const std::string &s) noexcept;
+} // namespace StringUtils
 } // namespace gnsstk
 
 #endif // GNSSTK_OBSERVATIONTYPE_HPP

@@ -45,44 +45,44 @@ using namespace std;
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(IERSConvention e)
-      {
-         switch (e)
-         {
-            case IERSConvention::Unknown:
-               return "Unknown";
-            case IERSConvention::IERS1996:
-               return "IERS1996";
-            case IERSConvention::IERS2003:
-               return "IERS2003";
-            case IERSConvention::IERS2010:
-               return "IERS2010";
-            default:
-               return "???";
-         }
-      }
+namespace StringUtils
+{
+std::string asString(IERSConvention e)
+{
+    switch (e)
+    {
+    case IERSConvention::Unknown:
+        return "Unknown";
+    case IERSConvention::IERS1996:
+        return "IERS1996";
+    case IERSConvention::IERS2003:
+        return "IERS2003";
+    case IERSConvention::IERS2010:
+        return "IERS2010";
+    default:
+        return "???";
+    }
+}
 
-      IERSConvention asIERSConvention(const std::string& s)
-      {
-         if (s == "Unknown")
-         {
-            return IERSConvention::Unknown;
-         }
-         if (s == "IERS1996")
-         {
-            return IERSConvention::IERS1996;
-         }
-         if (s == "IERS2003")
-         {
-            return IERSConvention::IERS2003;
-         }
-         if (s == "IERS2010")
-         {
-            return IERSConvention::IERS2010;
-         }
-         return IERSConvention::Unknown;
-      }
-   } // namespace StringUtils
+IERSConvention asIERSConvention(const std::string &s)
+{
+    if (s == "Unknown")
+    {
+        return IERSConvention::Unknown;
+    }
+    if (s == "IERS1996")
+    {
+        return IERSConvention::IERS1996;
+    }
+    if (s == "IERS2003")
+    {
+        return IERSConvention::IERS2003;
+    }
+    if (s == "IERS2010")
+    {
+        return IERSConvention::IERS2010;
+    }
+    return IERSConvention::Unknown;
+}
+} // namespace StringUtils
 } // end namespace gnsstk

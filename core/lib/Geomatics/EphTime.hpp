@@ -54,49 +54,50 @@
 
 namespace gnsstk
 {
-   /// @ingroup TimeHandling
-   //@{
+/// @ingroup TimeHandling
+//@{
 
-   /// @todo Make this class inherit from TimeTag like all the others.
+/// @todo Make this class inherit from TimeTag like all the others.
 
-      /**
-       Class implementing date+time, only in formats applicable solar system
-       ephemeris and earth orientation, namely UTC, TT and TDB.
-       Conversion to and from CommonTime is implicit through casts defined here.
-      */
-   class EphTime
-   {
-   private:
-      long iMJD;         ///< integer MJD
-      double dSOD;       ///< double seconds of day
-      TimeSystem system; ///< time system, limited to Unknown, UTC, TT, TDB
+/**
+ Class implementing date+time, only in formats applicable solar system
+ ephemeris and earth orientation, namely UTC, TT and TDB.
+ Conversion to and from CommonTime is implicit through casts defined here.
+*/
+class EphTime
+{
+  private:
+    long iMJD;         ///< integer MJD
+    double dSOD;       ///< double seconds of day
+    TimeSystem system; ///< time system, limited to Unknown, UTC, TT, TDB
 
-   public:
-         /// empty constructor
-      EphTime() : iMJD(0), dSOD(0.0), system(TimeSystem::Unknown) {}
+  public:
+    /// empty constructor
+    EphTime() : iMJD(0), dSOD(0.0), system(TimeSystem::Unknown)
+    {
+    }
 
-         /// constructor, input int mjd, seconds of day, and system
-      EphTime(int imjd, double dsod, TimeSystem sys = TimeSystem::UTC)
-         : iMJD(imjd), dSOD(dsod), system(sys)
-      {
-      }
+    /// constructor, input int mjd, seconds of day, and system
+    EphTime(int imjd, double dsod, TimeSystem sys = TimeSystem::UTC) : iMJD(imjd), dSOD(dsod), system(sys)
+    {
+    }
 
-         /// constructor from full MJD and system
-      EphTime(double mjd, TimeSystem sys = TimeSystem::UTC) : system(sys)
-      {
-         setMJD(mjd);
-         setTimeSystem(sys);
-      }
+    /// constructor from full MJD and system
+    EphTime(double mjd, TimeSystem sys = TimeSystem::UTC) : system(sys)
+    {
+        setMJD(mjd);
+        setTimeSystem(sys);
+    }
 
-         /**
-          convert systems
-          @param ts TimeSystem to be converted to
-          @throw Exception if Correction does, if input system is Unknown
-         */
-      void convertSystemTo(const TimeSystem& ts)
-      {
-         try
-         {
+    /**
+     convert systems
+     @param ts TimeSystem to be converted to
+     @throw Exception if Correction does, if input system is Unknown
+    */
+    void convertSystemTo(const TimeSystem &ts)
+    {
+        try
+        {
             long jday(static_cast<long>(iMJD + dSOD / SEC_PER_DAY + MJD_JDAY));
             int yy, mm, dd;
             convertJDtoCalendar(jday, yy, mm, dd);
@@ -106,182 +107,184 @@ namespace gnsstk
             *this += dt;
             // set new system
             this->setTimeSystem(ts);
-         }
-         catch (Exception& e)
-         {
+        }
+        catch (Exception &e)
+        {
             GNSSTK_RETHROW(e);
-         }
-      }
+        }
+    }
 
-         /**
-          add seconds to this EphTime
-          @param seconds double seconds to add
-         */
-      EphTime& operator+=(double seconds)
-      {
-         dSOD += seconds;
-         while (dSOD >= 86400.0)
-         {
+    /**
+     add seconds to this EphTime
+     @param seconds double seconds to add
+    */
+    EphTime &operator+=(double seconds)
+    {
+        dSOD += seconds;
+        while (dSOD >= 86400.0)
+        {
             dSOD -= 86400.0;
             iMJD++;
-         }
-         while (dSOD < 0.0)
-         {
+        }
+        while (dSOD < 0.0)
+        {
             dSOD += 86400.0;
             iMJD--;
-         }
-         return *this;
-      }
+        }
+        return *this;
+    }
 
-         /**
-          set the TimeSystem
-          @param sys desired TimeSystem
-          @throw Exception if it is not allowed (one of UTC TT TBD)
-         */
-      void setTimeSystem(TimeSystem sys)
-      {
-         if (sys != TimeSystem::UTC && sys != TimeSystem::TT &&
-             sys != TimeSystem::TDB)
-         {
+    /**
+     set the TimeSystem
+     @param sys desired TimeSystem
+     @throw Exception if it is not allowed (one of UTC TT TBD)
+    */
+    void setTimeSystem(TimeSystem sys)
+    {
+        if (sys != TimeSystem::UTC && sys != TimeSystem::TT && sys != TimeSystem::TDB)
+        {
             GNSSTK_THROW(Exception("Time system not allowed"));
-         }
-         system = sys;
-      }
+        }
+        system = sys;
+    }
 
-         /**
-          set to value of full MJD
-          @param mjd long double MJD
-         */
-      void setMJD(long double mjd)
-      {
-         iMJD = long(mjd);
-         dSOD = (mjd - static_cast<double>(iMJD)) * 86400.0;
-      }
+    /**
+     set to value of full MJD
+     @param mjd long double MJD
+    */
+    void setMJD(long double mjd)
+    {
+        iMJD = long(mjd);
+        dSOD = (mjd - static_cast<double>(iMJD)) * 86400.0;
+    }
 
-         /**
-          Compute MJD
-          @return long integer MJD
-          */
-      long lMJD() const { return iMJD; }
+    /**
+     Compute MJD
+     @return long integer MJD
+     */
+    long lMJD() const
+    {
+        return iMJD;
+    }
 
-         /**
-          Compute MJD
-          @return full double MJD
-         */
-      double dMJD() const
-      {
-         return (static_cast<double>(iMJD) + dSOD / 86400.);
-      }
+    /**
+     Compute MJD
+     @return full double MJD
+    */
+    double dMJD() const
+    {
+        return (static_cast<double>(iMJD) + dSOD / 86400.);
+    }
 
-         /// @return seconds of day
-      double secOfDay() const { return dSOD; }
+    /// @return seconds of day
+    double secOfDay() const
+    {
+        return dSOD;
+    }
 
-         /// @return year
-      int year() const
-      {
-         long jday(static_cast<long>(iMJD + dSOD / SEC_PER_DAY + MJD_JDAY));
-         int yy, mm, dd;
-         convertJDtoCalendar(jday, yy, mm, dd);
-         return yy;
-      }
+    /// @return year
+    int year() const
+    {
+        long jday(static_cast<long>(iMJD + dSOD / SEC_PER_DAY + MJD_JDAY));
+        int yy, mm, dd;
+        convertJDtoCalendar(jday, yy, mm, dd);
+        return yy;
+    }
 
-         /**
-          constructor from CommonTime; convert to UTC if system is not
-          UTC|TT|TDB, and change Unknown to UTC.
-          @param dt CommonTime input
-          @throw Exception if convertSystemTo does, if input system is Unknown
-         */
-      EphTime(const CommonTime& dt)
-      {
-         try
-         {
+    /**
+     constructor from CommonTime; convert to UTC if system is not
+     UTC|TT|TDB, and change Unknown to UTC.
+     @param dt CommonTime input
+     @throw Exception if convertSystemTo does, if input system is Unknown
+    */
+    EphTime(const CommonTime &dt)
+    {
+        try
+        {
             CommonTime ct(dt);
             TimeSystem sys = ct.getTimeSystem();
             if (sys == TimeSystem::Unknown || sys == TimeSystem::Any)
             {
-               ct.setTimeSystem(TimeSystem::UTC);
+                ct.setTimeSystem(TimeSystem::UTC);
             }
             // if its not UTC TT or TDB, convert it to UTC
-            else if (sys != TimeSystem::UTC && sys != TimeSystem::TT &&
-                     sys != TimeSystem::TDB)
+            else if (sys != TimeSystem::UTC && sys != TimeSystem::TT && sys != TimeSystem::TDB)
             {
-               CivilTime civt;
-               civt.convertFromCommonTime(ct);
-               double dt = gnsstk::getTimeSystemCorrection(
-                  sys, TimeSystem::UTC, civt.year, civt.month, civt.day);
-               ct += dt;
+                CivilTime civt;
+                civt.convertFromCommonTime(ct);
+                double dt = gnsstk::getTimeSystemCorrection(sys, TimeSystem::UTC, civt.year, civt.month, civt.day);
+                ct += dt;
             }
 
             MJD ctmjd;
             ctmjd.convertFromCommonTime(ct);
-            iMJD   = static_cast<long>(ctmjd.mjd);
-            dSOD   = (ctmjd.mjd - static_cast<long double>(iMJD)) * SEC_PER_DAY;
+            iMJD = static_cast<long>(ctmjd.mjd);
+            dSOD = (ctmjd.mjd - static_cast<long double>(iMJD)) * SEC_PER_DAY;
             system = ctmjd.getTimeSystem();
-         }
-         catch (Exception& e)
-         {
+        }
+        catch (Exception &e)
+        {
             GNSSTK_RETHROW(e);
-         }
-      }
+        }
+    }
 
-         /// const cast EphTime to CommonTime
-      operator CommonTime() const
-      {
-         MJD ctmjd;
-         ctmjd.mjd     = static_cast<long double>(iMJD + dSOD / SEC_PER_DAY);
-         CommonTime ct = ctmjd.convertToCommonTime();
-         ct.setTimeSystem(system);
-         return ct;
-      }
+    /// const cast EphTime to CommonTime
+    operator CommonTime() const
+    {
+        MJD ctmjd;
+        ctmjd.mjd = static_cast<long double>(iMJD + dSOD / SEC_PER_DAY);
+        CommonTime ct = ctmjd.convertToCommonTime();
+        ct.setTimeSystem(system);
+        return ct;
+    }
 
-      // no this is not a duplicate of the previous function
-         /// non-const cast EphTime to CommonTime
-      operator CommonTime()
-      {
-         MJD ctmjd;
-         ctmjd.mjd     = static_cast<long double>(iMJD + dSOD / SEC_PER_DAY);
-         CommonTime ct = ctmjd.convertToCommonTime();
-         ct.setTimeSystem(system);
-         return ct;
-      }
+    // no this is not a duplicate of the previous function
+    /// non-const cast EphTime to CommonTime
+    operator CommonTime()
+    {
+        MJD ctmjd;
+        ctmjd.mjd = static_cast<long double>(iMJD + dSOD / SEC_PER_DAY);
+        CommonTime ct = ctmjd.convertToCommonTime();
+        ct.setTimeSystem(system);
+        return ct;
+    }
 
-         /**
-          return string of form Week sow.sss
-          @param prec precision in fixed float output
-         */
-      std::string asGPSString(const int prec = 2) const
-      {
-         std::ostringstream oss;
-         int wk((iMJD - GPS_EPOCH_MJD) / 7);
-         double sow((iMJD - wk * 7) * SEC_PER_DAY + dSOD);
-         if (sow >= FULLWEEK)
-         {
+    /**
+     return string of form Week sow.sss
+     @param prec precision in fixed float output
+    */
+    std::string asGPSString(const int prec = 2) const
+    {
+        std::ostringstream oss;
+        int wk((iMJD - GPS_EPOCH_MJD) / 7);
+        double sow((iMJD - wk * 7) * SEC_PER_DAY + dSOD);
+        if (sow >= FULLWEEK)
+        {
             sow -= FULLWEEK;
             wk++;
-         }
-         oss << wk << " " << std::fixed << std::setprecision(prec) << sow;
-         return oss.str();
-      }
+        }
+        oss << wk << " " << std::fixed << std::setprecision(prec) << sow;
+        return oss.str();
+    }
 
-         /**
-          return string of form MJD HH:MM:SS.ss
-          @param prec precision in fixed float output
-         */
-      std::string asMJDString(const int prec = 3) const
-      {
-         std::ostringstream oss;
-         int hh, mm;
-         double sec;
-         convertSODtoTime(dSOD, hh, mm, sec);
-         oss << iMJD << " " << std::setfill('0') << std::setw(2) << hh << ":"
-             << std::setw(2) << mm << ":" << std::setfill(' ') << std::fixed
-             << std::setprecision(prec) << sec;
-         return oss.str();
-      }
+    /**
+     return string of form MJD HH:MM:SS.ss
+     @param prec precision in fixed float output
+    */
+    std::string asMJDString(const int prec = 3) const
+    {
+        std::ostringstream oss;
+        int hh, mm;
+        double sec;
+        convertSODtoTime(dSOD, hh, mm, sec);
+        oss << iMJD << " " << std::setfill('0') << std::setw(2) << hh << ":" << std::setw(2) << mm << ":"
+            << std::setfill(' ') << std::fixed << std::setprecision(prec) << sec;
+        return oss.str();
+    }
 
-   }; // end class EphTime
+}; // end class EphTime
 
-   //@}
+//@}
 
 } // namespace gnsstk
 

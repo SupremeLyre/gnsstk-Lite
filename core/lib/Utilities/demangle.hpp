@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,8 +42,8 @@
 
 namespace gnsstk
 {
-      /// Demangle G++ class names.
-   std::string demangle(const char* name);
-}
+/// Demangle G++ class names.
+std::string demangle(const char *name);
+} // namespace gnsstk
 
 #endif // GNSSTK_DEMANGLE_HPP

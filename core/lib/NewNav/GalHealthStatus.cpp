@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -40,35 +39,40 @@
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(GalHealthStatus e) noexcept
-      {
-         switch (e)
-         {
-            case GalHealthStatus::Unknown:      return "Unknown";
-            case GalHealthStatus::OK:           return "OK";
-            case GalHealthStatus::OutOfService: return "OutOfService";
-            case GalHealthStatus::WillBeOOS:    return "WillBeOOS";
-            case GalHealthStatus::InTest:       return "InTest";
-            default:                            return "???";
-         } // switch (e)
-      } // asString(GalHealthStatus)
+namespace StringUtils
+{
+std::string asString(GalHealthStatus e) noexcept
+{
+    switch (e)
+    {
+    case GalHealthStatus::Unknown:
+        return "Unknown";
+    case GalHealthStatus::OK:
+        return "OK";
+    case GalHealthStatus::OutOfService:
+        return "OutOfService";
+    case GalHealthStatus::WillBeOOS:
+        return "WillBeOOS";
+    case GalHealthStatus::InTest:
+        return "InTest";
+    default:
+        return "???";
+    } // switch (e)
+} // asString(GalHealthStatus)
 
-
-      GalHealthStatus asGalHealthStatus(const std::string& s) noexcept
-      {
-         if (s == "Unknown")
-            return GalHealthStatus::Unknown;
-         if (s == "OK")
-            return GalHealthStatus::OK;
-         if (s == "OutOfService")
-            return GalHealthStatus::OutOfService;
-         if (s == "WillBeOOS")
-            return GalHealthStatus::WillBeOOS;
-         if (s == "InTest")
-            return GalHealthStatus::InTest;
-         return GalHealthStatus::Unknown;
-      } // asGalHealthStatus(string)
-   } // namespace StringUtils
+GalHealthStatus asGalHealthStatus(const std::string &s) noexcept
+{
+    if (s == "Unknown")
+        return GalHealthStatus::Unknown;
+    if (s == "OK")
+        return GalHealthStatus::OK;
+    if (s == "OutOfService")
+        return GalHealthStatus::OutOfService;
+    if (s == "WillBeOOS")
+        return GalHealthStatus::WillBeOOS;
+    if (s == "InTest")
+        return GalHealthStatus::InTest;
+    return GalHealthStatus::Unknown;
+} // asGalHealthStatus(string)
+} // namespace StringUtils
 } // namespace gnsstk

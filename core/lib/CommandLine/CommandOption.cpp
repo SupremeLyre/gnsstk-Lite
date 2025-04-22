@@ -52,513 +52,502 @@ using namespace gnsstk::StringUtils;
 
 namespace gnsstk
 {
-   CommandOptionVec defaultCommandOptionList;
+CommandOptionVec defaultCommandOptionList;
 
-   CommandOption::CommandOption(
-      const CommandOption::CommandOptionFlag of,
-      const CommandOption::CommandOptionType ot,
-      const char shOpt,
-      const std::string& loOpt,
-      const std::string& desc,
-      const bool req,
-      CommandOptionVec& optVectorList)
-         : optFlag(of),  optType(ot),
-           shortOpt(shOpt), longOpt(loOpt), description(desc),
-           required(req), count(0), maxCount(0), order(0), parser(NULL)
-   {
-      if (ot == CommandOption::stdType)
-      {
-         if ( (shOpt == 0) && (loOpt.size() == 0) )
-         {
-            InvalidParameter  exc("A short or long command option must be specified");
+CommandOption::CommandOption(const CommandOption::CommandOptionFlag of, const CommandOption::CommandOptionType ot,
+                             const char shOpt, const std::string &loOpt, const std::string &desc, const bool req,
+                             CommandOptionVec &optVectorList)
+    : optFlag(of), optType(ot), shortOpt(shOpt), longOpt(loOpt), description(desc), required(req), count(0),
+      maxCount(0), order(0), parser(NULL)
+{
+    if (ot == CommandOption::stdType)
+    {
+        if ((shOpt == 0) && (loOpt.size() == 0))
+        {
+            InvalidParameter exc("A short or long command option must be specified");
             GNSSTK_THROW(exc);
-         }
-            // if short option is specified, allow only printable, non-space characters
-         if ( (shOpt != 0) && !isgraph(shOpt) )
-         {
-            InvalidParameter  exc("Invalid short command option character");
+        }
+        // if short option is specified, allow only printable, non-space characters
+        if ((shOpt != 0) && !isgraph(shOpt))
+        {
+            InvalidParameter exc("Invalid short command option character");
             GNSSTK_THROW(exc);
-         }
-            // if long option is specified, allow only printable, non-space characters
-         for ( size_t i = longOpt.size(); i > 0; --i )
-         {
-            if ( !isgraph(longOpt[i - 1]) )
+        }
+        // if long option is specified, allow only printable, non-space characters
+        for (size_t i = longOpt.size(); i > 0; --i)
+        {
+            if (!isgraph(longOpt[i - 1]))
             {
-               InvalidParameter  exc("Invalid long command option character");
-               GNSSTK_THROW(exc);
+                InvalidParameter exc("Invalid long command option character");
+                GNSSTK_THROW(exc);
             }
-         }
-      }
-      optVectorList.push_back(this);
-   }
+        }
+    }
+    optVectorList.push_back(this);
+}
 
-      // Prints out short options with a leading '-' and long ones with '--'.
-      // Puts a '|' between them if it has both.
-   string CommandOption::getOptionString() const
-   {
-      string toReturn;
-      if (shortOpt != 0)
-      {
-         toReturn += string("-") + string(1, shortOpt);
-         if (!longOpt.empty())
+// Prints out short options with a leading '-' and long ones with '--'.
+// Puts a '|' between them if it has both.
+string CommandOption::getOptionString() const
+{
+    string toReturn;
+    if (shortOpt != 0)
+    {
+        toReturn += string("-") + string(1, shortOpt);
+        if (!longOpt.empty())
             toReturn += string(" | --") + longOpt;
-      }
-      else
-      {
-         toReturn += string("--") + longOpt;
-      }
-      return toReturn;
-   }
+    }
+    else
+    {
+        toReturn += string("--") + longOpt;
+    }
+    return toReturn;
+}
 
-      // Prints out short options with a leading '-' and long ones with '--'.
-      // Puts a ',' between them if it has both.
-   string CommandOption::getFullOptionString() const
-   {
-      string toReturn("  ");
-      if (shortOpt != 0)
-      {
-         toReturn += string("-") + string(1, shortOpt);
-         if (!longOpt.empty())
-         {
+// Prints out short options with a leading '-' and long ones with '--'.
+// Puts a ',' between them if it has both.
+string CommandOption::getFullOptionString() const
+{
+    string toReturn("  ");
+    if (shortOpt != 0)
+    {
+        toReturn += string("-") + string(1, shortOpt);
+        if (!longOpt.empty())
+        {
             toReturn += string(", --") + longOpt;
             if (optFlag == hasArgument)
-               toReturn += "=" + getArgString();
-         }
-         else
-         {
+                toReturn += "=" + getArgString();
+        }
+        else
+        {
             if (optFlag == hasArgument)
-               toReturn += "  " + getArgString();
-         }
-      }
-      else
-      {
-         toReturn += string("    --") + longOpt;
-         if (optFlag == hasArgument)
+                toReturn += "  " + getArgString();
+        }
+    }
+    else
+    {
+        toReturn += string("    --") + longOpt;
+        if (optFlag == hasArgument)
             toReturn += "=" + getArgString();
-      }
-      return toReturn;
-   }
+    }
+    return toReturn;
+}
 
-      // creates the struct option for getopt_long
-   struct option CommandOption::toGetoptLongOption() const
-   {
-      struct option o = {longOpt.c_str(), optFlag, NULL, 0};
-      return o;
-   }
+// creates the struct option for getopt_long
+struct option CommandOption::toGetoptLongOption() const
+{
+    struct option o = {longOpt.c_str(), optFlag, NULL, 0};
+    return o;
+}
 
-      // makes the string for getopt
-   std::string CommandOption::toGetoptShortOption() const
-   {
-      std::string opt(1, shortOpt);
-      if (optFlag == hasArgument) opt += ":";
-      return opt;
-   }
+// makes the string for getopt
+std::string CommandOption::toGetoptShortOption() const
+{
+    std::string opt(1, shortOpt);
+    if (optFlag == hasArgument)
+        opt += ":";
+    return opt;
+}
 
-      // get the order of the specified instance of this command option
-   unsigned long CommandOption::getOrder(unsigned long idx) const
-   {
-      if (order.size() == 0)
-         return 0;
+// get the order of the specified instance of this command option
+unsigned long CommandOption::getOrder(unsigned long idx) const
+{
+    if (order.size() == 0)
+        return 0;
 
-      if (idx == (unsigned long)-1)
-         return order[order.size()-1];
+    if (idx == (unsigned long)-1)
+        return order[order.size() - 1];
 
-      if (idx >= order.size())
-         return 0;
+    if (idx >= order.size())
+        return 0;
 
-      return order[idx];
-   }
+    return order[idx];
+}
 
-      // writes out the vector of values for this command option
-   std::ostream& CommandOption::dumpValue(std::ostream& out) const
-   {
-      std::vector<std::string>::const_iterator itr = value.begin();
-      while(itr != value.end())
-      {
-         out << *itr << std::endl;
-         itr++;
-      }
-      return out;
-   }
+// writes out the vector of values for this command option
+std::ostream &CommandOption::dumpValue(std::ostream &out) const
+{
+    std::vector<std::string>::const_iterator itr = value.begin();
+    while (itr != value.end())
+    {
+        out << *itr << std::endl;
+        itr++;
+    }
+    return out;
+}
 
-      // returns a string like this:
-      //
-      //   -f | --foo  <arg>
-      //        this is the description
-      //
-   std::string CommandOption::getDescription() const
-   {
-      ostringstream out;
-         // do the option itself first
-      out << '\t';
-      if (shortOpt != 0)
-      {
-         out << '-' << shortOpt;
-         if (!longOpt.empty())
+// returns a string like this:
+//
+//   -f | --foo  <arg>
+//        this is the description
+//
+std::string CommandOption::getDescription() const
+{
+    ostringstream out;
+    // do the option itself first
+    out << '\t';
+    if (shortOpt != 0)
+    {
+        out << '-' << shortOpt;
+        if (!longOpt.empty())
             out << " | ";
-         else
+        else
             out << '\t';
-      }
-      if (! longOpt.empty())
-      {
-         out << "--" << longOpt;
-      }
-      if (optFlag == hasArgument)
-      {
-         out << " " << getArgString();
-      }
-         // and the description goes on a new line
-      out << endl << prettyPrint(description,
-                                 "\n",
-                                 "                  ",
-                                 "               ");
-      if (maxCount != 0)
-      {
-         out << "\t\tUp to " << maxCount << " may be used on the command line."
-             << endl;
-      }
-      return out.str();
-   }
+    }
+    if (!longOpt.empty())
+    {
+        out << "--" << longOpt;
+    }
+    if (optFlag == hasArgument)
+    {
+        out << " " << getArgString();
+    }
+    // and the description goes on a new line
+    out << endl << prettyPrint(description, "\n", "                  ", "               ");
+    if (maxCount != 0)
+    {
+        out << "\t\tUp to " << maxCount << " may be used on the command line." << endl;
+    }
+    return out.str();
+}
 
-      // this checks if it expects number or string type arguments.
-      // it returns a string describing the error, if any.
-   string CommandOption::checkArguments()
-   {
-      if (required && (count == 0))
-         return "Required option " + getOptionString() + " was not found.";
+// this checks if it expects number or string type arguments.
+// it returns a string describing the error, if any.
+string CommandOption::checkArguments()
+{
+    if (required && (count == 0))
+        return "Required option " + getOptionString() + " was not found.";
 
-      return string();
-   }
+    return string();
+}
 
-   string CommandOptionRest::checkArguments()
-   {
-      if (required && (count == 0))
-         return "Required trailing argument was not found.";
+string CommandOptionRest::checkArguments()
+{
+    if (required && (count == 0))
+        return "Required trailing argument was not found.";
 
-      return string();
-   }
+    return string();
+}
 
-   string CommandOptionWithNumberArg::checkArguments()
-   {
-      string errstr = CommandOption::checkArguments();
+string CommandOptionWithNumberArg::checkArguments()
+{
+    string errstr = CommandOption::checkArguments();
 
-      if (!errstr.empty())
-         return errstr;
+    if (!errstr.empty())
+        return errstr;
 
-      vector<string>::size_type vecindex;
-      for(vecindex = 0; vecindex < value.size(); vecindex++)
-      {
-         if (!isDigitString(value[vecindex]))
-         {
+    vector<string>::size_type vecindex;
+    for (vecindex = 0; vecindex < value.size(); vecindex++)
+    {
+        if (!isDigitString(value[vecindex]))
+        {
             string errstr("Argument for ");
             errstr += getOptionString();
             errstr += string(" should be a digit string.");
             return errstr;
-         }
-      }
+        }
+    }
 
-      return string();
-   }
+    return string();
+}
 
-   string CommandOptionWithDecimalArg::checkArguments()
-   {
-      string errstr = CommandOption::checkArguments();
+string CommandOptionWithDecimalArg::checkArguments()
+{
+    string errstr = CommandOption::checkArguments();
 
-      if (!errstr.empty())
-         return errstr;
+    if (!errstr.empty())
+        return errstr;
 
-      vector<string>::size_type vecindex;
-      for(vecindex = 0; vecindex < value.size(); vecindex++)
-      {
-         if (!isDecimalString(value[vecindex]))
-         {
+    vector<string>::size_type vecindex;
+    for (vecindex = 0; vecindex < value.size(); vecindex++)
+    {
+        if (!isDecimalString(value[vecindex]))
+        {
             string errstr("Argument for ");
             errstr += getOptionString();
             errstr += string(" should be a decimal string.");
             return errstr;
-         }
-      }
+        }
+    }
 
-      return string();
-   }
+    return string();
+}
 
-   string CommandOptionWithStringArg::checkArguments()
-   {
-      string errstr = CommandOption::checkArguments();
+string CommandOptionWithStringArg::checkArguments()
+{
+    string errstr = CommandOption::checkArguments();
 
-      if (!errstr.empty())
-         return errstr;
+    if (!errstr.empty())
+        return errstr;
 
-      vector<string>::size_type vecindex;
-      for(vecindex = 0; vecindex < value.size(); vecindex++)
-      {
-         if (!isAlphaString(value[vecindex]))
-         {
+    vector<string>::size_type vecindex;
+    for (vecindex = 0; vecindex < value.size(); vecindex++)
+    {
+        if (!isAlphaString(value[vecindex]))
+        {
             string errstr("Argument for ");
             errstr += getOptionString();
             errstr += string(" should be an alphabetic string.");
             return errstr;
-         }
-      }
-      return errstr;
-   }
+        }
+    }
+    return errstr;
+}
 
-   string CommandOptionMutex::checkArguments()
-   {
-      if (doOneOfChecking)
-      {
-         string oo = CommandOptionOneOf::checkArguments();
-         if (oo != string())
+string CommandOptionMutex::checkArguments()
+{
+    if (doOneOfChecking)
+    {
+        string oo = CommandOptionOneOf::checkArguments();
+        if (oo != string())
             return oo;
-      }
+    }
 
-         // mutex doesn't call CommandOption::checkArguments because
-         // it uses "required" differently
-      string errstr("Only one of the following options may be specified: ");
-      int firstSpec = -1;
-      bool touched = false;
+    // mutex doesn't call CommandOption::checkArguments because
+    // it uses "required" differently
+    string errstr("Only one of the following options may be specified: ");
+    int firstSpec = -1;
+    bool touched = false;
 
-      for (size_t i = 0; i < optionVec.size(); i++)
-      {
-         CommandOption *opt = optionVec[i];
+    for (size_t i = 0; i < optionVec.size(); i++)
+    {
+        CommandOption *opt = optionVec[i];
 
-         if (i)
+        if (i)
             errstr += ", ";
-         errstr += opt->getOptionString();
-         if (opt->getCount())
-         {
+        errstr += opt->getOptionString();
+        if (opt->getCount())
+        {
             if (firstSpec != -1)
-               touched = true;
+                touched = true;
             else
-               firstSpec = i;
-         }
-      }
+                firstSpec = i;
+        }
+    }
 
-      if (touched)
-         return errstr;
+    if (touched)
+        return errstr;
 
-      return string();
-   }
+    return string();
+}
 
-   void CommandOptionNOf::addOption(CommandOption* opt)
-   {
-      if (NULL == opt)
-      {
-         InvalidParameter  exc("Invalid option address");
-         GNSSTK_THROW(exc);
-      }
-      optionVec.push_back(opt);
-   }
+void CommandOptionNOf::addOption(CommandOption *opt)
+{
+    if (NULL == opt)
+    {
+        InvalidParameter exc("Invalid option address");
+        GNSSTK_THROW(exc);
+    }
+    optionVec.push_back(opt);
+}
 
-   string CommandOptionNOf::checkArguments()
-   {
-         // n-of doesn't call CommandOption::checkArguments because
-         // it doesn't use "required"
-      string fewerrstr("At least " + StringUtils::asString(N));
+string CommandOptionNOf::checkArguments()
+{
+    // n-of doesn't call CommandOption::checkArguments because
+    // it doesn't use "required"
+    string fewerrstr("At least " + StringUtils::asString(N));
 
-      string manyerrstr("No more than " + StringUtils::asString(maxCount));
-      string errstr(" of the following options must be specified: ");
+    string manyerrstr("No more than " + StringUtils::asString(maxCount));
+    string errstr(" of the following options must be specified: ");
 
-      bool found = false;
-      unsigned long n = 0;
+    bool found = false;
+    unsigned long n = 0;
 
-      for (CommandOptionVec::size_type i = 0; i < optionVec.size(); i++)
-      {
-         n += optionVec[i]->getCount();
-         if (i > 0)
+    for (CommandOptionVec::size_type i = 0; i < optionVec.size(); i++)
+    {
+        n += optionVec[i]->getCount();
+        if (i > 0)
             errstr += ", ";
-         errstr += optionVec[i]->getOptionString();
-      }
+        errstr += optionVec[i]->getOptionString();
+    }
 
-      if (n < N)
-         return fewerrstr + errstr;
-      if (n > maxCount)
-         return manyerrstr + errstr;
+    if (n < N)
+        return fewerrstr + errstr;
+    if (n > maxCount)
+        return manyerrstr + errstr;
 
-      return string();
-   }
+    return string();
+}
 
-   std::vector<CommandOption*> CommandOptionNOf::which() const
-   {
-      std::vector<CommandOption*> rv;
+std::vector<CommandOption *> CommandOptionNOf::which() const
+{
+    std::vector<CommandOption *> rv;
 
-      for (CommandOptionVec::size_type i = 0; i < optionVec.size(); i++)
-      {
-         if (optionVec[i]->getCount())
-         {
+    for (CommandOptionVec::size_type i = 0; i < optionVec.size(); i++)
+    {
+        if (optionVec[i]->getCount())
+        {
             rv.push_back(optionVec[i]);
-         }
-      }
+        }
+    }
 
-      return rv;
-   }
+    return rv;
+}
 
-   void CommandOptionOneOf::addOption(CommandOption* opt)
-   {
-      if (NULL == opt)
-      {
-         InvalidParameter  exc("Invalid option address");
-         GNSSTK_THROW(exc);
-      }
-      optionVec.push_back(opt);
-   }
+void CommandOptionOneOf::addOption(CommandOption *opt)
+{
+    if (NULL == opt)
+    {
+        InvalidParameter exc("Invalid option address");
+        GNSSTK_THROW(exc);
+    }
+    optionVec.push_back(opt);
+}
 
-   string CommandOptionOneOf::checkArguments()
-   {
-         // one-of doesn't call CommandOption::checkArguments because
-         // it doesn't use "required"
-      string errstr("One of the following options must be specified: ");
-      bool found = false;
+string CommandOptionOneOf::checkArguments()
+{
+    // one-of doesn't call CommandOption::checkArguments because
+    // it doesn't use "required"
+    string errstr("One of the following options must be specified: ");
+    bool found = false;
 
-      for (size_t i = 0; i < optionVec.size(); i++)
-      {
-         if (optionVec[i]->getCount())
+    for (size_t i = 0; i < optionVec.size(); i++)
+    {
+        if (optionVec[i]->getCount())
             found = true;
-         if (i > 0)
+        if (i > 0)
             errstr += ", ";
-         errstr += optionVec[i]->getOptionString();
-      }
+        errstr += optionVec[i]->getOptionString();
+    }
 
-      if (!found)
-         return errstr;
+    if (!found)
+        return errstr;
 
-      return string();
-   }
+    return string();
+}
 
-   CommandOption* CommandOptionOneOf::whichOne() const
-   {
-      CommandOption *rv = NULL;
+CommandOption *CommandOptionOneOf::whichOne() const
+{
+    CommandOption *rv = NULL;
 
-      for (size_t i = 0; i < optionVec.size(); i++)
-      {
-         if (optionVec[i]->getCount())
-         {
+    for (size_t i = 0; i < optionVec.size(); i++)
+    {
+        if (optionVec[i]->getCount())
+        {
             rv = optionVec[i];
             break;
-         }
-      }
+        }
+    }
 
-      return rv;
-   }
+    return rv;
+}
 
-   string CommandOptionAllOf::checkArguments()
-   {
-      string errstr("The following options must be used together: ");
-      bool found = false, notFound = false;
+string CommandOptionAllOf::checkArguments()
+{
+    string errstr("The following options must be used together: ");
+    bool found = false, notFound = false;
 
-      for (size_t i = 0; i < optionVec.size(); i++)
-      {
-         if (optionVec[i]->getCount())
+    for (size_t i = 0; i < optionVec.size(); i++)
+    {
+        if (optionVec[i]->getCount())
             found = true;
-         else
+        else
             notFound = true;
-         if (i > 0)
+        if (i > 0)
             errstr += ", ";
-         errstr += optionVec[i]->getOptionString();
-      }
+        errstr += optionVec[i]->getOptionString();
+    }
 
-      if (found && notFound)
-         return errstr;
+    if (found && notFound)
+        return errstr;
 
-      return string();
-   }
+    return string();
+}
 
-   unsigned long CommandOptionAllOf::getCount() const
-   {
-      unsigned long rv = 0;
-      for (size_t i = 0; i < optionVec.size(); i++)
-      {
-         if (optionVec[i]->getCount() == 0)
+unsigned long CommandOptionAllOf::getCount() const
+{
+    unsigned long rv = 0;
+    for (size_t i = 0; i < optionVec.size(); i++)
+    {
+        if (optionVec[i]->getCount() == 0)
             return 0;
-         rv += optionVec[i]->getCount();
-      }
-      return rv;
-   }
+        rv += optionVec[i]->getCount();
+    }
+    return rv;
+}
 
-   CommandOptionDependent::CommandOptionDependent(
-      const CommandOption* parent,
-      const CommandOption* child)
-         : CommandOption(noArgument, metaType, 0, "", "")
-   {
-      if (NULL == parent)
-      {
-         InvalidParameter  exc("Invalid parent address");
-         GNSSTK_THROW(exc);
-      }
-      if (NULL == child)
-      {
-         InvalidParameter  exc("Invalid child address");
-         GNSSTK_THROW(exc);
-      }
-      requiree = parent;
-      requirer = child;
-   }
+CommandOptionDependent::CommandOptionDependent(const CommandOption *parent, const CommandOption *child)
+    : CommandOption(noArgument, metaType, 0, "", "")
+{
+    if (NULL == parent)
+    {
+        InvalidParameter exc("Invalid parent address");
+        GNSSTK_THROW(exc);
+    }
+    if (NULL == child)
+    {
+        InvalidParameter exc("Invalid child address");
+        GNSSTK_THROW(exc);
+    }
+    requiree = parent;
+    requirer = child;
+}
 
-   string CommandOptionDependent::checkArguments()
-   {
-         // dependent doesn't call CommandOption::checkArguments because
-         // it doesn't use "required"
-      string errstr;
+string CommandOptionDependent::checkArguments()
+{
+    // dependent doesn't call CommandOption::checkArguments because
+    // it doesn't use "required"
+    string errstr;
 
-      if (!requiree)
-         errstr = "Null requiree (parent) for CommandOptionDependent";
-      if (!requirer)
-         errstr = "Null requirer (child) for CommandOptionDependent";
+    if (!requiree)
+        errstr = "Null requiree (parent) for CommandOptionDependent";
+    if (!requirer)
+        errstr = "Null requirer (child) for CommandOptionDependent";
 
-      if (requirer->getCount() && !requiree->getCount())
-         errstr = "Option " + requirer->getOptionString() + " requires " +
-            requiree->getOptionString();
+    if (requirer->getCount() && !requiree->getCount())
+        errstr = "Option " + requirer->getOptionString() + " requires " + requiree->getOptionString();
 
-      return errstr;
-   }
+    return errstr;
+}
 
-   string CommandOptionGroupOr::getOptionString() const
-   {
-      string rv;
-      if (optionVec.size() > 1)
-         rv += "(";
-      for (size_t i = 0; i < optionVec.size(); i++)
-      {
-         if (i) rv += ",";
-         rv += optionVec[i]->getOptionString();
-      }
-      if (optionVec.size() > 1)
-         rv += ")";
+string CommandOptionGroupOr::getOptionString() const
+{
+    string rv;
+    if (optionVec.size() > 1)
+        rv += "(";
+    for (size_t i = 0; i < optionVec.size(); i++)
+    {
+        if (i)
+            rv += ",";
+        rv += optionVec[i]->getOptionString();
+    }
+    if (optionVec.size() > 1)
+        rv += ")";
 
-      return rv;
-   }
+    return rv;
+}
 
-   unsigned long CommandOptionGroupOr::getCount() const
-   {
-      unsigned long rv = 0;
-      for (size_t i = 0; i < optionVec.size(); i++)
-         rv += optionVec[i]->getCount();
+unsigned long CommandOptionGroupOr::getCount() const
+{
+    unsigned long rv = 0;
+    for (size_t i = 0; i < optionVec.size(); i++)
+        rv += optionVec[i]->getCount();
 
-      return rv;
-   }
+    return rv;
+}
 
-   unsigned long CommandOptionGroupAnd::getCount() const
-   {
-      unsigned long rv = 0;
-      for (size_t i = 0; i < optionVec.size(); i++)
-      {
-         if (optionVec[i]->getCount() == 0)
+unsigned long CommandOptionGroupAnd::getCount() const
+{
+    unsigned long rv = 0;
+    for (size_t i = 0; i < optionVec.size(); i++)
+    {
+        if (optionVec[i]->getCount() == 0)
             return 0;
-         rv += optionVec[i]->getCount();
-      }
-      return rv;
-   }
+        rv += optionVec[i]->getCount();
+    }
+    return rv;
+}
 
-   void CommandOptionHelpUsage::printHelp(std::ostream& out, bool pretty)
-   {
-      GNSSTK_ASSERT(parser != NULL);
-         // Secret option! Ask for help once, get the normal usage.
-         // Ask for help twice, get doxygen-formatted comments to
-         // insert into your code's documentation.
-      if (getCount() == 1)
-         parser->displayUsage(out, pretty);
-      else if (getCount() > 1)
-         parser->displayUsageDoxygen(out);
-   }
+void CommandOptionHelpUsage::printHelp(std::ostream &out, bool pretty)
+{
+    GNSSTK_ASSERT(parser != NULL);
+    // Secret option! Ask for help once, get the normal usage.
+    // Ask for help twice, get doxygen-formatted comments to
+    // insert into your code's documentation.
+    if (getCount() == 1)
+        parser->displayUsage(out, pretty);
+    else if (getCount() > 1)
+        parser->displayUsageDoxygen(out);
+}
 
 } // namespace gnsstk

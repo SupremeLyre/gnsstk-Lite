@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -37,130 +36,116 @@
 //
 //==============================================================================
 #include "KlobucharIonoNavData.hpp"
+#include "FreqConv.hpp"
 #include "TimeString.hpp"
 #include "YDSTime.hpp"
-#include "FreqConv.hpp"
 
 using namespace std;
 
 namespace gnsstk
 {
-   KlobucharIonoNavData ::
-   KlobucharIonoNavData()
-         : alpha{0,0,0,0},
-           beta{0,0,0,0}
-   {
-   }
-
-
-   void KlobucharIonoNavData ::
-   dump(std::ostream& s, DumpDetail dl) const
-   {
-      if (dl == DumpDetail::OneLine)
-      {
-         NavData::dump(s,dl);
-         return;
-      }
-         // "header"
-      s << "****************************************************************"
-        << "************" << endl
-        << "Ionospheric correction data"
-        << endl
-        << endl
-        << getSignalString() << endl;
-
-         // the rest is full details, so just return if Full is not asked for.
-      if (dl != DumpDetail::Full)
-         return;
-
-      const ios::fmtflags oldFlags = s.flags();
-
-      s.setf(ios::fixed, ios::floatfield);
-      s.setf(ios::right, ios::adjustfield);
-      s.setf(ios::uppercase);
-      s.precision(0);
-      s.fill(' ');
-
-      s << "           TIMES OF INTEREST"
-        << endl << endl
-        << "              " << getDumpTimeHdr(dl) << endl
-        << "Transmit:     " << getDumpTime(dl, timeStamp) << endl;
-
-      s.setf(ios::scientific, ios::floatfield);
-      s.precision(8);
-      s.fill(' ');
-
-      s << endl
-        << "           KLOBUCHAR IONO PARAMETERS" << endl
-        << "Parameter              Value" << endl
-        << "alpha[0]    " << setw(16) << alpha[0] << " sec" << endl
-        << "alpha[1]    " << setw(16) << alpha[1] << " sec/semi-circle" << endl
-        << "alpha[2]    " << setw(16) << alpha[2] << " sec/semi-circle**2"
-        << endl
-        << "alpha[3]    " << setw(16) << alpha[3] << " sec/semi-circle**3"
-        << endl
-        << "beta[0]     " << setw(16) << beta[0] << " sec" << endl
-        << "beta[1]     " << setw(16) << beta[1] << " sec/semi-circle" << endl
-        << "beta[2]     " << setw(16) << beta[2] << " sec/semi-circle**2"
-        << endl
-        << "beta[3]     " << setw(16) << beta[3] << " sec/semi-circle**3"
-        << endl;
-
-      s.flags(oldFlags);
-   }
-
-
-   double KlobucharIonoNavData ::
-   getIonoCorr(const CommonTime& when,
-               const Position& rxgeo,
-               const Position& svgeo,
-               CarrierBand band) const
-   {
-         // style guide strongly discourages using underscores, but
-         // I'm using them here to denote subscripts, latex style.
-      double el = rxgeo.elevationGeodetic(svgeo) / 180.0;
-      double az = rxgeo.azimuthGeodetic(svgeo) / 180.0;
-      double phi_u = rxgeo.getGeodeticLatitude() / 180.0;
-      double lambda_u = rxgeo.getLongitude() / 180.0;
-         // constant values defined in Figure 20-4, IS-GPS-200
-      double psi = (0.0137 / (el+0.11)) - 0.022;
-      double phi_i = phi_u + psi * ::cos(az * PI);
-      if (phi_i > 0.416)
-         phi_i = 0.416;
-      if (phi_i < -0.416)
-         phi_i = -0.416;
-      double lambda_i = lambda_u + (psi * ::sin(az * PI) / ::cos(phi_i * PI));
-      double t = 43200 * lambda_i + YDSTime(when).sod;
-      if (t >= 86400.0)
-         t -= 86400.0;
-      else if (t < 0.0)
-         t += 86400.0;
-      double phi_m = phi_i + 0.064 * ::cos((lambda_i-1.617) * PI);
-      double iAMP = alpha[0]+phi_m*(alpha[1]+phi_m*(alpha[2]+phi_m*alpha[3]));
-      double iPER =  beta[0]+phi_m*( beta[1]+phi_m*( beta[2]+phi_m* beta[3]));
-      if (iAMP < 0.0)
-         iAMP = 0.0;
-      if (iPER < 72000.0)
-         iPER = 72000.0;
-      double x = TWO_PI * (t - 50400.0) / iPER;
-      double iF = 1.0 + 16.0 * (0.53 - el)*(0.53 - el)*(0.53 - el);
-      double t_iono = 0.0;
-      if (fabs(x) < 1.57)
-      {
-         t_iono = iF * (5.0e-9 + iAMP * (1 + x*x * (-0.5 + x*x/24.0)));
-      }
-      else
-      {
-         t_iono = iF * 5.0e-9;
-      }
-         /* Klobuchar models used in GPS and QZSS are referenced to
-          * L1.  If other systems use this model, this may need to
-          * change. */
-      if (band != gnsstk::CarrierBand::L1)
-      {
-         double f2 = getFrequency(band);
-         t_iono *= (FREQ_GPS_L1/f2)*(FREQ_GPS_L1/f2);
-      }
-      return t_iono * C_MPS;
-   }
+KlobucharIonoNavData ::KlobucharIonoNavData() : alpha{0, 0, 0, 0}, beta{0, 0, 0, 0}
+{
 }
+
+void KlobucharIonoNavData ::dump(std::ostream &s, DumpDetail dl) const
+{
+    if (dl == DumpDetail::OneLine)
+    {
+        NavData::dump(s, dl);
+        return;
+    }
+    // "header"
+    s << "****************************************************************"
+      << "************" << endl
+      << "Ionospheric correction data" << endl
+      << endl
+      << getSignalString() << endl;
+
+    // the rest is full details, so just return if Full is not asked for.
+    if (dl != DumpDetail::Full)
+        return;
+
+    const ios::fmtflags oldFlags = s.flags();
+
+    s.setf(ios::fixed, ios::floatfield);
+    s.setf(ios::right, ios::adjustfield);
+    s.setf(ios::uppercase);
+    s.precision(0);
+    s.fill(' ');
+
+    s << "           TIMES OF INTEREST" << endl
+      << endl
+      << "              " << getDumpTimeHdr(dl) << endl
+      << "Transmit:     " << getDumpTime(dl, timeStamp) << endl;
+
+    s.setf(ios::scientific, ios::floatfield);
+    s.precision(8);
+    s.fill(' ');
+
+    s << endl
+      << "           KLOBUCHAR IONO PARAMETERS" << endl
+      << "Parameter              Value" << endl
+      << "alpha[0]    " << setw(16) << alpha[0] << " sec" << endl
+      << "alpha[1]    " << setw(16) << alpha[1] << " sec/semi-circle" << endl
+      << "alpha[2]    " << setw(16) << alpha[2] << " sec/semi-circle**2" << endl
+      << "alpha[3]    " << setw(16) << alpha[3] << " sec/semi-circle**3" << endl
+      << "beta[0]     " << setw(16) << beta[0] << " sec" << endl
+      << "beta[1]     " << setw(16) << beta[1] << " sec/semi-circle" << endl
+      << "beta[2]     " << setw(16) << beta[2] << " sec/semi-circle**2" << endl
+      << "beta[3]     " << setw(16) << beta[3] << " sec/semi-circle**3" << endl;
+
+    s.flags(oldFlags);
+}
+
+double KlobucharIonoNavData ::getIonoCorr(const CommonTime &when, const Position &rxgeo, const Position &svgeo,
+                                          CarrierBand band) const
+{
+    // style guide strongly discourages using underscores, but
+    // I'm using them here to denote subscripts, latex style.
+    double el = rxgeo.elevationGeodetic(svgeo) / 180.0;
+    double az = rxgeo.azimuthGeodetic(svgeo) / 180.0;
+    double phi_u = rxgeo.getGeodeticLatitude() / 180.0;
+    double lambda_u = rxgeo.getLongitude() / 180.0;
+    // constant values defined in Figure 20-4, IS-GPS-200
+    double psi = (0.0137 / (el + 0.11)) - 0.022;
+    double phi_i = phi_u + psi * ::cos(az * PI);
+    if (phi_i > 0.416)
+        phi_i = 0.416;
+    if (phi_i < -0.416)
+        phi_i = -0.416;
+    double lambda_i = lambda_u + (psi * ::sin(az * PI) / ::cos(phi_i * PI));
+    double t = 43200 * lambda_i + YDSTime(when).sod;
+    if (t >= 86400.0)
+        t -= 86400.0;
+    else if (t < 0.0)
+        t += 86400.0;
+    double phi_m = phi_i + 0.064 * ::cos((lambda_i - 1.617) * PI);
+    double iAMP = alpha[0] + phi_m * (alpha[1] + phi_m * (alpha[2] + phi_m * alpha[3]));
+    double iPER = beta[0] + phi_m * (beta[1] + phi_m * (beta[2] + phi_m * beta[3]));
+    if (iAMP < 0.0)
+        iAMP = 0.0;
+    if (iPER < 72000.0)
+        iPER = 72000.0;
+    double x = TWO_PI * (t - 50400.0) / iPER;
+    double iF = 1.0 + 16.0 * (0.53 - el) * (0.53 - el) * (0.53 - el);
+    double t_iono = 0.0;
+    if (fabs(x) < 1.57)
+    {
+        t_iono = iF * (5.0e-9 + iAMP * (1 + x * x * (-0.5 + x * x / 24.0)));
+    }
+    else
+    {
+        t_iono = iF * 5.0e-9;
+    }
+    /* Klobuchar models used in GPS and QZSS are referenced to
+     * L1.  If other systems use this model, this may need to
+     * change. */
+    if (band != gnsstk::CarrierBand::L1)
+    {
+        double f2 = getFrequency(band);
+        t_iono *= (FREQ_GPS_L1 / f2) * (FREQ_GPS_L1 / f2);
+    }
+    return t_iono * C_MPS;
+}
+} // namespace gnsstk

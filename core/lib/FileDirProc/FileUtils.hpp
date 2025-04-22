@@ -47,14 +47,14 @@
 // #ifdef __sun
 // #include <libgen.h>
 // #else
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <iostream>
+#include <sys/stat.h>
+#include <sys/types.h>
 // #endif
 
+#include "StringUtils.hpp"
 #include <fstream>
 #include <string>
-#include "StringUtils.hpp"
 
 #ifdef WIN32
 #include <direct.h>
@@ -64,109 +64,103 @@
 using namespace std;
 namespace gnsstk
 {
-      /// @ingroup FileDirProc
-      //@{
+/// @ingroup FileDirProc
+//@{
 
-      /**
-       * These functions and macros help process files and directories.
-       */
-   namespace FileUtils
-   {
-         /**
-          * Creates a hierarchy of directories rather than just one dir.
-          * This intentionally doesn't check the mkdir return codes because
-          * there is no difference between return codes for directories
-          * that already exist and error creating new ones.
-          * @param path the full path of the directory you want created
-          * @param mode the permission of the new directory (like 0755)
-          * @return always 0
-          */
+/**
+ * These functions and macros help process files and directories.
+ */
+namespace FileUtils
+{
+/**
+ * Creates a hierarchy of directories rather than just one dir.
+ * This intentionally doesn't check the mkdir return codes because
+ * there is no difference between return codes for directories
+ * that already exist and error creating new ones.
+ * @param path the full path of the directory you want created
+ * @param mode the permission of the new directory (like 0755)
+ * @return always 0
+ */
 
 #ifdef WIN32
-      inline int makeDir(const std::string& path, unsigned mode)
-      {
-        std::string temppath = path;
+inline int makeDir(const std::string &path, unsigned mode)
+{
+    std::string temppath = path;
 
-        //Clean up windows file path
-        std::replace(temppath.begin(), temppath.end(), '\\', '/');
-        std::string::size_type i = 0;
+    // Clean up windows file path
+    std::replace(temppath.begin(), temppath.end(), '\\', '/');
+    std::string::size_type i = 0;
 
-         while ((i = temppath.find('/',i+1)) != std::string::npos)
-         {
-            std::string thispath(temppath.substr(0,i));
-            if (thispath[thispath.length() - 1] == '/')
-               thispath.erase(thispath.length() - 1);
-            _mkdir(thispath.c_str());
-
-         }
-         _mkdir(temppath.c_str());
-         return 0;
-      }
+    while ((i = temppath.find('/', i + 1)) != std::string::npos)
+    {
+        std::string thispath(temppath.substr(0, i));
+        if (thispath[thispath.length() - 1] == '/')
+            thispath.erase(thispath.length() - 1);
+        _mkdir(thispath.c_str());
+    }
+    _mkdir(temppath.c_str());
+    return 0;
+}
 #else
-      inline int makeDir(const std::string& path, unsigned mode)
-      {
-            //  #ifdef __sun
-            //      mkdirp(path.c_str(), mode);
-            //  #else
-         std::string::size_type i = 0;
+inline int makeDir(const std::string &path, unsigned mode)
+{
+    //  #ifdef __sun
+    //      mkdirp(path.c_str(), mode);
+    //  #else
+    std::string::size_type i = 0;
 
-         while ((i = path.find('/',i+1)) != std::string::npos)
-         {
-            std::string thispath(path.substr(0,i));
-            if (thispath[thispath.length() - 1] == '/')
-               thispath.erase(thispath.length() - 1);
+    while ((i = path.find('/', i + 1)) != std::string::npos)
+    {
+        std::string thispath(path.substr(0, i));
+        if (thispath[thispath.length() - 1] == '/')
+            thispath.erase(thispath.length() - 1);
 
-            mkdir(thispath.c_str(), mode);
-
-         }
-         mkdir(path.c_str(), mode);
-            // #endif
-         return 0;
-      }
+        mkdir(thispath.c_str(), mode);
+    }
+    mkdir(path.c_str(), mode);
+    // #endif
+    return 0;
+}
 
 #endif
-         /**
-          * makeDir that takes a char* for an argument.
-          * @param path the full path of the directory you want created
-          * @param mode the permission of the new directory (like 0755)
-          * @return always 0
-          */
-      inline int makeDir(const char* path, unsigned mode)
-      {
-         return makeDir(std::string(path), mode);
-      }
+/**
+ * makeDir that takes a char* for an argument.
+ * @param path the full path of the directory you want created
+ * @param mode the permission of the new directory (like 0755)
+ * @return always 0
+ */
+inline int makeDir(const char *path, unsigned mode)
+{
+    return makeDir(std::string(path), mode);
+}
 
-         /**
-          * Returns true if the file exists. Only readability is
-          * verified unless the user inputs the openmode of interest.
-          * @param[in] fname Name of the file to check
-          * @param[in] mode Mode of access to check (default is
-          *   readable, std::ios::in)
-          * @warning This method fails to work correctly under Debian
-          *   7, which seems to have a bug in the OS/system calls that
-          *   erroneously allow opening read-only files with write
-          *   access.  There's nothing we can do about this.
-          * @return true if the file can be accessed
-          */
-      inline bool fileAccessCheck(const char* fname,
-                                  std::ios::openmode mode=std::ios::in)
-      {
-         std::fstream test(fname, mode);
-         return !test.fail();
-      }
+/**
+ * Returns true if the file exists. Only readability is
+ * verified unless the user inputs the openmode of interest.
+ * @param[in] fname Name of the file to check
+ * @param[in] mode Mode of access to check (default is
+ *   readable, std::ios::in)
+ * @warning This method fails to work correctly under Debian
+ *   7, which seems to have a bug in the OS/system calls that
+ *   erroneously allow opening read-only files with write
+ *   access.  There's nothing we can do about this.
+ * @return true if the file can be accessed
+ */
+inline bool fileAccessCheck(const char *fname, std::ios::openmode mode = std::ios::in)
+{
+    std::fstream test(fname, mode);
+    return !test.fail();
+}
 
-      inline bool fileAccessCheck(const std::string& fname,
-                                  std::ios::openmode mode=std::ios::in)
-      {
-         return fileAccessCheck(fname.c_str(), mode);
-      }
+inline bool fileAccessCheck(const std::string &fname, std::ios::openmode mode = std::ios::in)
+{
+    return fileAccessCheck(fname.c_str(), mode);
+}
 
+} // namespace FileUtils
 
-   } // namespace FileUtils
+//@}
 
-      //@}
-
-} // namespace
-
+} // namespace gnsstk
 
 #endif

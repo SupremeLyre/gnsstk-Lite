@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -42,23 +41,23 @@ using namespace std;
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(GLOFNavPCode e)
-      {
-         switch (e)
-         {
-            case GLOFNavPCode::CRelGPSRel:
-               return "tau_c from CS, tau_GPS from CS";
-            case GLOFNavPCode::CRelGPSCalc:
-               return "tau_c from CS, tau_GPS calc SV";
-            case GLOFNavPCode::CCalcGPSRel:
-               return "tau_c calc SV, tau_GPS from CS";
-            case GLOFNavPCode::CCalcGPSCalc:
-               return "tau_c calc SV, tau_GPS calc SV";
-            default:
-               return "???????";
-         }
-      }
-   }
+namespace StringUtils
+{
+std::string asString(GLOFNavPCode e)
+{
+    switch (e)
+    {
+    case GLOFNavPCode::CRelGPSRel:
+        return "tau_c from CS, tau_GPS from CS";
+    case GLOFNavPCode::CRelGPSCalc:
+        return "tau_c from CS, tau_GPS calc SV";
+    case GLOFNavPCode::CCalcGPSRel:
+        return "tau_c calc SV, tau_GPS from CS";
+    case GLOFNavPCode::CCalcGPSCalc:
+        return "tau_c calc SV, tau_GPS calc SV";
+    default:
+        return "???????";
+    }
 }
+} // namespace StringUtils
+} // namespace gnsstk

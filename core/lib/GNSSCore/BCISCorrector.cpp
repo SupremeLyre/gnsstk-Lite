@@ -36,41 +36,30 @@
 //
 //==============================================================================
 
-
 #include "BCISCorrector.hpp"
 
 namespace gnsstk
 {
-   BCISCorrector ::
-   BCISCorrector(NavLibrary& nl)
-         : navLib(nl)
-   {
-      corrType = CorrectorType::ISC;
-   }
+BCISCorrector ::BCISCorrector(NavLibrary &nl) : navLib(nl)
+{
+    corrType = CorrectorType::ISC;
+}
 
+bool BCISCorrector ::getCorr(const Position &rxPos, const Position &svPos, const SatID &sat, const ObsID &obs,
+                             const CommonTime &when, NavType nav, double &corrOut)
+{
+    if (navLib.getISC(sat, obs, when, corrOut))
+    {
+        return true;
+    }
+    corrOut = std::numeric_limits<double>::quiet_NaN();
+    return false;
+}
 
-   bool BCISCorrector ::
-   getCorr(const Position& rxPos, const Position& svPos,
-           const SatID& sat, const ObsID& obs,
-           const CommonTime& when, NavType nav,
-           double& corrOut)
-   {
-      if (navLib.getISC(sat, obs, when, corrOut))
-      {
-         return true;
-      }
-      corrOut = std::numeric_limits<double>::quiet_NaN();
-      return false;
-   }
-
-
-   bool BCISCorrector ::
-   getCorr(const Position& rxPos, const Xvt& svPos,
-           const SatID& sat, const ObsID& obs,
-           const CommonTime& when, NavType nav,
-           double& corrOut)
-   {
-      Position svp(svPos.x);
-      return getCorr(rxPos, svp, sat, obs, when, nav, corrOut);
-   }
+bool BCISCorrector ::getCorr(const Position &rxPos, const Xvt &svPos, const SatID &sat, const ObsID &obs,
+                             const CommonTime &when, NavType nav, double &corrOut)
+{
+    Position svp(svPos.x);
+    return getCorr(rxPos, svp, sat, obs, when, nav, corrOut);
+}
 } // namespace gnsstk

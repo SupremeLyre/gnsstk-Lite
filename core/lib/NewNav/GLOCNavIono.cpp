@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -37,90 +36,80 @@
 //
 //==============================================================================
 #include "GLOCNavIono.hpp"
+#include "FreqConv.hpp"
 #include "TimeString.hpp"
 #include "YDSTime.hpp"
-#include "FreqConv.hpp"
-//#include "iossmart.hpp"
+// #include "iossmart.hpp"
 
 using namespace std;
 
 namespace gnsstk
 {
-   GLOCNavIono ::
-   GLOCNavIono()
-         : peakTECF2(std::numeric_limits<double>::quiet_NaN()),
-           solarIndex(std::numeric_limits<double>::quiet_NaN()),
-           geoIndex(std::numeric_limits<double>::quiet_NaN())
-   {
-      msgLenSec = 3.0;
-   }
-
-
-   bool GLOCNavIono ::
-   validate() const
-   {
-         /// @todo Implement some validation.
-      return true;
-   }
-
-
-   void GLOCNavIono ::
-   dump(std::ostream& s, DumpDetail dl) const
-   {
-      const ios::fmtflags oldFlags = s.flags();
-      s.setf(ios::fixed, ios::floatfield);
-      s.setf(ios::right, ios::adjustfield);
-      s.setf(ios::uppercase);
-      s.precision(0);
-      s.fill(' ');
-      switch (dl)
-      {
-         case DumpDetail::OneLine:
-            NavData::dump(s,dl);
-            break;
-         case DumpDetail::Brief:
-            NavData::dump(s,dl);
-            s << "  c_A = " << peakTECF2
-              << "  c_F10.7 = " << solarIndex
-              << "  c_Ap = " << geoIndex
-              << endl;
-            break;
-         case DumpDetail::Full:
-               // "header"
-            s << "*************************************************************"
-              << "***************" << endl
-              << "Ionospheric correction data" << endl << endl
-              << "PRN : " << setw(2) << signal.sat << " / "
-              << "SVN : " << setw(2);
-            std::string svn;
-            if (getSVN(signal.sat, timeStamp, svn))
-            {
-               s << svn;
-            }
-            s << endl << endl
-              << "           TIMES OF INTEREST"
-              << endl << endl
-              << "              " << getDumpTimeHdr(dl) << endl
-              << "Transmit:     " << getDumpTime(dl, timeStamp) << endl
-              << endl
-              << "           IONO PARAMETERS" << endl << endl;
-                  // format chosed based on precision available in data
-              // << "c_A                " << scifmt(16,7) << peakTECF2 << endl
-              // << "c_F10.7            " << scifmt(16,4) << solarIndex << endl
-              // << "c_Ap               " << fixedfmt(16,0) << geoIndex << endl;
-            break;
-      }
-      s.flags(oldFlags);
-   }
-
-
-   double GLOCNavIono ::
-   getIonoCorr(const CommonTime& when,
-               const Position& rxgeo,
-               const Position& svgeo,
-               CarrierBand band) const
-   {
-         /// @todo implement this
-      return std::numeric_limits<double>::quiet_NaN();
-   }
+GLOCNavIono ::GLOCNavIono()
+    : peakTECF2(std::numeric_limits<double>::quiet_NaN()), solarIndex(std::numeric_limits<double>::quiet_NaN()),
+      geoIndex(std::numeric_limits<double>::quiet_NaN())
+{
+    msgLenSec = 3.0;
 }
+
+bool GLOCNavIono ::validate() const
+{
+    /// @todo Implement some validation.
+    return true;
+}
+
+void GLOCNavIono ::dump(std::ostream &s, DumpDetail dl) const
+{
+    const ios::fmtflags oldFlags = s.flags();
+    s.setf(ios::fixed, ios::floatfield);
+    s.setf(ios::right, ios::adjustfield);
+    s.setf(ios::uppercase);
+    s.precision(0);
+    s.fill(' ');
+    switch (dl)
+    {
+    case DumpDetail::OneLine:
+        NavData::dump(s, dl);
+        break;
+    case DumpDetail::Brief:
+        NavData::dump(s, dl);
+        s << "  c_A = " << peakTECF2 << "  c_F10.7 = " << solarIndex << "  c_Ap = " << geoIndex << endl;
+        break;
+    case DumpDetail::Full:
+        // "header"
+        s << "*************************************************************"
+          << "***************" << endl
+          << "Ionospheric correction data" << endl
+          << endl
+          << "PRN : " << setw(2) << signal.sat << " / "
+          << "SVN : " << setw(2);
+        std::string svn;
+        if (getSVN(signal.sat, timeStamp, svn))
+        {
+            s << svn;
+        }
+        s << endl
+          << endl
+          << "           TIMES OF INTEREST" << endl
+          << endl
+          << "              " << getDumpTimeHdr(dl) << endl
+          << "Transmit:     " << getDumpTime(dl, timeStamp) << endl
+          << endl
+          << "           IONO PARAMETERS" << endl
+          << endl;
+        // format chosed based on precision available in data
+        // << "c_A                " << scifmt(16,7) << peakTECF2 << endl
+        // << "c_F10.7            " << scifmt(16,4) << solarIndex << endl
+        // << "c_Ap               " << fixedfmt(16,0) << geoIndex << endl;
+        break;
+    }
+    s.flags(oldFlags);
+}
+
+double GLOCNavIono ::getIonoCorr(const CommonTime &when, const Position &rxgeo, const Position &svgeo,
+                                 CarrierBand band) const
+{
+    /// @todo implement this
+    return std::numeric_limits<double>::quiet_NaN();
+}
+} // namespace gnsstk

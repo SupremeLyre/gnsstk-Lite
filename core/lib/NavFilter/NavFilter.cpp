@@ -38,23 +38,20 @@
 
 #include "NavFilter.hpp"
 
-
 namespace gnsstk
 {
-   NavFilter ::
-   NavFilter()
-   {
-   }
+NavFilter ::NavFilter()
+{
+}
 
-   void NavFilter::
-   dumpRejected(std::ostream& out) const
-   {
-      NavMsgList::const_iterator cit;
-      for (cit=rejected.begin();cit!=rejected.end();cit++)
-      {
-         NavFilterKey* p = *cit;
-         out << *p << std::endl;
-      }
-   }
+void NavFilter::dumpRejected(std::ostream &out) const
+{
+    NavMsgList::const_iterator cit;
+    for (cit = rejected.begin(); cit != rejected.end(); cit++)
+    {
+        NavFilterKey *p = *cit;
+        out << *p << std::endl;
+    }
+}
 
 } // namespace gnsstk

@@ -48,17 +48,16 @@ using namespace gnsstk;
 
 namespace gnsstk
 {
-   // These are just to facilitate debugging. The format of the data output
-   // is quite ad-hoc and may change.
+// These are just to facilitate debugging. The format of the data output
+// is quite ad-hoc and may change.
 
-   std::ostream& operator<<(std::ostream& s, const ObsEpoch& oe)
-      noexcept
-   {
-      s << oe.time << ", rxClock: " << oe.rxClock << endl;
-      ObsEpoch::const_iterator i;
-      for (i=oe.begin(); i!=oe.end(); i++)
-         s << i->first << ": " << i->second << endl;
+std::ostream &operator<<(std::ostream &s, const ObsEpoch &oe) noexcept
+{
+    s << oe.time << ", rxClock: " << oe.rxClock << endl;
+    ObsEpoch::const_iterator i;
+    for (i = oe.begin(); i != oe.end(); i++)
+        s << i->first << ": " << i->second << endl;
 
-      return s;
-   }
-}  // namespace
+    return s;
+}
+} // namespace gnsstk

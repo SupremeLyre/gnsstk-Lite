@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -40,29 +39,32 @@
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(GalDataValid e) noexcept
-      {
-         switch (e)
-         {
-            case GalDataValid::Unknown:     return "Unknown";
-            case GalDataValid::Valid:       return "Valid";
-            case GalDataValid::NoGuarantee: return "NoGuarantee";
-            default:                        return "???";
-         } // switch (e)
-      } // asString(GalDataValid)
+namespace StringUtils
+{
+std::string asString(GalDataValid e) noexcept
+{
+    switch (e)
+    {
+    case GalDataValid::Unknown:
+        return "Unknown";
+    case GalDataValid::Valid:
+        return "Valid";
+    case GalDataValid::NoGuarantee:
+        return "NoGuarantee";
+    default:
+        return "???";
+    } // switch (e)
+} // asString(GalDataValid)
 
-
-      GalDataValid asGalDataValid(const std::string& s) noexcept
-      {
-         if (s == "Unknown")
-            return GalDataValid::Unknown;
-         if (s == "Valid")
-            return GalDataValid::Valid;
-         if (s == "NoGuarantee")
-            return GalDataValid::NoGuarantee;
-         return GalDataValid::Unknown;
-      } // asGalDataValid(string)
-   } // namespace StringUtils
+GalDataValid asGalDataValid(const std::string &s) noexcept
+{
+    if (s == "Unknown")
+        return GalDataValid::Unknown;
+    if (s == "Valid")
+        return GalDataValid::Valid;
+    if (s == "NoGuarantee")
+        return GalDataValid::NoGuarantee;
+    return GalDataValid::Unknown;
+} // asGalDataValid(string)
+} // namespace StringUtils
 } // namespace gnsstk

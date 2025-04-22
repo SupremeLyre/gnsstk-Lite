@@ -41,23 +41,31 @@
 namespace gnsstk
 {
 
-   gnsstk::TimeSystem satTimeSystem(gnsstk::SatelliteSystem sys)
-   {
-      switch (sys)
-      {
-         case SatelliteSystem::GPS:     return TimeSystem::GPS;
-         case SatelliteSystem::Galileo: return TimeSystem::GAL;
-         case SatelliteSystem::Glonass: return TimeSystem::GLO;
-         case SatelliteSystem::BeiDou:  return TimeSystem::BDT;
-         case SatelliteSystem::QZSS:    return TimeSystem::QZS;
-         case SatelliteSystem::IRNSS:   return TimeSystem::IRN;
-               // not sure what else to use for these
-         case SatelliteSystem::Geosync:
-         case SatelliteSystem::LEO:
-         case SatelliteSystem::Transit: return TimeSystem::GPS;
-               // shouldn't be valid
-         default:                       return TimeSystem::Unknown;
-      }
-   }
+gnsstk::TimeSystem satTimeSystem(gnsstk::SatelliteSystem sys)
+{
+    switch (sys)
+    {
+    case SatelliteSystem::GPS:
+        return TimeSystem::GPS;
+    case SatelliteSystem::Galileo:
+        return TimeSystem::GAL;
+    case SatelliteSystem::Glonass:
+        return TimeSystem::GLO;
+    case SatelliteSystem::BeiDou:
+        return TimeSystem::BDT;
+    case SatelliteSystem::QZSS:
+        return TimeSystem::QZS;
+    case SatelliteSystem::IRNSS:
+        return TimeSystem::IRN;
+        // not sure what else to use for these
+    case SatelliteSystem::Geosync:
+    case SatelliteSystem::LEO:
+    case SatelliteSystem::Transit:
+        return TimeSystem::GPS;
+        // shouldn't be valid
+    default:
+        return TimeSystem::Unknown;
+    }
+}
 
 } // namespace gnsstk

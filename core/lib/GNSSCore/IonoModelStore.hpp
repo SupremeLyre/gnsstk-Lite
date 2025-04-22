@@ -41,119 +41,118 @@
  * Store GPS Navigation Message based ionospheric models
  */
 
-
 #ifndef GNSSTK_IONOMODELSTORE_HPP
 #define GNSSTK_IONOMODELSTORE_HPP
 
-#include <map>
-#include "CommonTime.hpp"
 #include "CarrierBand.hpp"
+#include "CommonTime.hpp"
 #include "IonoModel.hpp"
+#include <map>
 
 namespace gnsstk
 {
-      /// @ingroup GNSSsolutions
-      //@{
+/// @ingroup GNSSsolutions
+//@{
 
-      /** This class defines an interface to hide how we determine
-       * the ionospheric delay as determined from GPS navigation message
-       * based models at some point in time
-       */
-   class IonoModelStore
-   {
-   public:
+/** This class defines an interface to hide how we determine
+ * the ionospheric delay as determined from GPS navigation message
+ * based models at some point in time
+ */
+class IonoModelStore
+{
+  public:
+    /** Thrown when attempting to get a model that isn't stored.
+     * @ingroup exceptiongroup
+     */
+    NEW_EXCEPTION_CLASS(NoIonoModelFound, gnsstk::Exception);
 
-         /** Thrown when attempting to get a model that isn't stored.
-          * @ingroup exceptiongroup
-          */
-      NEW_EXCEPTION_CLASS(NoIonoModelFound, gnsstk::Exception);
+    /// Constructor
+    IonoModelStore()
+    {
+    }
 
+    /// Destructor
+    virtual ~IonoModelStore()
+    {
+    }
 
-         /// Constructor
-      IonoModelStore() {}
+    /** Get the ionospheric correction value.
+     *
+     * @param[in] time Time of the observation
+     * @param[in] rxgeo WGS84 geodetic position of the receiver
+     * @param[in] svel Elevation angle between the rx and SV (degrees)
+     * @param[in] svaz Azimuth angle between the rx and SV (degrees)
+     * @param[in] freq GPS band the observation was made from
+     * @return the ionospheric correction (meters)
+     * @throw NoIonoModelFound
+     */
+    virtual double getCorrection(const CommonTime &time, const Position &rxgeo, double svel, double svaz,
+                                 CarrierBand band = CarrierBand::L1) const;
 
-         /// Destructor
-      virtual ~IonoModelStore() {}
+    /** Add an IonoModel to this collection
+     *
+     * @param[in] mt Time the model is valid from
+     * @param[in] im IonoModel to add
+     * @return true if the model was added, false otherwise
+     */
+    bool addIonoModel(const CommonTime &mt, const IonoModel &im) noexcept;
 
-         /** Get the ionospheric correction value.
-          *
-          * @param[in] time Time of the observation
-          * @param[in] rxgeo WGS84 geodetic position of the receiver
-          * @param[in] svel Elevation angle between the rx and SV (degrees)
-          * @param[in] svaz Azimuth angle between the rx and SV (degrees)
-          * @param[in] freq GPS band the observation was made from
-          * @return the ionospheric correction (meters)
-          * @throw NoIonoModelFound
-          */
-      virtual double getCorrection(const CommonTime& time,
-                                   const Position& rxgeo,
-                                   double svel,
-                                   double svaz,
-                                   CarrierBand band = CarrierBand::L1) const;
+    /** Edit the dataset, removing data outside the indicated time interval
+     *
+     * @param[in] tmin Defines the beginning of the time interval (inclusive)
+     * @param[in] tmax Defines the end of the time interval (inclusive)
+     */
+    void edit(const CommonTime &tmin, const CommonTime &tmax = CommonTime::END_OF_TIME);
 
-         /** Add an IonoModel to this collection
-          *
-          * @param[in] mt Time the model is valid from
-          * @param[in] im IonoModel to add
-          * @return true if the model was added, false otherwise
-          */
-      bool addIonoModel(const CommonTime& mt,
-                        const IonoModel& im) noexcept;
+    /** Remove all data from the store
+     */
+    void clear()
+    {
+        ims.clear();
+    }
 
-         /** Edit the dataset, removing data outside the indicated time interval
-          *
-          * @param[in] tmin Defines the beginning of the time interval (inclusive)
-          * @param[in] tmax Defines the end of the time interval (inclusive)
-          */
-      void edit(const CommonTime& tmin,
-                const CommonTime& tmax = CommonTime::END_OF_TIME);
+    /** Return the earliest time in the store, or return
+     * CommonTime::END_OF_TIME if the store is empty.
+     * @return The store initial time
+     */
+    virtual CommonTime getInitialTime() const;
 
-         /** Remove all data from the store
-          */
-      void clear()
-      { ims.clear(); }
+    /** Return the latest time in the store, or return
+     * CommonTime::BEGINNING_OF_TIME if the store is empty.
+     * @return The store final time
+     */
+    virtual CommonTime getFinalTime() const;
 
-         /** Return the earliest time in the store, or return
-          * CommonTime::END_OF_TIME if the store is empty.
-          * @return The store initial time
-          */
-      virtual CommonTime getInitialTime() const;
+    /** Return the number of models in the store.
+     * @return Store size
+     */
+    virtual unsigned size() const
+    {
+        return ims.size();
+    }
 
-         /** Return the latest time in the store, or return
-          * CommonTime::BEGINNING_OF_TIME if the store is empty.
-          * @return The store final time
-          */
-      virtual CommonTime getFinalTime() const;
+    /** Return whether the store is empty.
+     * @return Whether to store is empty
+     */
+    virtual bool empty() const
+    {
+        return ims.empty();
+    }
 
-         /** Return the number of models in the store.
-          * @return Store size
-          */
-      virtual unsigned size() const
-      { return ims.size(); }
+    /** Dump to contents of the store in human-readable form.
+     * @param[in,out] s Stream to receive the output; defaults to cout
+     */
+    virtual void dump(std::ostream &s = std::cout) const;
 
-         /** Return whether the store is empty.
-          * @return Whether to store is empty
-          */
-      virtual bool empty() const
-      { return ims.empty(); }
+  private:
+    typedef std::map<CommonTime, IonoModel> IonoModelMap;
 
-         /** Dump to contents of the store in human-readable form.
-          * @param[in,out] s Stream to receive the output; defaults to cout
-          */
-      virtual void dump(std::ostream& s=std::cout) const;
+    IonoModelMap ims;
 
-   private:
+}; // End of class 'IonoModelStore'
 
+//@}
 
-      typedef std::map<CommonTime, IonoModel> IonoModelMap;
+} // End of namespace gnsstk
 
-      IonoModelMap ims;
-
-
-   }; // End of class 'IonoModelStore'
-
-      //@}
-
-}  // End of namespace gnsstk
-
-#endif  // GNSSTK_IONOMODELSTORE_HPP
+#endif // GNSSTK_IONOMODELSTORE_HPP

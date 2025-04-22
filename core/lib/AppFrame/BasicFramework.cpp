@@ -41,126 +41,107 @@
  * Basic framework for programs in the GPS toolkit
  */
 
-
-#include "Exception.hpp"
 #include "BasicFramework.hpp"
+#include "Exception.hpp"
 #include "StringUtils.hpp"
-
 
 namespace gnsstk
 {
 
-   using namespace std;
+using namespace std;
 
+BasicFramework ::BasicFramework(const std::string &applName, const std::string &applDesc) noexcept
+    : debugLevel(0), verboseLevel(0), exitCode(0), argv0(applName), appDesc(applDesc),
+      debugOption('d', "debug", "Increase debug level"), verboseOption('v', "verbose", "Increase verbosity"),
+      helpOption('h', "help", "Print help usage")
+{
+} // End of constructor 'BasicFramework::BasicFramework()'
 
-   BasicFramework :: BasicFramework( const std::string& applName,
-                                     const std::string& applDesc )
-      noexcept
-         : debugLevel(0),
-           verboseLevel(0),
-           exitCode(0),
-           argv0(applName),
-           appDesc(applDesc),
-           debugOption('d', "debug", "Increase debug level"),
-           verboseOption('v', "verbose", "Increase verbosity"),
-           helpOption('h', "help", "Print help usage")
-   {} // End of constructor 'BasicFramework::BasicFramework()'
+bool BasicFramework ::initialize(int argc, char *argv[], bool pretty) noexcept
+{
 
+    // Creating the parser here ensures that all the subclasses'
+    // option objects are constructed.
+    try
+    {
+        CommandOptionParser cop(appDesc);
 
+        cop.parseOptions(argc, argv);
 
-   bool BasicFramework :: initialize( int argc,
-                                      char *argv[],
-                                      bool pretty )
-      noexcept
-   {
-
-         // Creating the parser here ensures that all the subclasses'
-         // option objects are constructed.
-      try
-      {
-         CommandOptionParser cop(appDesc);
-
-         cop.parseOptions(argc, argv);
-
-         if (cop.helpRequested())
-         {
+        if (cop.helpRequested())
+        {
             cop.printHelp(cerr, pretty);
             return false;
-         }
+        }
 
-         if (cop.hasErrors())
-         {
+        if (cop.hasErrors())
+        {
             cop.dumpErrors(cerr);
             cop.displayUsage(cerr, pretty);
             exitCode = OPTION_ERROR;
             return false;
-         }
+        }
 
-         debugLevel = debugOption.getCount();
-         verboseLevel = verboseOption.getCount();
-      }
-      catch (gnsstk::Exception &exc)
-      {
-         cerr << exc << endl;
-         exitCode=OPTION_ERROR;
-         return false;
-      }
-      catch (std::exception &exc)
-      {
-         cerr << "BasicFramework::initialize caught " << exc.what() << endl;
-         exitCode=OPTION_ERROR;
-         return false;
-      }
-      catch (...)
-      {
-         cerr << "BasicFramework::initialize caught unknown exception" << endl;
-         exitCode=OPTION_ERROR;
-         return false;
-      }
+        debugLevel = debugOption.getCount();
+        verboseLevel = verboseOption.getCount();
+    }
+    catch (gnsstk::Exception &exc)
+    {
+        cerr << exc << endl;
+        exitCode = OPTION_ERROR;
+        return false;
+    }
+    catch (std::exception &exc)
+    {
+        cerr << "BasicFramework::initialize caught " << exc.what() << endl;
+        exitCode = OPTION_ERROR;
+        return false;
+    }
+    catch (...)
+    {
+        cerr << "BasicFramework::initialize caught unknown exception" << endl;
+        exitCode = OPTION_ERROR;
+        return false;
+    }
 
-      return true;
+    return true;
 
-   }  // End of method 'BasicFramework::initialize()'
+} // End of method 'BasicFramework::initialize()'
 
+bool BasicFramework ::run() noexcept
+{
 
-   bool BasicFramework :: run()
-      noexcept
-   {
+    try
+    {
+        completeProcessing();
+    }
+    catch (Exception &exc)
+    {
+        cerr << exc;
+        exitCode = EXCEPTION_ERROR;
+        return false;
+    }
+    catch (...)
+    {
+        cerr << "Caught unknown exception" << endl;
+        exitCode = EXCEPTION_ERROR;
+        return false;
+    }
 
-      try
-      {
-         completeProcessing();
-      }
-      catch (Exception& exc)
-      {
-         cerr << exc;
-         exitCode = EXCEPTION_ERROR;
-         return false;
-      }
-      catch (...)
-      {
-         cerr << "Caught unknown exception" << endl;
-         exitCode = EXCEPTION_ERROR;
-         return false;
-      }
+    shutDown();
 
-      shutDown();
+    return true;
 
-      return true;
+} // End of method 'BasicFramework::run()'
 
-   }  // End of method 'BasicFramework::run()'
+void BasicFramework ::completeProcessing()
+{
+    additionalSetup();
 
+    spinUp();
 
+    process();
 
-   void BasicFramework :: completeProcessing()
-   {
-      additionalSetup();
+} // End of method 'BasicFramework::completeProcessing()'
 
-      spinUp();
-
-      process();
-
-   }  // End of method 'BasicFramework::completeProcessing()'
-
-
-}  // End of namespace gnsstk
+} // End of namespace gnsstk

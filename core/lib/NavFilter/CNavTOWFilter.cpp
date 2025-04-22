@@ -41,35 +41,31 @@
 
 namespace gnsstk
 {
-   CNavTOWFilter::
-   CNavTOWFilter()
-   {
-   }
-
-   void CNavTOWFilter ::
-   validate(NavMsgList& msgBitsIn, NavMsgList& msgBitsOut)
-   {
-      NavMsgList::const_iterator i;
-      for (i = msgBitsIn.begin(); i != msgBitsIn.end(); i++)
-      {
-         CNavFilterData *fd = dynamic_cast<CNavFilterData*>(*i);
-         uint32_t preamble = (uint32_t) fd->pnb->asUnsignedLong(0,8,1);
-         uint32_t msgType  = (uint32_t) fd->pnb->asUnsignedLong(14,6,1);
-         uint32_t TOWCount = (uint32_t) fd->pnb->asUnsignedLong(20,17,1);
-
-         bool valid =
-               // check TLM preamble
-            ( preamble == 0x0000008b &&
-               // < 604800 sow or < 100800 TOW counts
-              TOWCount < 100800 &&
-               // subframe ID
-             (  msgType==0 ||
-               (msgType >= 10 && msgType <= 15 ) ||
-               (msgType >= 30 && msgType <= 39 ) ) );
-         if (valid)
-            accept(fd, msgBitsOut);
-         else
-            reject(fd);
-      }
-   }
+CNavTOWFilter::CNavTOWFilter()
+{
 }
+
+void CNavTOWFilter ::validate(NavMsgList &msgBitsIn, NavMsgList &msgBitsOut)
+{
+    NavMsgList::const_iterator i;
+    for (i = msgBitsIn.begin(); i != msgBitsIn.end(); i++)
+    {
+        CNavFilterData *fd = dynamic_cast<CNavFilterData *>(*i);
+        uint32_t preamble = (uint32_t)fd->pnb->asUnsignedLong(0, 8, 1);
+        uint32_t msgType = (uint32_t)fd->pnb->asUnsignedLong(14, 6, 1);
+        uint32_t TOWCount = (uint32_t)fd->pnb->asUnsignedLong(20, 17, 1);
+
+        bool valid =
+            // check TLM preamble
+            (preamble == 0x0000008b &&
+             // < 604800 sow or < 100800 TOW counts
+             TOWCount < 100800 &&
+             // subframe ID
+             (msgType == 0 || (msgType >= 10 && msgType <= 15) || (msgType >= 30 && msgType <= 39)));
+        if (valid)
+            accept(fd, msgBitsOut);
+        else
+            reject(fd);
+    }
+}
+} // namespace gnsstk

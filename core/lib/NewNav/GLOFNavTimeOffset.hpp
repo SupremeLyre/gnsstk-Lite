@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -44,30 +43,32 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Defines the class that provides the ability to convert
-       * GLONASS to/from GPS or UTC, using data extracted from
-       * GLONASS navigation messages. */
-   class GLOFNavTimeOffset : public StdNavTimeOffset
-   {
-   public:
-         /// Initialize all data to 0.
-      GLOFNavTimeOffset();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GLOFNavTimeOffset>(*this); }
+/** Defines the class that provides the ability to convert
+ * GLONASS to/from GPS or UTC, using data extracted from
+ * GLONASS navigation messages. */
+class GLOFNavTimeOffset : public StdNavTimeOffset
+{
+  public:
+    /// Initialize all data to 0.
+    GLOFNavTimeOffset();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GLOFNavTimeOffset>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
-   };
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GLOFNAVTIMEOFFSET_HPP

@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -44,30 +43,32 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Defines the class that provides the ability to convert
-       * between GPS and UTC, using data extracted from GPS legacy
-       * navigation messages. */
-   class GPSLNavTimeOffset : public StdNavTimeOffset
-   {
-   public:
-         /// Initialize all data to 0.
-      GPSLNavTimeOffset();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GPSLNavTimeOffset>(*this); }
+/** Defines the class that provides the ability to convert
+ * between GPS and UTC, using data extracted from GPS legacy
+ * navigation messages. */
+class GPSLNavTimeOffset : public StdNavTimeOffset
+{
+  public:
+    /// Initialize all data to 0.
+    GPSLNavTimeOffset();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GPSLNavTimeOffset>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
-   };
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GPSLNAVTIMEOFFSET_HPP

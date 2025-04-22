@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,114 +38,96 @@
 /** @file NavStatic.cpp contains definitions of static data that need
  * to be initialized in a particular order. */
 
-#include "NavMessageType.hpp"
-#include "NavDataFactory.hpp"
 #include "MultiFormatNavDataFactory.hpp"
-#include "RinexNavDataFactory.hpp"
-#include "SP3NavDataFactory.hpp"
-#include "PNBMultiGNSSNavDataFactory.hpp"
-#include "PNBGPSLNavDataFactory.hpp"
-#include "PNBGPSCNavDataFactory.hpp"
-#include "PNBGPSCNav2DataFactory.hpp"
-#include "PNBGalINavDataFactory.hpp"
-#include "PNBGalFNavDataFactory.hpp"
+#include "NavDataFactory.hpp"
+#include "NavMessageType.hpp"
 #include "PNBBDSD1NavDataFactory.hpp"
 #include "PNBBDSD2NavDataFactory.hpp"
-#include "PNBGLOFNavDataFactory.hpp"
 #include "PNBGLOCNavDataFactory.hpp"
-#include "YumaNavDataFactory.hpp"
+#include "PNBGLOFNavDataFactory.hpp"
+#include "PNBGPSCNav2DataFactory.hpp"
+#include "PNBGPSCNavDataFactory.hpp"
+#include "PNBGPSLNavDataFactory.hpp"
+#include "PNBGalFNavDataFactory.hpp"
+#include "PNBGalINavDataFactory.hpp"
+#include "PNBMultiGNSSNavDataFactory.hpp"
+#include "RinexNavDataFactory.hpp"
 #include "SEMNavDataFactory.hpp"
+#include "SP3NavDataFactory.hpp"
+#include "YumaNavDataFactory.hpp"
 
 namespace gnsstk
 {
-      /** @note This must be initialized before instantiating
-       * factories and adding them to MultiFormatNavDataFactory.
-       * @note This deliberately omits the System type, as most users are not
-       * expected to use it.*/
-   const NavMessageTypeSet allNavMessageTypes { NavMessageType::Almanac,
-                                                NavMessageType::Ephemeris,
-                                                NavMessageType::TimeOffset,
-                                                NavMessageType::Health,
-                                                NavMessageType::Clock,
-                                                NavMessageType::Iono,
-                                                NavMessageType::ISC };
+/** @note This must be initialized before instantiating
+ * factories and adding them to MultiFormatNavDataFactory.
+ * @note This deliberately omits the System type, as most users are not
+ * expected to use it.*/
+const NavMessageTypeSet allNavMessageTypes{
+    NavMessageType::Almanac, NavMessageType::Ephemeris, NavMessageType::TimeOffset, NavMessageType::Health,
+    NavMessageType::Clock,   NavMessageType::Iono,      NavMessageType::ISC};
 
-      /** This class is not for public use.  It is used to create a
-       * singleton object to add supported formats to
-       * MultiFormatNavDataFactory.
-       * @todo Resolve the memory leak caused by the constructor here. */
-   class GNSSTKFormatInitializer
-   {
-   public:
-         /// Add gnsstk factories to MultiFormatNavDataFactory
-      GNSSTKFormatInitializer()
-      {
-         static bool initialized = false;
-         // std::cerr << "starting GNSSTKFormatInitializer() " << this << std::endl;
-         if (initialized)
+/** This class is not for public use.  It is used to create a
+ * singleton object to add supported formats to
+ * MultiFormatNavDataFactory.
+ * @todo Resolve the memory leak caused by the constructor here. */
+class GNSSTKFormatInitializer
+{
+  public:
+    /// Add gnsstk factories to MultiFormatNavDataFactory
+    GNSSTKFormatInitializer()
+    {
+        static bool initialized = false;
+        // std::cerr << "starting GNSSTKFormatInitializer() " << this << std::endl;
+        if (initialized)
             return;
-         // std::cerr << "continuing GNSSTKFormatInitializer() " << this << std::endl;
-         initialized = true;
-            // create our factories
-            /** @note The order that the factories are added defines
-             * their precedence when doing a find in
-             * MultiFormatNavDataFactory. */
-         gnsstk::NavDataFactoryPtr
-            ndfp1(std::make_shared<gnsstk::SP3NavDataFactory>());
-         gnsstk::NavDataFactoryPtr
-            ndfp2(std::make_shared<gnsstk::RinexNavDataFactory>());
-            // ignore the return value
-         MultiFormatNavDataFactory::addFactory(ndfp1);
-         MultiFormatNavDataFactory::addFactory(ndfp2);
+        // std::cerr << "continuing GNSSTKFormatInitializer() " << this << std::endl;
+        initialized = true;
+        // create our factories
+        /** @note The order that the factories are added defines
+         * their precedence when doing a find in
+         * MultiFormatNavDataFactory. */
+        gnsstk::NavDataFactoryPtr ndfp1(std::make_shared<gnsstk::SP3NavDataFactory>());
+        gnsstk::NavDataFactoryPtr ndfp2(std::make_shared<gnsstk::RinexNavDataFactory>());
+        // ignore the return value
+        MultiFormatNavDataFactory::addFactory(ndfp1);
+        MultiFormatNavDataFactory::addFactory(ndfp2);
 
-         gnsstk::NavDataFactoryPtr
-            ndfp3(std::make_shared<gnsstk::YumaNavDataFactory>());
-         gnsstk::NavDataFactoryPtr
-            ndfp4(std::make_shared<gnsstk::SEMNavDataFactory>());
-         MultiFormatNavDataFactory::addFactory(ndfp3);
-         MultiFormatNavDataFactory::addFactory(ndfp4);
+        gnsstk::NavDataFactoryPtr ndfp3(std::make_shared<gnsstk::YumaNavDataFactory>());
+        gnsstk::NavDataFactoryPtr ndfp4(std::make_shared<gnsstk::SEMNavDataFactory>());
+        MultiFormatNavDataFactory::addFactory(ndfp3);
+        MultiFormatNavDataFactory::addFactory(ndfp4);
 
-         gnsstk::PNBNavDataFactoryPtr
-            lnav(std::make_shared<gnsstk::PNBGPSLNavDataFactory>());
-         PNBMultiGNSSNavDataFactory::addFactory(NavType::GPSLNAV,lnav);
+        gnsstk::PNBNavDataFactoryPtr lnav(std::make_shared<gnsstk::PNBGPSLNavDataFactory>());
+        PNBMultiGNSSNavDataFactory::addFactory(NavType::GPSLNAV, lnav);
 
-         gnsstk::PNBNavDataFactoryPtr
-            cnavL2(std::make_shared<gnsstk::PNBGPSCNavDataFactory>());
-         PNBMultiGNSSNavDataFactory::addFactory(NavType::GPSCNAVL2,cnavL2);
+        gnsstk::PNBNavDataFactoryPtr cnavL2(std::make_shared<gnsstk::PNBGPSCNavDataFactory>());
+        PNBMultiGNSSNavDataFactory::addFactory(NavType::GPSCNAVL2, cnavL2);
 
-         gnsstk::PNBNavDataFactoryPtr
-            cnavL5(std::make_shared<gnsstk::PNBGPSCNavDataFactory>());
-         PNBMultiGNSSNavDataFactory::addFactory(NavType::GPSCNAVL5,cnavL5);
+        gnsstk::PNBNavDataFactoryPtr cnavL5(std::make_shared<gnsstk::PNBGPSCNavDataFactory>());
+        PNBMultiGNSSNavDataFactory::addFactory(NavType::GPSCNAVL5, cnavL5);
 
-         gnsstk::PNBNavDataFactoryPtr
-            cnav2(std::make_shared<gnsstk::PNBGPSCNav2DataFactory>());
-         PNBMultiGNSSNavDataFactory::addFactory(NavType::GPSCNAV2,cnav2);
+        gnsstk::PNBNavDataFactoryPtr cnav2(std::make_shared<gnsstk::PNBGPSCNav2DataFactory>());
+        PNBMultiGNSSNavDataFactory::addFactory(NavType::GPSCNAV2, cnav2);
 
-         gnsstk::PNBNavDataFactoryPtr
-            gali(std::make_shared<gnsstk::PNBGalINavDataFactory>());
-         PNBMultiGNSSNavDataFactory::addFactory(NavType::GalINAV,gali);
+        gnsstk::PNBNavDataFactoryPtr gali(std::make_shared<gnsstk::PNBGalINavDataFactory>());
+        PNBMultiGNSSNavDataFactory::addFactory(NavType::GalINAV, gali);
 
-         gnsstk::PNBNavDataFactoryPtr
-            galf(std::make_shared<gnsstk::PNBGalFNavDataFactory>());
-         PNBMultiGNSSNavDataFactory::addFactory(NavType::GalFNAV,galf);
+        gnsstk::PNBNavDataFactoryPtr galf(std::make_shared<gnsstk::PNBGalFNavDataFactory>());
+        PNBMultiGNSSNavDataFactory::addFactory(NavType::GalFNAV, galf);
 
-         gnsstk::PNBNavDataFactoryPtr
-            bd1(std::make_shared<gnsstk::PNBBDSD1NavDataFactory>());
-         PNBMultiGNSSNavDataFactory::addFactory(NavType::BeiDou_D1,bd1);
+        gnsstk::PNBNavDataFactoryPtr bd1(std::make_shared<gnsstk::PNBBDSD1NavDataFactory>());
+        PNBMultiGNSSNavDataFactory::addFactory(NavType::BeiDou_D1, bd1);
 
-         gnsstk::PNBNavDataFactoryPtr
-            bd2(std::make_shared<gnsstk::PNBBDSD2NavDataFactory>());
-         PNBMultiGNSSNavDataFactory::addFactory(NavType::BeiDou_D2,bd2);
+        gnsstk::PNBNavDataFactoryPtr bd2(std::make_shared<gnsstk::PNBBDSD2NavDataFactory>());
+        PNBMultiGNSSNavDataFactory::addFactory(NavType::BeiDou_D2, bd2);
 
-         gnsstk::PNBNavDataFactoryPtr
-            glof(std::make_shared<gnsstk::PNBGLOFNavDataFactory>());
-         PNBMultiGNSSNavDataFactory::addFactory(NavType::GloCivilF,glof);
+        gnsstk::PNBNavDataFactoryPtr glof(std::make_shared<gnsstk::PNBGLOFNavDataFactory>());
+        PNBMultiGNSSNavDataFactory::addFactory(NavType::GloCivilF, glof);
 
-         gnsstk::PNBNavDataFactoryPtr
-            gloc(std::make_shared<gnsstk::PNBGLOCNavDataFactory>());
-         PNBMultiGNSSNavDataFactory::addFactory(NavType::GloCivilC,gloc);
-      }
-   };
+        gnsstk::PNBNavDataFactoryPtr gloc(std::make_shared<gnsstk::PNBGLOCNavDataFactory>());
+        PNBMultiGNSSNavDataFactory::addFactory(NavType::GloCivilC, gloc);
+    }
+};
 
-   static GNSSTKFormatInitializer gnsstkMFNDFI;
-}
+static GNSSTKFormatInitializer gnsstkMFNDFI;
+} // namespace gnsstk

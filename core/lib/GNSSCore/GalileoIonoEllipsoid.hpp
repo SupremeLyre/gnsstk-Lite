@@ -49,47 +49,58 @@
 
 namespace gnsstk
 {
-      /** @addtogroup geodeticgroup */
-      //@{
+/** @addtogroup geodeticgroup */
+//@{
 
-      /** Define an "ellipsoid" as used by the Galileo ionospheric
-       * model.  This is actually a sphere. */
-   class GalileoIonoEllipsoid : public GalileoEllipsoid
-   {
-   public:
+/** Define an "ellipsoid" as used by the Galileo ionospheric
+ * model.  This is actually a sphere. */
+class GalileoIonoEllipsoid : public GalileoEllipsoid
+{
+  public:
+    /// @return semi-major axis of Earth in meters.
+    virtual double a() const noexcept
+    {
+        return a_km() * 1000.0;
+    }
 
-         /// @return semi-major axis of Earth in meters.
-      virtual double a() const noexcept
-      { return a_km() * 1000.0; }
+    /// Defined in galileo:iono section 2.5.2 as R<sub>E</sub>
+    /// @return semi-major axis of Earth in km.
+    virtual double a_km() const noexcept
+    {
+        return 6371.2;
+    }
 
-         /// Defined in galileo:iono section 2.5.2 as R<sub>E</sub>
-         /// @return semi-major axis of Earth in km.
-      virtual double a_km() const noexcept
-      { return 6371.2; }
+    /// @return flattening (ellipsoid parameter).
+    virtual double flattening() const noexcept
+    {
+        return 0;
+    }
 
-         /// @return flattening (ellipsoid parameter).
-      virtual double flattening() const noexcept
-      { return 0; }
+    /// Unstated in Galileo OS SIS ICD. Derived as e = sqrt(2f - f*f)
+    /// based on NGA TR8350.2 Section 7.4
+    /// @return eccentricity (ellipsoid parameter).
+    virtual double eccentricity() const noexcept
+    {
+        return 0;
+    }
 
-         /// Unstated in Galileo OS SIS ICD. Derived as e = sqrt(2f - f*f)
-         /// based on NGA TR8350.2 Section 7.4
-         /// @return eccentricity (ellipsoid parameter).
-      virtual double eccentricity() const noexcept
-      { return 0; }
+    /// Unstated in Galileo OS SIS ICD. Derived as e^2 = 2f - f*f
+    /// based on NGA TR8350.2 Section 7.4
+    /// @return eccentricity squared (ellipsoid parameter).
+    virtual double eccSquared() const noexcept
+    {
+        return 0;
+    }
 
-         /// Unstated in Galileo OS SIS ICD. Derived as e^2 = 2f - f*f
-         /// based on NGA TR8350.2 Section 7.4
-         /// @return eccentricity squared (ellipsoid parameter).
-      virtual double eccSquared() const noexcept
-      { return 0; }
+    /// Destructor.
+    virtual ~GalileoIonoEllipsoid() noexcept
+    {
+    }
 
-         /// Destructor.
-      virtual ~GalileoIonoEllipsoid() noexcept {}
+}; // class GalileoIonoEllipsoid
 
-   }; // class GalileoIonoEllipsoid
+//@}
 
-      //@}
-
-} // namespace
+} // namespace gnsstk
 
 #endif

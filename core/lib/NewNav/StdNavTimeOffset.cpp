@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,118 +42,99 @@ using namespace std;
 
 namespace gnsstk
 {
-   StdNavTimeOffset ::
-   StdNavTimeOffset()
-         : a0(0.0), a1(0.0), a2(0.0), deltatLS(0.0), tot(0.0), wnot(0),
-           wnLSF(0), dn(0), deltatLSF(0.0), dnSun(1),
-           src(TimeSystem::Unknown), tgt(TimeSystem::Unknown)
-   {
-   }
+StdNavTimeOffset ::StdNavTimeOffset()
+    : a0(0.0), a1(0.0), a2(0.0), deltatLS(0.0), tot(0.0), wnot(0), wnLSF(0), dn(0), deltatLSF(0.0), dnSun(1),
+      src(TimeSystem::Unknown), tgt(TimeSystem::Unknown)
+{
+}
 
-
-   bool StdNavTimeOffset ::
-   getOffset(TimeSystem fromSys, TimeSystem toSys,
-             const CommonTime& when, double& offset)
-      const
-   {
-      if (((fromSys == src) && (toSys == tgt)) ||
-          ((fromSys == tgt) && (toSys == src)))
-      {
-         GNSSTK_ASSERT(when.getTimeSystem() == fromSys);
-            // Change the reference time system to the source time
-            // system (fromSys) to allow for reverse conversions
-            // (e.g. UTC->GPS vs GPS->UTC).
-         CommonTime t0(refTime);
-         t0.setTimeSystem(fromSys);
-            // difference between tE and tot (using GPS terms)
-         double dt = when - t0;
-            // delta tLS should be 0 for anything other than UTC,
-            // except in the case of GLONASS.
-         offset = deltatLS + a0 + a1*dt + a2*dt*dt;
-            // UTC conversion includes leap seconds and everyone
-            // copied what GPS was doing, more or less, including the
-            // ICD/IS.
-         if ((fromSys == TimeSystem::UTC) || (toSys == TimeSystem::UTC))
-         {
+bool StdNavTimeOffset ::getOffset(TimeSystem fromSys, TimeSystem toSys, const CommonTime &when, double &offset) const
+{
+    if (((fromSys == src) && (toSys == tgt)) || ((fromSys == tgt) && (toSys == src)))
+    {
+        GNSSTK_ASSERT(when.getTimeSystem() == fromSys);
+        // Change the reference time system to the source time
+        // system (fromSys) to allow for reverse conversions
+        // (e.g. UTC->GPS vs GPS->UTC).
+        CommonTime t0(refTime);
+        t0.setTimeSystem(fromSys);
+        // difference between tE and tot (using GPS terms)
+        double dt = when - t0;
+        // delta tLS should be 0 for anything other than UTC,
+        // except in the case of GLONASS.
+        offset = deltatLS + a0 + a1 * dt + a2 * dt * dt;
+        // UTC conversion includes leap seconds and everyone
+        // copied what GPS was doing, more or less, including the
+        // ICD/IS.
+        if ((fromSys == TimeSystem::UTC) || (toSys == TimeSystem::UTC))
+        {
             CommonTime effBlank(effTime);
             effBlank.setTimeSystem(fromSys);
             if ((when >= effBlank) && ((when - effBlank) <= effEnd()))
             {
-                  // use deltatLSF from effectivity time to
-                  // effectivity time + effEnd()
-               offset = deltatLSF + a0 + a1*dt + a2*dt*dt;
+                // use deltatLSF from effectivity time to
+                // effectivity time + effEnd()
+                offset = deltatLSF + a0 + a1 * dt + a2 * dt * dt;
             }
-         }
-         if (fromSys == tgt)
+        }
+        if (fromSys == tgt)
             offset = -offset;
-         return true;
-      }
-      return false;
-   }
-
-
-   void StdNavTimeOffset ::
-   dump(std::ostream& s, DumpDetail dl) const
-   {
-      const ios::fmtflags oldFlags = s.flags();
-      if (dl == DumpDetail::OneLine)
-      {
-         NavData::dump(s,dl);
-         return;
-      }
-      if (dl == DumpDetail::Brief)
-      {
-         double offset;
-         getOffset(src, tgt, refTime, offset);
-            // brief just shows the offset as of the reference time.
-         s << StringUtils::asString(src) << "-" << StringUtils::asString(tgt)
-           << " offset = " << offset << endl;
-         return;
-      }
-      s << "****************************************************************"
-        << "************" << endl
-        << "Time System Offset"
-        << endl
-        << endl
-        << getSignalString() << endl
-        << "           TIMES OF INTEREST" << endl << endl
-        << "              " << getDumpTimeHdr(dl) << endl
-        << "Transmit:     " << getDumpTime(dl, timeStamp)
-        << endl << endl
-        << "           " << StringUtils::asString(src) << " "
-        << StringUtils::asString(tgt) << " PARAMETERS" << endl
-        << "Parameter                 Value" << endl
-        << "Reference   "
-        << printTime(refTime,"%Y/%02m/%02d %02H:%02M:%02S") << endl
-        << "Effective   "
-        << printTime(effTime,"%Y/%02m/%02d %02H:%02M:%02S") << endl
-        << right << uppercase << fixed << setprecision(0) << setfill(' ')
-        << "t-sub-ot       " << setw(16) << tot << " sec" << endl
-        << scientific << setprecision(9)
-        << "A0             " << setw(16) << a0 << " sec" << endl
-        << "A1             " << setw(16) << a1 << " sec/sec" << endl
-        << "A2             " << setw(16) << a2 << " sec/sec**2" << endl
-        << fixed << setprecision(0)
-        << "dtLS           " << setw(16) << deltatLS << " sec" << endl
-        << "dtLSF          " << setw(16) << deltatLSF << " sec" << endl
-        << "WNot           " << setw(11) << wnot << "("
-        << setw(3) << (wnot & 0x0ff) << ") Full week (modulo 256 week)" << endl
-        << "WN(LSF)        " << setw(11) << wnLSF << "("
-        << setw(3) << (wnLSF & 0x0ff) << ") Full week (modulo 256 week)" << endl
-            /** @todo maybe need to make this a dynamic label for
-             * systems that start at DN=0 */
-        << "DN             " << setw(16) << dn << " day (" << dnSun << "-"
-        << (dnSun+6) << ")" << endl;
-      s.flags(oldFlags);
-   }
-
-
-   TimeCvtSet StdNavTimeOffset ::
-   getConversions() const
-   {
-      TimeCvtKey keyF(src,tgt);
-      TimeCvtKey keyR(tgt,src);
-      return TimeCvtSet({ keyF, keyR });
-   }
+        return true;
+    }
+    return false;
 }
 
+void StdNavTimeOffset ::dump(std::ostream &s, DumpDetail dl) const
+{
+    const ios::fmtflags oldFlags = s.flags();
+    if (dl == DumpDetail::OneLine)
+    {
+        NavData::dump(s, dl);
+        return;
+    }
+    if (dl == DumpDetail::Brief)
+    {
+        double offset;
+        getOffset(src, tgt, refTime, offset);
+        // brief just shows the offset as of the reference time.
+        s << StringUtils::asString(src) << "-" << StringUtils::asString(tgt) << " offset = " << offset << endl;
+        return;
+    }
+    s << "****************************************************************"
+      << "************" << endl
+      << "Time System Offset" << endl
+      << endl
+      << getSignalString() << endl
+      << "           TIMES OF INTEREST" << endl
+      << endl
+      << "              " << getDumpTimeHdr(dl) << endl
+      << "Transmit:     " << getDumpTime(dl, timeStamp) << endl
+      << endl
+      << "           " << StringUtils::asString(src) << " " << StringUtils::asString(tgt) << " PARAMETERS" << endl
+      << "Parameter                 Value" << endl
+      << "Reference   " << printTime(refTime, "%Y/%02m/%02d %02H:%02M:%02S") << endl
+      << "Effective   " << printTime(effTime, "%Y/%02m/%02d %02H:%02M:%02S") << endl
+      << right << uppercase << fixed << setprecision(0) << setfill(' ') << "t-sub-ot       " << setw(16) << tot
+      << " sec" << endl
+      << scientific << setprecision(9) << "A0             " << setw(16) << a0 << " sec" << endl
+      << "A1             " << setw(16) << a1 << " sec/sec" << endl
+      << "A2             " << setw(16) << a2 << " sec/sec**2" << endl
+      << fixed << setprecision(0) << "dtLS           " << setw(16) << deltatLS << " sec" << endl
+      << "dtLSF          " << setw(16) << deltatLSF << " sec" << endl
+      << "WNot           " << setw(11) << wnot << "(" << setw(3) << (wnot & 0x0ff) << ") Full week (modulo 256 week)"
+      << endl
+      << "WN(LSF)        " << setw(11) << wnLSF << "(" << setw(3) << (wnLSF & 0x0ff) << ") Full week (modulo 256 week)"
+      << endl
+      /** @todo maybe need to make this a dynamic label for
+       * systems that start at DN=0 */
+      << "DN             " << setw(16) << dn << " day (" << dnSun << "-" << (dnSun + 6) << ")" << endl;
+    s.flags(oldFlags);
+}
+
+TimeCvtSet StdNavTimeOffset ::getConversions() const
+{
+    TimeCvtKey keyF(src, tgt);
+    TimeCvtKey keyR(tgt, src);
+    return TimeCvtSet({keyF, keyR});
+}
+} // namespace gnsstk

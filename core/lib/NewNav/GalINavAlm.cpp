@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,98 +42,77 @@ using namespace std;
 
 namespace gnsstk
 {
-   const double GalINavAlm::refA = 29600000;
-   const double GalINavAlm::refioffset = (56.0 * PI / 180.0);
+const double GalINavAlm::refA = 29600000;
+const double GalINavAlm::refioffset = (56.0 * PI / 180.0);
 
-   GalINavAlm ::
-   GalINavAlm()
-         : dAhalf(0.0),
-           deltai(0.0),
-           wna(0),
-           t0a(0.0),
-           ioda1(0),
-           ioda2(0),
-           hsE5b(GalHealthStatus::Unknown),
-           hsE1B(GalHealthStatus::Unknown)
-   {
-      signal.messageType = NavMessageType::Almanac;
-      weekFmt = "%4L(%4l)";
-         // Not recommended for use - getUserTime() should be used
-         // instead as there is no guarantee that the two word types
-         // making up this almanac are consecutive.
-      msgLenSec = 2.0;
-      frame = RefFrameSys::ITRF;
-   }
-
-
-   bool GalINavAlm ::
-   validate() const
-   {
-      return true;
-   }
-
-
-   CommonTime GalINavAlm ::
-   getUserTime() const
-   {
-         // Galileo I/NAV nominal page transmit time is 2 seconds per
-         // OS-SIS-ICD figure 15.
-      return std::max(xmitTime, xmit2) + 2.0;
-   }
-
-
-   void GalINavAlm ::
-   fixFit()
-   {
-         /// @todo set the fit interval correctly
-         // Set the fit times to transmit time through toa+74 hours.
-      beginFit = xmitTime;
-      endFit   = Toe + (74.0 * 3600.0);
-   }
-
-
-   void GalINavAlm ::
-   fixHealth()
-   {
-         /** @todo determine if this educated guess about health
-          * status is correct or at least reasonable. */
-      if ((hsE5b == GalHealthStatus::OK) && (hsE1B == GalHealthStatus::OK))
-      {
-         health = SVHealth::Healthy;
-      }
-      else if ((hsE5b == GalHealthStatus::OutOfService) &&
-               (hsE1B == GalHealthStatus::OutOfService))
-      {
-         health = SVHealth::Unhealthy;
-      }
-      else
-      {
-         health = SVHealth::Degraded;
-      }
-   }
-
-
-   void GalINavAlm ::
-   dumpSVStatus(std::ostream& s) const
-   {
-      const ios::fmtflags oldFlags = s.flags();
-      s.setf(ios::scientific, ios::floatfield);
-      s << "           PAGE OVERHEAD" << endl
-        << endl
-        << "                SOW    DOW:HH:MM:SS         IODa" << endl
-        << printTime(xmitTime,"Part 1 TOW : %6.0g  %3a-%1w:%02H:%02M:%02S")
-        << setw(13) << (unsigned)ioda1 << endl
-        << printTime(xmit2,"Part 2 TOW : %6.0g  %3a-%1w:%02H:%02M:%02S")
-        << setw(13) << (unsigned)ioda2 << endl
-        << endl
-        << "           SV STATUS" << endl
-        << endl
-        << "E5b_HS              : " << setw(9) << static_cast<int>(hsE5b)
-        << " (" << gnsstk::StringUtils::asString(hsE5b) << ")" << endl
-        << "E1B_HS              : " << setw(9) << static_cast<int>(hsE1B)
-        << " (" << gnsstk::StringUtils::asString(hsE1B) << ")" << endl
-        << "Health              : " << setw(9)
-        << gnsstk::StringUtils::asString(health) << endl;
-      s.flags(oldFlags);
-   }
+GalINavAlm ::GalINavAlm()
+    : dAhalf(0.0), deltai(0.0), wna(0), t0a(0.0), ioda1(0), ioda2(0), hsE5b(GalHealthStatus::Unknown),
+      hsE1B(GalHealthStatus::Unknown)
+{
+    signal.messageType = NavMessageType::Almanac;
+    weekFmt = "%4L(%4l)";
+    // Not recommended for use - getUserTime() should be used
+    // instead as there is no guarantee that the two word types
+    // making up this almanac are consecutive.
+    msgLenSec = 2.0;
+    frame = RefFrameSys::ITRF;
 }
+
+bool GalINavAlm ::validate() const
+{
+    return true;
+}
+
+CommonTime GalINavAlm ::getUserTime() const
+{
+    // Galileo I/NAV nominal page transmit time is 2 seconds per
+    // OS-SIS-ICD figure 15.
+    return std::max(xmitTime, xmit2) + 2.0;
+}
+
+void GalINavAlm ::fixFit()
+{
+    /// @todo set the fit interval correctly
+    // Set the fit times to transmit time through toa+74 hours.
+    beginFit = xmitTime;
+    endFit = Toe + (74.0 * 3600.0);
+}
+
+void GalINavAlm ::fixHealth()
+{
+    /** @todo determine if this educated guess about health
+     * status is correct or at least reasonable. */
+    if ((hsE5b == GalHealthStatus::OK) && (hsE1B == GalHealthStatus::OK))
+    {
+        health = SVHealth::Healthy;
+    }
+    else if ((hsE5b == GalHealthStatus::OutOfService) && (hsE1B == GalHealthStatus::OutOfService))
+    {
+        health = SVHealth::Unhealthy;
+    }
+    else
+    {
+        health = SVHealth::Degraded;
+    }
+}
+
+void GalINavAlm ::dumpSVStatus(std::ostream &s) const
+{
+    const ios::fmtflags oldFlags = s.flags();
+    s.setf(ios::scientific, ios::floatfield);
+    s << "           PAGE OVERHEAD" << endl
+      << endl
+      << "                SOW    DOW:HH:MM:SS         IODa" << endl
+      << printTime(xmitTime, "Part 1 TOW : %6.0g  %3a-%1w:%02H:%02M:%02S") << setw(13) << (unsigned)ioda1 << endl
+      << printTime(xmit2, "Part 2 TOW : %6.0g  %3a-%1w:%02H:%02M:%02S") << setw(13) << (unsigned)ioda2 << endl
+      << endl
+      << "           SV STATUS" << endl
+      << endl
+      << "E5b_HS              : " << setw(9) << static_cast<int>(hsE5b) << " (" << gnsstk::StringUtils::asString(hsE5b)
+      << ")" << endl
+      << "E1B_HS              : " << setw(9) << static_cast<int>(hsE1B) << " (" << gnsstk::StringUtils::asString(hsE1B)
+      << ")" << endl
+      << "Health              : " << setw(9) << gnsstk::StringUtils::asString(health) << endl;
+    s.flags(oldFlags);
+}
+} // namespace gnsstk

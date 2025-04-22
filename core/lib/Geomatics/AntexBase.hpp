@@ -45,20 +45,22 @@
 
 namespace gnsstk
 {
-   /// @ingroup FileHandling
-   //@{
+/// @ingroup FileHandling
+//@{
 
-   /** This level isn't serving any purpose other than to make
-    * the class diagram look nice...
-    */
-   class AntexBase : public FFData
-   {
-   public:
-      /// Destructor per the coding standards
-      virtual ~AntexBase() {}
-   };
+/** This level isn't serving any purpose other than to make
+ * the class diagram look nice...
+ */
+class AntexBase : public FFData
+{
+  public:
+    /// Destructor per the coding standards
+    virtual ~AntexBase()
+    {
+    }
+};
 
-   //@}
+//@}
 
 } // namespace gnsstk
 

@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -40,60 +39,64 @@
 
 namespace gnsstk
 {
-   gnsstk::Xvt::HealthStatus toXvtHealth(SVHealth e)
-   {
-      gnsstk::Xvt::HealthStatus rv;
-      switch (e)
-      {
-         case SVHealth::Unknown:
-            rv = gnsstk::Xvt::Unknown;
-            break;
-         case SVHealth::Healthy:
-            rv = gnsstk::Xvt::Healthy;
-            break;
-         case SVHealth::Unhealthy:
-            rv = gnsstk::Xvt::Unhealthy;
-            break;
-         case SVHealth::Degraded:
-            rv = gnsstk::Xvt::Degraded;
-            break;
-         default:
-            rv = gnsstk::Xvt::Uninitialized;
-            break;
-      }
-      return rv;
-   }
+gnsstk::Xvt::HealthStatus toXvtHealth(SVHealth e)
+{
+    gnsstk::Xvt::HealthStatus rv;
+    switch (e)
+    {
+    case SVHealth::Unknown:
+        rv = gnsstk::Xvt::Unknown;
+        break;
+    case SVHealth::Healthy:
+        rv = gnsstk::Xvt::Healthy;
+        break;
+    case SVHealth::Unhealthy:
+        rv = gnsstk::Xvt::Unhealthy;
+        break;
+    case SVHealth::Degraded:
+        rv = gnsstk::Xvt::Degraded;
+        break;
+    default:
+        rv = gnsstk::Xvt::Uninitialized;
+        break;
+    }
+    return rv;
+}
 
+namespace StringUtils
+{
+std::string asString(SVHealth e) noexcept
+{
+    switch (e)
+    {
+    case SVHealth::Unknown:
+        return "Unknown";
+    case SVHealth::Any:
+        return "Any";
+    case SVHealth::Healthy:
+        return "Healthy";
+    case SVHealth::Unhealthy:
+        return "Unhealthy";
+    case SVHealth::Degraded:
+        return "Degraded";
+    default:
+        return "???";
+    } // switch (e)
+} // asString(SVHealth)
 
-   namespace StringUtils
-   {
-      std::string asString(SVHealth e) noexcept
-      {
-         switch (e)
-         {
-            case SVHealth::Unknown:    return "Unknown";
-            case SVHealth::Any:        return "Any";
-            case SVHealth::Healthy:    return "Healthy";
-            case SVHealth::Unhealthy:  return "Unhealthy";
-            case SVHealth::Degraded:   return "Degraded";
-            default:                   return "???";
-         } // switch (e)
-      } // asString(SVHealth)
-
-
-      SVHealth asSVHealth(const std::string& s) noexcept
-      {
-         if (s == "Unknown")
-            return SVHealth::Unknown;
-         if (s == "Any")
-            return SVHealth::Any;
-         if (s == "Healthy")
-            return SVHealth::Healthy;
-         if (s == "Unhealthy")
-            return SVHealth::Unhealthy;
-         if (s == "Degraded")
-            return SVHealth::Degraded;
-         return SVHealth::Unknown;
-      } // asSVHealth(string)
-   } // namespace StringUtils
+SVHealth asSVHealth(const std::string &s) noexcept
+{
+    if (s == "Unknown")
+        return SVHealth::Unknown;
+    if (s == "Any")
+        return SVHealth::Any;
+    if (s == "Healthy")
+        return SVHealth::Healthy;
+    if (s == "Unhealthy")
+        return SVHealth::Unhealthy;
+    if (s == "Degraded")
+        return SVHealth::Degraded;
+    return SVHealth::Unknown;
+} // asSVHealth(string)
+} // namespace StringUtils
 } // namespace gnsstk

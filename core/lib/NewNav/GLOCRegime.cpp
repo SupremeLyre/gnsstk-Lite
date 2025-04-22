@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -41,21 +40,21 @@
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(GLOCRegime e)
-      {
-         switch (e)
-         {
-            case GLOCRegime::Relay:
-               return "Relay";
-            case GLOCRegime::Prediction:
-               return "Prediction";
-            case GLOCRegime::Intersat:
-               return "Intersat";
-            default:
-               return "????";
-         }
-      }
-   }
+namespace StringUtils
+{
+std::string asString(GLOCRegime e)
+{
+    switch (e)
+    {
+    case GLOCRegime::Relay:
+        return "Relay";
+    case GLOCRegime::Prediction:
+        return "Prediction";
+    case GLOCRegime::Intersat:
+        return "Intersat";
+    default:
+        return "????";
+    }
 }
+} // namespace StringUtils
+} // namespace gnsstk

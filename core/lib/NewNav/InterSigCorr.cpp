@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -36,125 +35,110 @@
 //                            release, distribution is unlimited.
 //
 //==============================================================================
-#include <math.h>
 #include "InterSigCorr.hpp"
 #include "FreqConv.hpp"
 #include "TimeString.hpp"
+#include <math.h>
 
 using namespace std;
 
 namespace gnsstk
 {
-   InterSigCorr ::
-   InterSigCorr()
-         : isc(std::numeric_limits<double>::quiet_NaN()),
-           iscLabel("ISC")
-   {
-      signal.messageType = NavMessageType::ISC;
-   }
-
-
-   void InterSigCorr ::
-   dump(std::ostream& s, DumpDetail dl) const
-   {
-      if (dl == DumpDetail::OneLine)
-      {
-         NavData::dump(s,dl);
-         return;
-      }
-         // "header"
-      s << "****************************************************************"
-        << "************" << endl
-        << "Inter-signal Corrections"
-        << endl
-        << endl
-        << getSignalString() << endl;
-
-         // the rest is full details, so just return if Full is not asked for.
-      if (dl != DumpDetail::Full)
-         return;
-
-      const ios::fmtflags oldFlags = s.flags();
-
-      s.setf(ios::fixed, ios::floatfield);
-      s.setf(ios::right, ios::adjustfield);
-      s.setf(ios::uppercase);
-      s.precision(0);
-      s.fill(' ');
-
-      s << "           TIMES OF INTEREST" << endl << endl
-        << "              " << getDumpTimeHdr(dl) << endl
-        << "Transmit:     " << getDumpTime(dl, timeStamp) << endl << endl;
-      dumpCorrections(s);
-      s.flags(oldFlags);
-   }
-
-
-   void InterSigCorr ::
-   dumpCorrections(std::ostream& s) const
-   {
-      const ios::fmtflags oldFlags = s.flags();
-      s << "           CORRECTION"
-        << endl << endl
-        << scientific << setprecision(8) << setfill(' ')
-        << setw(20) << left << (iscLabel+":")
-        << setw(15) << right << isc << endl;
-      s.flags(oldFlags);
-   }
-
-
-   bool InterSigCorr ::
-   getISC(const ObsID& oid, double& corrOut)
-      const
-   {
-      ObsID oidU(oid);
-      oidU.type = ObservationType::Unknown;
-         // it's possible to have an empty validOids and still be
-         // useful, but it is not possible to have an empty refOids or
-         // isc=NaN and still be useful.
-      if (isnan(isc) || refOids.empty())
-         return false;
-      if (refOids.count(oidU))
-      {
-         corrOut = -isc;
-      }
-      else if (validOids.count(oidU))
-      {
-         corrOut = -(getGamma(refOids.begin()->band, oidU.band) * isc);
-      }
-      else
-      {
-         return false;
-      }
-      return true;
-   }
-
-
-   bool InterSigCorr ::
-   getISC(const ObsID& oid1, const ObsID& oid2, double& corrOut)
-      const
-   {
-      corrOut = 0;
-      return true;
-   }
-
-
-   double InterSigCorr ::
-   getGPSISC(const PackedNavBitsPtr& navIn, unsigned startBit)
-   {
-      double rv = 0;
-         // GPS ISC/Tgd are always 13 bits x 2^-35
-         // but we scale tgdBits by 1 to match the bit pattern.
-      unsigned long tgdBits = navIn->asUnsignedLong(startBit, 13, 1);
-      if (tgdBits == 0x1000)
-      {
-            // set to NaN because tgd is not available
-         rv = std::numeric_limits<float>::quiet_NaN();
-      }
-      else
-      {
-         rv = navIn->asSignedDouble(startBit, 13, -35);
-      }
-      return rv;
-   }
+InterSigCorr ::InterSigCorr() : isc(std::numeric_limits<double>::quiet_NaN()), iscLabel("ISC")
+{
+    signal.messageType = NavMessageType::ISC;
 }
+
+void InterSigCorr ::dump(std::ostream &s, DumpDetail dl) const
+{
+    if (dl == DumpDetail::OneLine)
+    {
+        NavData::dump(s, dl);
+        return;
+    }
+    // "header"
+    s << "****************************************************************"
+      << "************" << endl
+      << "Inter-signal Corrections" << endl
+      << endl
+      << getSignalString() << endl;
+
+    // the rest is full details, so just return if Full is not asked for.
+    if (dl != DumpDetail::Full)
+        return;
+
+    const ios::fmtflags oldFlags = s.flags();
+
+    s.setf(ios::fixed, ios::floatfield);
+    s.setf(ios::right, ios::adjustfield);
+    s.setf(ios::uppercase);
+    s.precision(0);
+    s.fill(' ');
+
+    s << "           TIMES OF INTEREST" << endl
+      << endl
+      << "              " << getDumpTimeHdr(dl) << endl
+      << "Transmit:     " << getDumpTime(dl, timeStamp) << endl
+      << endl;
+    dumpCorrections(s);
+    s.flags(oldFlags);
+}
+
+void InterSigCorr ::dumpCorrections(std::ostream &s) const
+{
+    const ios::fmtflags oldFlags = s.flags();
+    s << "           CORRECTION" << endl
+      << endl
+      << scientific << setprecision(8) << setfill(' ') << setw(20) << left << (iscLabel + ":") << setw(15) << right
+      << isc << endl;
+    s.flags(oldFlags);
+}
+
+bool InterSigCorr ::getISC(const ObsID &oid, double &corrOut) const
+{
+    ObsID oidU(oid);
+    oidU.type = ObservationType::Unknown;
+    // it's possible to have an empty validOids and still be
+    // useful, but it is not possible to have an empty refOids or
+    // isc=NaN and still be useful.
+    if (isnan(isc) || refOids.empty())
+        return false;
+    if (refOids.count(oidU))
+    {
+        corrOut = -isc;
+    }
+    else if (validOids.count(oidU))
+    {
+        corrOut = -(getGamma(refOids.begin()->band, oidU.band) * isc);
+    }
+    else
+    {
+        return false;
+    }
+    return true;
+}
+
+bool InterSigCorr ::getISC(const ObsID &oid1, const ObsID &oid2, double &corrOut) const
+{
+    corrOut = 0;
+    return true;
+}
+
+double InterSigCorr ::getGPSISC(const PackedNavBitsPtr &navIn, unsigned startBit)
+{
+    double rv = 0;
+    // GPS ISC/Tgd are always 13 bits x 2^-35
+    // but we scale tgdBits by 1 to match the bit pattern.
+    unsigned long tgdBits = navIn->asUnsignedLong(startBit, 13, 1);
+    if (tgdBits == 0x1000)
+    {
+        // set to NaN because tgd is not available
+        rv = std::numeric_limits<float>::quiet_NaN();
+    }
+    else
+    {
+        rv = navIn->asSignedDouble(startBit, 13, -35);
+    }
+    return rv;
+}
+} // namespace gnsstk

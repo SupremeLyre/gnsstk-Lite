@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -41,95 +40,78 @@
 
 namespace gnsstk
 {
-   PNBMultiGNSSNavDataFactory ::
-   PNBMultiGNSSNavDataFactory()
-   {
-         // get our own shared pointer to the factories map.
-      myFactories = factories();
-   }
-
-
-   void PNBMultiGNSSNavDataFactory ::
-   setValidityFilter(NavValidityType nvt)
-   {
-      for (auto& fi : *myFactories)
-      {
-         fi.second->setValidityFilter(nvt);
-      }
-   }
-
-
-   void PNBMultiGNSSNavDataFactory ::
-   setTypeFilter(const NavMessageTypeSet& nmts)
-   {
-      for (auto& fi : *myFactories)
-      {
-         fi.second->setTypeFilter(nmts);
-      }
-   }
-
-
-   bool PNBMultiGNSSNavDataFactory ::
-   addData(const PackedNavBitsPtr& navIn, NavDataPtrList& navOut,
-           double cadence)
-   {
-      DEBUGTRACE_FUNCTION();
-      NavType navType = navIn->getNavID().navType;
-      auto fi = myFactories->find(navType);
-      if (fi == myFactories->end())
-      {
-         DEBUGTRACE("No factory for " + StringUtils::asString(navType));
-         DEBUGTRACE(*(navIn.get()));
-            // We don't have a factory for this navigation message type
-         return false;
-      }
-      return fi->second->addData(navIn, navOut, cadence);
-   }
-
-
-   bool PNBMultiGNSSNavDataFactory ::
-   addFactory(NavType navType, PNBNavDataFactoryPtr& fact)
-   {
-         // make sure it's a valid class first
-      PNBNavDataFactory *ndfp = fact.get();
-      if (ndfp == nullptr)
-      {
-         return false;
-      }
-      if (dynamic_cast<PNBMultiGNSSNavDataFactory*>(ndfp) != nullptr)
-      {
-         return false;
-      }
-      (*factories())[navType] = fact;
-      return true;
-   }
-
-
-   void PNBMultiGNSSNavDataFactory ::
-   resetState()
-   {
-      for (auto& fi : *myFactories)
-      {
-         fi.second->resetState();
-      }
-   }
-
-
-   std::shared_ptr<PNBNavDataFactoryMap> PNBMultiGNSSNavDataFactory ::
-   factories()
-   {
-      static std::shared_ptr<PNBNavDataFactoryMap> rv =
-         std::make_shared<PNBNavDataFactoryMap>();
-      return rv;
-   }
-
-
-   void PNBMultiGNSSNavDataFactory ::
-   setControl(const FactoryControl& ctrl)
-   {
-      for (auto& fi : *myFactories)
-      {
-         fi.second->setControl(ctrl);
-      }
-   }
+PNBMultiGNSSNavDataFactory ::PNBMultiGNSSNavDataFactory()
+{
+    // get our own shared pointer to the factories map.
+    myFactories = factories();
 }
+
+void PNBMultiGNSSNavDataFactory ::setValidityFilter(NavValidityType nvt)
+{
+    for (auto &fi : *myFactories)
+    {
+        fi.second->setValidityFilter(nvt);
+    }
+}
+
+void PNBMultiGNSSNavDataFactory ::setTypeFilter(const NavMessageTypeSet &nmts)
+{
+    for (auto &fi : *myFactories)
+    {
+        fi.second->setTypeFilter(nmts);
+    }
+}
+
+bool PNBMultiGNSSNavDataFactory ::addData(const PackedNavBitsPtr &navIn, NavDataPtrList &navOut, double cadence)
+{
+    DEBUGTRACE_FUNCTION();
+    NavType navType = navIn->getNavID().navType;
+    auto fi = myFactories->find(navType);
+    if (fi == myFactories->end())
+    {
+        DEBUGTRACE("No factory for " + StringUtils::asString(navType));
+        DEBUGTRACE(*(navIn.get()));
+        // We don't have a factory for this navigation message type
+        return false;
+    }
+    return fi->second->addData(navIn, navOut, cadence);
+}
+
+bool PNBMultiGNSSNavDataFactory ::addFactory(NavType navType, PNBNavDataFactoryPtr &fact)
+{
+    // make sure it's a valid class first
+    PNBNavDataFactory *ndfp = fact.get();
+    if (ndfp == nullptr)
+    {
+        return false;
+    }
+    if (dynamic_cast<PNBMultiGNSSNavDataFactory *>(ndfp) != nullptr)
+    {
+        return false;
+    }
+    (*factories())[navType] = fact;
+    return true;
+}
+
+void PNBMultiGNSSNavDataFactory ::resetState()
+{
+    for (auto &fi : *myFactories)
+    {
+        fi.second->resetState();
+    }
+}
+
+std::shared_ptr<PNBNavDataFactoryMap> PNBMultiGNSSNavDataFactory ::factories()
+{
+    static std::shared_ptr<PNBNavDataFactoryMap> rv = std::make_shared<PNBNavDataFactoryMap>();
+    return rv;
+}
+
+void PNBMultiGNSSNavDataFactory ::setControl(const FactoryControl &ctrl)
+{
+    for (auto &fi : *myFactories)
+    {
+        fi.second->setControl(ctrl);
+    }
+}
+} // namespace gnsstk

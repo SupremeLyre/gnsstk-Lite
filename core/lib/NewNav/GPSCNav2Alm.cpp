@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -42,38 +41,27 @@ using namespace std;
 
 namespace gnsstk
 {
-   const double GPSCNav2Alm::refi0GPS = 0.3 * PI;
-   const double GPSCNav2Alm::refi0QZSS = 0.25 * PI;
+const double GPSCNav2Alm::refi0GPS = 0.3 * PI;
+const double GPSCNav2Alm::refi0QZSS = 0.25 * PI;
 
-   GPSCNav2Alm ::
-   GPSCNav2Alm()
-         : healthL1(true),
-           healthL2(true),
-           healthL5(true),
-           deltai(0),
-           wna(0),
-           toa(0)
-   {
-      signal.messageType = NavMessageType::Almanac;
-      msgLenSec = 5.48;
-   }
-
-
-   bool GPSCNav2Alm ::
-   validate() const
-   {
-         /// @todo implement some checks.
-      return true;
-   }
-
-
-   void GPSCNav2Alm ::
-   fixFit()
-   {
-         /** @todo Determine a more reasonable set of values.  This
-          * was copied from OrbAlmExt. */
-      beginFit = xmitTime;
-      endFit   = gnsstk::CommonTime::END_OF_TIME;
-      endFit.setTimeSystem(beginFit.getTimeSystem());
-   }
+GPSCNav2Alm ::GPSCNav2Alm() : healthL1(true), healthL2(true), healthL5(true), deltai(0), wna(0), toa(0)
+{
+    signal.messageType = NavMessageType::Almanac;
+    msgLenSec = 5.48;
 }
+
+bool GPSCNav2Alm ::validate() const
+{
+    /// @todo implement some checks.
+    return true;
+}
+
+void GPSCNav2Alm ::fixFit()
+{
+    /** @todo Determine a more reasonable set of values.  This
+     * was copied from OrbAlmExt. */
+    beginFit = xmitTime;
+    endFit = gnsstk::CommonTime::END_OF_TIME;
+    endFit.setTimeSystem(beginFit.getTimeSystem());
+}
+} // namespace gnsstk

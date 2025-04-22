@@ -39,29 +39,29 @@
 #ifndef GNSSTK_SVOBSEPOCH_HPP
 #define GNSSTK_SVOBSEPOCH_HPP
 
-#include <map>
 #include <iostream>
+#include <map>
 
-#include "SatID.hpp"
 #include "ObsID.hpp"
+#include "SatID.hpp"
 #include "ValidType.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup ClockModel
-      //@{
+/// @ingroup ClockModel
+//@{
 
-      /// All the observations collected from a single SV at a single epoch
-   struct SvObsEpoch : public std::map<ObsID, double>
-   {
-      gnsstk::SatID svid;
-      vfloat azimuth, elevation;
-   };
+/// All the observations collected from a single SV at a single epoch
+struct SvObsEpoch : public std::map<ObsID, double>
+{
+    gnsstk::SatID svid;
+    vfloat azimuth, elevation;
+};
 
-   std::ostream& operator<<(std::ostream& s, const SvObsEpoch& obs) noexcept;
+std::ostream &operator<<(std::ostream &s, const SvObsEpoch &obs) noexcept;
 
-      //@}
+//@}
 
-} // namespace
+} // namespace gnsstk
 
 #endif

@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -44,61 +43,63 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Class containing data elements unique to GPS CNav2 ephemerides.
-   class GPSCNav2Eph : public OrbitDataGPS
-   {
-   public:
-         /// Aref value defined in IS-GPS-800 (meters).
-      GNSSTK_EXPORT static const double refAGPS;
-         /// OMEGA dot reference value defined in IS-GPS-800 (radians).
-      GNSSTK_EXPORT static const double refOMEGAdotGPS;
-         /// Aref value defined in IS-QZSS-PNT-004 (meters).
-      GNSSTK_EXPORT static const double refAQZSS;
-         /// OMEGA dot reference value defined in IS-QZSS-PNT-004 (radians).
-      GNSSTK_EXPORT static const double refOMEGAdotQZSS;
+/// Class containing data elements unique to GPS CNav2 ephemerides.
+class GPSCNav2Eph : public OrbitDataGPS
+{
+  public:
+    /// Aref value defined in IS-GPS-800 (meters).
+    GNSSTK_EXPORT static const double refAGPS;
+    /// OMEGA dot reference value defined in IS-GPS-800 (radians).
+    GNSSTK_EXPORT static const double refOMEGAdotGPS;
+    /// Aref value defined in IS-QZSS-PNT-004 (meters).
+    GNSSTK_EXPORT static const double refAQZSS;
+    /// OMEGA dot reference value defined in IS-QZSS-PNT-004 (radians).
+    GNSSTK_EXPORT static const double refOMEGAdotQZSS;
 
-         /// Sets the nav message type and all other data members to 0.
-      GPSCNav2Eph();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GPSCNav2Eph>(*this); }
+    /// Sets the nav message type and all other data members to 0.
+    GPSCNav2Eph();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GPSCNav2Eph>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @todo implement some checking.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @todo implement some checking.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-         /** Fill the beginFit and endFit values for this object.
-          * @pre xmitTime, xmit11, xmitClk, Toe must all be set. */
-      void fixFit();
+    /** Fill the beginFit and endFit values for this object.
+     * @pre xmitTime, xmit11, xmitClk, Toe must all be set. */
+    void fixFit();
 
-         /** Dump SV status information (e.g. health).
-          * @param[in,out] s The stream to write the data to. */
-      void dumpSVStatus(std::ostream& s) const override;
+    /** Dump SV status information (e.g. health).
+     * @param[in,out] s The stream to write the data to. */
+    void dumpSVStatus(std::ostream &s) const override;
 
-      uint8_t itow;       ///< Interval time of week.
-         /// @note The health flags are true if unhealthy.
-      bool healthL1C;     ///< L1C signal health.
-      int8_t uraED;       ///< 5-bit URA index from message type 10.
-      int8_t uraNED0;     ///< non-elevation dependent URA from clock message.
-      uint8_t uraNED1;    ///< non-elevation dependent URA from clock message.
-      uint8_t uraNED2;    ///< non-elevation dependent URA from clock message.
-      bool integStat;     ///< Integrity status flag.
-      double deltaA;      ///< Semi-major axis relative to reference (Aref).
-      double dOMEGAdot;   ///< Rate of right ascension relative to -2.6e-9*pi.
-      CommonTime top;     ///< Time of prediction.
-      double tgd;         ///< Ionospheric group delay in seconds. NaN=invalid.
-      double iscL1CP;     ///< Inter-signal correction for L1CP.
-      double iscL1CD;     ///< Inter-signal correction for L1CD.
-   };
+    uint8_t itow;     ///< Interval time of week.
+                      /// @note The health flags are true if unhealthy.
+    bool healthL1C;   ///< L1C signal health.
+    int8_t uraED;     ///< 5-bit URA index from message type 10.
+    int8_t uraNED0;   ///< non-elevation dependent URA from clock message.
+    uint8_t uraNED1;  ///< non-elevation dependent URA from clock message.
+    uint8_t uraNED2;  ///< non-elevation dependent URA from clock message.
+    bool integStat;   ///< Integrity status flag.
+    double deltaA;    ///< Semi-major axis relative to reference (Aref).
+    double dOMEGAdot; ///< Rate of right ascension relative to -2.6e-9*pi.
+    CommonTime top;   ///< Time of prediction.
+    double tgd;       ///< Ionospheric group delay in seconds. NaN=invalid.
+    double iscL1CP;   ///< Inter-signal correction for L1CP.
+    double iscL1CD;   ///< Inter-signal correction for L1CD.
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GPSCNAV2EPH_HPP

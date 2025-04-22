@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,20 +42,19 @@
 
 namespace gnsstk
 {
-      /// Regime for data generation (RjE, RjT, see ICD 5.2.2.8).
-   enum class GLOCRegime
-   {
-      Unknown = -1,    ///< Unknown/Uninitialized value.
-      Relay = 1,
-      Prediction = 2,
-      Intersat = 3,
-   };
+/// Regime for data generation (RjE, RjT, see ICD 5.2.2.8).
+enum class GLOCRegime
+{
+    Unknown = -1, ///< Unknown/Uninitialized value.
+    Relay = 1,
+    Prediction = 2,
+    Intersat = 3,
+};
 
-
-   namespace StringUtils
-   {
-      std::string asString(GLOCRegime e);
-   }
+namespace StringUtils
+{
+std::string asString(GLOCRegime e);
 }
+} // namespace gnsstk
 
 #endif // GNSSTK_GLOCREGIME_HPP

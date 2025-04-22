@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -42,42 +41,29 @@ using namespace std;
 
 namespace gnsstk
 {
-   GPSCNavAlm ::
-   GPSCNavAlm()
-         : healthL1(true),
-           healthL2(true),
-           healthL5(true),
-           deltai(0),
-           wna(0),
-           toa(0)
-   {
-      signal.messageType = NavMessageType::Almanac;
-   }
-
-
-   bool GPSCNavAlm ::
-   validate() const
-   {
-      return GPSCNavData::validate();
-   }
-
-
-   CommonTime GPSCNavAlm ::
-   getUserTime() const
-   {
-      if (signal.nav == NavType::GPSCNAVL2)
-         return timeStamp + 12.0;
-      return timeStamp + 6.0;
-   }
-
-
-   void GPSCNavAlm ::
-   fixFit()
-   {
-         /** @todo Determine a more reasonable set of values.  This
-          * was copied from OrbAlmExt. */
-      beginFit = xmitTime;
-      endFit   = gnsstk::CommonTime::END_OF_TIME;
-      endFit.setTimeSystem(beginFit.getTimeSystem());
-   }
+GPSCNavAlm ::GPSCNavAlm() : healthL1(true), healthL2(true), healthL5(true), deltai(0), wna(0), toa(0)
+{
+    signal.messageType = NavMessageType::Almanac;
 }
+
+bool GPSCNavAlm ::validate() const
+{
+    return GPSCNavData::validate();
+}
+
+CommonTime GPSCNavAlm ::getUserTime() const
+{
+    if (signal.nav == NavType::GPSCNAVL2)
+        return timeStamp + 12.0;
+    return timeStamp + 6.0;
+}
+
+void GPSCNavAlm ::fixFit()
+{
+    /** @todo Determine a more reasonable set of values.  This
+     * was copied from OrbAlmExt. */
+    beginFit = xmitTime;
+    endFit = gnsstk::CommonTime::END_OF_TIME;
+    endFit.setTimeSystem(beginFit.getTimeSystem());
+}
+} // namespace gnsstk

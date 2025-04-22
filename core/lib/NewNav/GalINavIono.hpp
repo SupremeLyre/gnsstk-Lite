@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,29 +42,31 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Class containing data elements unique to Galileo I/NAV iono data.
-   class GalINavIono : public NeQuickIonoNavData
-   {
-   public:
-         /// Sets the nav message type.
-      GalINavIono();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GalINavIono>(*this); }
+/// Class containing data elements unique to Galileo I/NAV iono data.
+class GalINavIono : public NeQuickIonoNavData
+{
+  public:
+    /// Sets the nav message type.
+    GalINavIono();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GalINavIono>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @todo implement some checking.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
-   };
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @todo implement some checking.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GALINAVIONO_HPP

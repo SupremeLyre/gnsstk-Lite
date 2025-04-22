@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,37 +38,37 @@
 #ifndef GNSSTK_NAVSEARCHORDER_HPP
 #define GNSSTK_NAVSEARCHORDER_HPP
 
-#include <string>
 #include "EnumIterator.hpp"
+#include <string>
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Specify the behavior of nav data searches in NavLibrary/NavDataFactory
-   enum class NavSearchOrder
-   {
-      Unknown,///< Search order is not known or is uninitialized.
-      User,   ///< Return the latest message before the search time.
-      Nearest,///< Return the message closest to the search time.
-      Last    ///< Used to create an iterator.
-   };
+/// Specify the behavior of nav data searches in NavLibrary/NavDataFactory
+enum class NavSearchOrder
+{
+    Unknown, ///< Search order is not known or is uninitialized.
+    User,    ///< Return the latest message before the search time.
+    Nearest, ///< Return the message closest to the search time.
+    Last     ///< Used to create an iterator.
+};
 
-      /** Define an iterator so C++11 can do things like
-       * for (NavSearchOrder i : NavSearchOrderIterator()) */
-   typedef EnumIterator<NavSearchOrder, NavSearchOrder::Unknown, NavSearchOrder::Last> NavSearchOrderIterator;
+/** Define an iterator so C++11 can do things like
+ * for (NavSearchOrder i : NavSearchOrderIterator()) */
+typedef EnumIterator<NavSearchOrder, NavSearchOrder::Unknown, NavSearchOrder::Last> NavSearchOrderIterator;
 
-   namespace StringUtils
-   {
-         /// Convert a NavSearchOrder to a whitespace-free string name.
-      std::string asString(NavSearchOrder e);
-         /// Convert a string name to an NavSearchOrder
-      NavSearchOrder asNavSearchOrder(const std::string& s);
-   }
+namespace StringUtils
+{
+/// Convert a NavSearchOrder to a whitespace-free string name.
+std::string asString(NavSearchOrder e);
+/// Convert a string name to an NavSearchOrder
+NavSearchOrder asNavSearchOrder(const std::string &s);
+} // namespace StringUtils
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_NAVSEARCHORDER_HPP

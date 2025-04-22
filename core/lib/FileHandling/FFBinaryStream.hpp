@@ -44,219 +44,214 @@
 #ifndef GNSSTK_FFBINARYSTREAM_HPP
 #define GNSSTK_FFBINARYSTREAM_HPP
 
-#include "FFStream.hpp"
 #include "BinUtils.hpp"
+#include "FFStream.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup FileHandling
-      //@{
+/// @ingroup FileHandling
+//@{
 
-      /**
-       * This is an FFStream that is required to be binary.  It also includes
-       * functions for reading and writing binary file.  Otherwise, this
-       * is the same as FFStream.
-       */
-   class FFBinaryStream : public FFStream
-   {
-   public:
-         /// Default constructor
-      FFBinaryStream();
+/**
+ * This is an FFStream that is required to be binary.  It also includes
+ * functions for reading and writing binary file.  Otherwise, this
+ * is the same as FFStream.
+ */
+class FFBinaryStream : public FFStream
+{
+  public:
+    /// Default constructor
+    FFBinaryStream();
 
-         /// destructor
-      virtual ~FFBinaryStream();
+    /// destructor
+    virtual ~FFBinaryStream();
 
-         /**
-          * Constructor - opens the stream in binary mode if not set.
-          * @param[in] fn file name.
-          * @param[in] mode file open mode
-          */
-      FFBinaryStream(const char* fn,
-                     std::ios::openmode mode=std::ios::in|std::ios::binary);
+    /**
+     * Constructor - opens the stream in binary mode if not set.
+     * @param[in] fn file name.
+     * @param[in] mode file open mode
+     */
+    FFBinaryStream(const char *fn, std::ios::openmode mode = std::ios::in | std::ios::binary);
 
-         /// Overrides open to ensure binary mode opens
-      virtual void open(const char* fn, std::ios::openmode mode);
+    /// Overrides open to ensure binary mode opens
+    virtual void open(const char *fn, std::ios::openmode mode);
 
-         /**
-          * Reads typed data directly from the stream in binary form.
-          * @throw EndOfFile
-          * @throw FFStreamError when the size of the data read
-          *   from this stream doesn't match the size of a T-object.
-          * @return the decoded data
-          */
-      inline void getData(uint8_t& v);
-      inline void getData(uint16_t& v);
-      inline void getData(uint32_t& v);
-      inline void getData(uint64_t& v);
-      inline void getData(int8_t& v);
-      inline void getData(int16_t& v);
-      inline void getData(int32_t& v);
-      inline void getData(int64_t& v);
-      inline void getData(float& v);
-      inline void getData(double& v);
+    /**
+     * Reads typed data directly from the stream in binary form.
+     * @throw EndOfFile
+     * @throw FFStreamError when the size of the data read
+     *   from this stream doesn't match the size of a T-object.
+     * @return the decoded data
+     */
+    inline void getData(uint8_t &v);
+    inline void getData(uint16_t &v);
+    inline void getData(uint32_t &v);
+    inline void getData(uint64_t &v);
+    inline void getData(int8_t &v);
+    inline void getData(int16_t &v);
+    inline void getData(int32_t &v);
+    inline void getData(int64_t &v);
+    inline void getData(float &v);
+    inline void getData(double &v);
 
-         /** Read raw data into a buffer.
-          * @param[out] buff the buffer to store the stream data
-          *   into. Must be pre-allocated to at least length bytes.
-          * @param[in] length the number of bytes to read from the stream.
-          * @throw EndOfFile
-          * @throw FFStreamError */
-      void getData(char* buff, size_t length);
+    /** Read raw data into a buffer.
+     * @param[out] buff the buffer to store the stream data
+     *   into. Must be pre-allocated to at least length bytes.
+     * @param[in] length the number of bytes to read from the stream.
+     * @throw EndOfFile
+     * @throw FFStreamError */
+    void getData(char *buff, size_t length);
 
-         /**
-          * Writes a T-object directly from the stream in binary form.
-          * @param[in] v the data to be written.
-          * @throw FFStreamError when the size of the data written
-          *   to this stream doesn't match the size of a T-object.
-          */
-         //@{
-      inline void writeData(uint8_t v);
-      inline void writeData(uint16_t v);
-      inline void writeData(uint32_t v);
-      inline void writeData(uint64_t v);
-      inline void writeData(int8_t v);
-      inline void writeData(int16_t v);
-      inline void writeData(int32_t v);
-      inline void writeData(int64_t v);
-      inline void writeData(float v);
-      inline void writeData(double v);
-         //@}
-      void writeData(const char* buff, size_t length);
+    /**
+     * Writes a T-object directly from the stream in binary form.
+     * @param[in] v the data to be written.
+     * @throw FFStreamError when the size of the data written
+     *   to this stream doesn't match the size of a T-object.
+     */
+    //@{
+    inline void writeData(uint8_t v);
+    inline void writeData(uint16_t v);
+    inline void writeData(uint32_t v);
+    inline void writeData(uint64_t v);
+    inline void writeData(int8_t v);
+    inline void writeData(int16_t v);
+    inline void writeData(int32_t v);
+    inline void writeData(int64_t v);
+    inline void writeData(float v);
+    inline void writeData(double v);
+    //@}
+    void writeData(const char *buff, size_t length);
 
-         /** Child classes must defined this method to determine how
-          * decodeData and encodeData behave with respect to byte
-          * ordering. This defines the byte ordering of the file
-          * format. */
-      virtual bool isStreamLittleEndian() const noexcept = 0;
-
-   };
-      //@}
-
+    /** Child classes must defined this method to determine how
+     * decodeData and encodeData behave with respect to byte
+     * ordering. This defines the byte ordering of the file
+     * format. */
+    virtual bool isStreamLittleEndian() const noexcept = 0;
+};
+//@}
 
 // Macro because all the getData functions are basically the same.
 // Use a character buffer because typed data can have bad side effects
 // causing data corruption.
-#define FFBIN_GET_DATA(ITOH_FN,NTOH_FN)         \
-   char buf[sizeof(v)] = "";                    \
-   getData(buf, sizeof(v));                     \
-   if (isStreamLittleEndian())                  \
-      BinUtils::ITOH_FN(buf, v);                \
-   else                                         \
-      BinUtils::NTOH_FN(buf, v);
+#define FFBIN_GET_DATA(ITOH_FN, NTOH_FN)                                                                               \
+    char buf[sizeof(v)] = "";                                                                                          \
+    getData(buf, sizeof(v));                                                                                           \
+    if (isStreamLittleEndian())                                                                                        \
+        BinUtils::ITOH_FN(buf, v);                                                                                     \
+    else                                                                                                               \
+        BinUtils::NTOH_FN(buf, v);
 
-#define FFBIN_WRITE_DATA(HTOI_FN,HTON_FN)       \
-   char buf[sizeof(v)];                         \
-   if (isStreamLittleEndian())                  \
-      BinUtils::HTOI_FN(buf, v);                \
-   else                                         \
-      BinUtils::HTON_FN(buf, v);                \
-   writeData(buf, sizeof(v));
+#define FFBIN_WRITE_DATA(HTOI_FN, HTON_FN)                                                                             \
+    char buf[sizeof(v)];                                                                                               \
+    if (isStreamLittleEndian())                                                                                        \
+        BinUtils::HTOI_FN(buf, v);                                                                                     \
+    else                                                                                                               \
+        BinUtils::HTON_FN(buf, v);                                                                                     \
+    writeData(buf, sizeof(v));
 
-
-   inline void FFBinaryStream :: getData(uint8_t& v)
-   {
-      char *buf = reinterpret_cast<char*>(&v);
-      getData(buf, sizeof(v));
-   }
-
-   inline void FFBinaryStream :: getData(uint16_t& v)
-   {
-      FFBIN_GET_DATA(buitohs,buntohs);
-   }
-
-   inline void FFBinaryStream :: getData(uint32_t& v)
-   {
-      FFBIN_GET_DATA(buitohl,buntohl);
-   }
-
-   inline void FFBinaryStream :: getData(uint64_t& v)
-   {
-      FFBIN_GET_DATA(buitohll,buntohll);
-   }
-
-   inline void FFBinaryStream :: getData(int8_t& v)
-   {
-      char *buf = reinterpret_cast<char*>(&v);
-      getData(buf, sizeof(v));
-   }
-
-   inline void FFBinaryStream :: getData(int16_t& v)
-   {
-      FFBIN_GET_DATA(buitohss,buntohss);
-   }
-
-   inline void FFBinaryStream :: getData(int32_t& v)
-   {
-      FFBIN_GET_DATA(buitohsl,buntohsl);
-   }
-
-   inline void FFBinaryStream :: getData(int64_t& v)
-   {
-      FFBIN_GET_DATA(buitohsll,buntohsll);
-   }
-
-   inline void FFBinaryStream :: getData(float& v)
-   {
-      FFBIN_GET_DATA(buitohf,buntohf);
-   }
-
-   inline void FFBinaryStream :: getData(double& v)
-   {
-      FFBIN_GET_DATA(buitohd,buntohd);
-   }
-
-
-   inline void FFBinaryStream :: writeData(uint8_t v)
-   {
-      char *buf = reinterpret_cast<char*>(&v);
-      writeData(buf, sizeof(v));
-   }
-
-   inline void FFBinaryStream :: writeData(uint16_t v)
-   {
-      FFBIN_WRITE_DATA(buhtois,buhtons);
-   }
-
-   inline void FFBinaryStream :: writeData(uint32_t v)
-   {
-      FFBIN_WRITE_DATA(buhtoil,buhtonl);
-   }
-
-   inline void FFBinaryStream :: writeData(uint64_t v)
-   {
-      FFBIN_WRITE_DATA(buhtoill,buhtonll);
-   }
-
-   inline void FFBinaryStream :: writeData(int8_t v)
-   {
-      char *buf = reinterpret_cast<char*>(&v);
-      writeData(buf, sizeof(v));
-   }
-
-   inline void FFBinaryStream :: writeData(int16_t v)
-   {
-      FFBIN_WRITE_DATA(buhtoiss,buhtonss);
-   }
-
-   inline void FFBinaryStream :: writeData(int32_t v)
-   {
-      FFBIN_WRITE_DATA(buhtoisl,buhtonsl);
-   }
-
-   inline void FFBinaryStream :: writeData(int64_t v)
-   {
-      FFBIN_WRITE_DATA(buhtoisll,buhtonsll);
-   }
-
-   inline void FFBinaryStream :: writeData(float v)
-   {
-      FFBIN_WRITE_DATA(buhtoif,buhtonf);
-   }
-
-   inline void FFBinaryStream :: writeData(double v)
-   {
-      FFBIN_WRITE_DATA(buhtoid,buhtond);
-   }
-
+inline void FFBinaryStream ::getData(uint8_t &v)
+{
+    char *buf = reinterpret_cast<char *>(&v);
+    getData(buf, sizeof(v));
 }
+
+inline void FFBinaryStream ::getData(uint16_t &v)
+{
+    FFBIN_GET_DATA(buitohs, buntohs);
+}
+
+inline void FFBinaryStream ::getData(uint32_t &v)
+{
+    FFBIN_GET_DATA(buitohl, buntohl);
+}
+
+inline void FFBinaryStream ::getData(uint64_t &v)
+{
+    FFBIN_GET_DATA(buitohll, buntohll);
+}
+
+inline void FFBinaryStream ::getData(int8_t &v)
+{
+    char *buf = reinterpret_cast<char *>(&v);
+    getData(buf, sizeof(v));
+}
+
+inline void FFBinaryStream ::getData(int16_t &v)
+{
+    FFBIN_GET_DATA(buitohss, buntohss);
+}
+
+inline void FFBinaryStream ::getData(int32_t &v)
+{
+    FFBIN_GET_DATA(buitohsl, buntohsl);
+}
+
+inline void FFBinaryStream ::getData(int64_t &v)
+{
+    FFBIN_GET_DATA(buitohsll, buntohsll);
+}
+
+inline void FFBinaryStream ::getData(float &v)
+{
+    FFBIN_GET_DATA(buitohf, buntohf);
+}
+
+inline void FFBinaryStream ::getData(double &v)
+{
+    FFBIN_GET_DATA(buitohd, buntohd);
+}
+
+inline void FFBinaryStream ::writeData(uint8_t v)
+{
+    char *buf = reinterpret_cast<char *>(&v);
+    writeData(buf, sizeof(v));
+}
+
+inline void FFBinaryStream ::writeData(uint16_t v)
+{
+    FFBIN_WRITE_DATA(buhtois, buhtons);
+}
+
+inline void FFBinaryStream ::writeData(uint32_t v)
+{
+    FFBIN_WRITE_DATA(buhtoil, buhtonl);
+}
+
+inline void FFBinaryStream ::writeData(uint64_t v)
+{
+    FFBIN_WRITE_DATA(buhtoill, buhtonll);
+}
+
+inline void FFBinaryStream ::writeData(int8_t v)
+{
+    char *buf = reinterpret_cast<char *>(&v);
+    writeData(buf, sizeof(v));
+}
+
+inline void FFBinaryStream ::writeData(int16_t v)
+{
+    FFBIN_WRITE_DATA(buhtoiss, buhtonss);
+}
+
+inline void FFBinaryStream ::writeData(int32_t v)
+{
+    FFBIN_WRITE_DATA(buhtoisl, buhtonsl);
+}
+
+inline void FFBinaryStream ::writeData(int64_t v)
+{
+    FFBIN_WRITE_DATA(buhtoisll, buhtonsll);
+}
+
+inline void FFBinaryStream ::writeData(float v)
+{
+    FFBIN_WRITE_DATA(buhtoif, buhtonf);
+}
+
+inline void FFBinaryStream ::writeData(double v)
+{
+    FFBIN_WRITE_DATA(buhtoid, buhtond);
+}
+
+} // namespace gnsstk
 #endif

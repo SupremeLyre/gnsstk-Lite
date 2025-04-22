@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,46 +38,47 @@
 #ifndef GNSSTK_CORRECTIONRESULTS_HPP
 #define GNSSTK_CORRECTIONRESULTS_HPP
 
-#include "CorrectionResult.hpp"
 #include "CorrDupHandling.hpp"
+#include "CorrectionResult.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup GNSSsolutions
-      //@{
+/// @ingroup GNSSsolutions
+//@{
 
-      /** Class for containing a series of computed biases from the
-       * GroupPathCorrector classes. */
-   class CorrectionResults
-   {
-   public:
-         /// Declaring it explicitly so people don't complain.
-      CorrectionResults() = default;
-         /** Add a result to the ordered list.
-          * @param[in] res The result to be added. */
-      void addResult(const CorrectionResult& res);
-         /// Empty the contents of #results.
-      void clear();
-         /// Get the ordered list of #results.
-      const CorrectionResultList& getResults() const;
-         /** Get the sum of results, filtering duplicates as indicated.
-          * @param[in] dups How duplicates are filtered.
-          *    * ComputeFirst means the first result of any given type
-          *      (e.g. Iono) that is contained within #results will be
-          *      incorporated into the final sum, while others of that
-          *      type will not.
-          *    * UseFirst behaves the same as ComputeFirst
-          *    * ComputeLast means the last result of any given type
-          *      that is contained within #results will be
-          *      incorporated into the final sum, while others of that
-          *      type will not.
-          * @return The sum of all corrections of unique types. */
-      double getCorrSum(CorrDupHandling dups) const;
-   private:
-      CorrectionResultList results; ///< The computed biases.
-   };
+/** Class for containing a series of computed biases from the
+ * GroupPathCorrector classes. */
+class CorrectionResults
+{
+  public:
+    /// Declaring it explicitly so people don't complain.
+    CorrectionResults() = default;
+    /** Add a result to the ordered list.
+     * @param[in] res The result to be added. */
+    void addResult(const CorrectionResult &res);
+    /// Empty the contents of #results.
+    void clear();
+    /// Get the ordered list of #results.
+    const CorrectionResultList &getResults() const;
+    /** Get the sum of results, filtering duplicates as indicated.
+     * @param[in] dups How duplicates are filtered.
+     *    * ComputeFirst means the first result of any given type
+     *      (e.g. Iono) that is contained within #results will be
+     *      incorporated into the final sum, while others of that
+     *      type will not.
+     *    * UseFirst behaves the same as ComputeFirst
+     *    * ComputeLast means the last result of any given type
+     *      that is contained within #results will be
+     *      incorporated into the final sum, while others of that
+     *      type will not.
+     * @return The sum of all corrections of unique types. */
+    double getCorrSum(CorrDupHandling dups) const;
 
-      //@}
+  private:
+    CorrectionResultList results; ///< The computed biases.
+};
+
+//@}
 
 } // namespace gnsstk
 

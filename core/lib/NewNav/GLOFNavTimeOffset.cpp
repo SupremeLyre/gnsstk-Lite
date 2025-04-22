@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,24 +42,20 @@ using namespace std;
 
 namespace gnsstk
 {
-   GLOFNavTimeOffset ::
-   GLOFNavTimeOffset()
-   {
-      msgLenSec = 2.0;
-         // The ICD uses the opposite sign convention from what
-         // StdNavTimeOffset uses, so just swap the src and tgt from
-         // what you would normally expect.
-      src = TimeSystem::GPS;
-      tgt = TimeSystem::GLO;
-      weekFmt = "";
-   }
-
-
-   bool GLOFNavTimeOffset ::
-   validate() const
-   {
-         /// @todo add some checks.
-      return true;
-   }
+GLOFNavTimeOffset ::GLOFNavTimeOffset()
+{
+    msgLenSec = 2.0;
+    // The ICD uses the opposite sign convention from what
+    // StdNavTimeOffset uses, so just swap the src and tgt from
+    // what you would normally expect.
+    src = TimeSystem::GPS;
+    tgt = TimeSystem::GLO;
+    weekFmt = "";
 }
 
+bool GLOFNavTimeOffset ::validate() const
+{
+    /// @todo add some checks.
+    return true;
+}
+} // namespace gnsstk

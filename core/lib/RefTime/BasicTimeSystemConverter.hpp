@@ -43,56 +43,54 @@
 
 namespace gnsstk
 {
-      /// @ingroup TimeHandling
-      //@{
+/// @ingroup TimeHandling
+//@{
 
-      /** Define a class for doing time system conversions using only
-       * a hard-coded table of second-resolution offsets from TAI. */
-   class BasicTimeSystemConverter : public TimeSystemConverter
-   {
-   public:
-         /** Get the offset in seconds between fromSys and toSys.
-          * @param[in] fromSys The time system to convert from.
-          * @param[in] toSys The time system to convert to.
-          * @param[in] t The time at which the offset is being
-          *   requested (i.e. the time being converted).
-          * @param[out] offs The resulting offset in seconds, 
-          *   if available, where when(toSys)=when(fromSys)-offset.
-          * @return true if successful, false if unavailable. */
-      bool getOffset(TimeSystem fromSys, TimeSystem toSys,
-                     const CommonTime& t, double& offs) override;
+/** Define a class for doing time system conversions using only
+ * a hard-coded table of second-resolution offsets from TAI. */
+class BasicTimeSystemConverter : public TimeSystemConverter
+{
+  public:
+    /** Get the offset in seconds between fromSys and toSys.
+     * @param[in] fromSys The time system to convert from.
+     * @param[in] toSys The time system to convert to.
+     * @param[in] t The time at which the offset is being
+     *   requested (i.e. the time being converted).
+     * @param[out] offs The resulting offset in seconds,
+     *   if available, where when(toSys)=when(fromSys)-offset.
+     * @return true if successful, false if unavailable. */
+    bool getOffset(TimeSystem fromSys, TimeSystem toSys, const CommonTime &t, double &offs) override;
 
-         /** Attempt to "prime" internal data over a desired time
-          * range so that when doing a large number of conversions
-          * over a time range, if the offset is the same across that
-          * time range, we don't do a conversion every single call.
-          * If the offset at fromTime is the same as at toTime, any
-          * calls to getOffset after calling explore will use the
-          * internally stored offset as opposed to attempting to do
-          * conversions.  This is a performance enhancement and is not
-          * strictly necessary.
-          * @param[in] fromSys The time system to convert from.
-          * @param[in] toSys The time system to convert to.
-          * @param[in] fromTime The start of the time range of interest.
-          * @param[in] toTime The end of the time range of interest.
-          * @return false if unable to determine the offset.
-          */
-      bool explore(TimeSystem fromSys, TimeSystem toSys,
-                   const CommonTime& fromTime, const CommonTime& toTime);
+    /** Attempt to "prime" internal data over a desired time
+     * range so that when doing a large number of conversions
+     * over a time range, if the offset is the same across that
+     * time range, we don't do a conversion every single call.
+     * If the offset at fromTime is the same as at toTime, any
+     * calls to getOffset after calling explore will use the
+     * internally stored offset as opposed to attempting to do
+     * conversions.  This is a performance enhancement and is not
+     * strictly necessary.
+     * @param[in] fromSys The time system to convert from.
+     * @param[in] toSys The time system to convert to.
+     * @param[in] fromTime The start of the time range of interest.
+     * @param[in] toTime The end of the time range of interest.
+     * @return false if unable to determine the offset.
+     */
+    bool explore(TimeSystem fromSys, TimeSystem toSys, const CommonTime &fromTime, const CommonTime &toTime);
 
-   protected:
-         /// Time system being converted from using toffs.
-      TimeSystem fromSystem;
-         /// Time system being converted to using toffs.
-      TimeSystem toSystem;
-         /// First time that toffs is known to be valid.
-      CommonTime fromTimeStamp;
-         /// Final time that toffs is known to be valid.
-      CommonTime toTimeStamp;
-         /// Stored offset for time system conversion.
-      double toffs;
-   };
-}
-      //@}
+  protected:
+    /// Time system being converted from using toffs.
+    TimeSystem fromSystem;
+    /// Time system being converted to using toffs.
+    TimeSystem toSystem;
+    /// First time that toffs is known to be valid.
+    CommonTime fromTimeStamp;
+    /// Final time that toffs is known to be valid.
+    CommonTime toTimeStamp;
+    /// Stored offset for time system conversion.
+    double toffs;
+};
+} // namespace gnsstk
+  //@}
 
 #endif // GNSSTK_BASICTIMESYSTEMCONVERTER_HPP

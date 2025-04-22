@@ -47,47 +47,49 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Wrapper for the 4-bit A-S status and SV configuration in GPS LNav
-       * subframe 4, page 25. */
-   class GPSNavConfig : public SystemNavData
-   {
-   public:
-         /// Initialize to ICD-defined "no info" values.
-      GPSNavConfig();
+/** Wrapper for the 4-bit A-S status and SV configuration in GPS LNav
+ * subframe 4, page 25. */
+class GPSNavConfig : public SystemNavData
+{
+  public:
+    /// Initialize to ICD-defined "no info" values.
+    GPSNavConfig();
 
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      {
-         return std::make_shared<GPSNavConfig>(*this);
-      }
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GPSNavConfig>(*this);
+    }
 
-         /** Checks the contents of this message against known validity rules
-          * as defined in the appropriate ICD.
-          * @return true always as there is nothing to check in this class.
-          */
-      bool validate() const override
-      { return true; }
+    /** Checks the contents of this message against known validity rules
+     * as defined in the appropriate ICD.
+     * @return true always as there is nothing to check in this class.
+     */
+    bool validate() const override
+    {
+        return true;
+    }
 
-         /** Print the contents of this object in a human-readable format.
-          * @param[in,out] s The stream to write the data to.
-          * @param[in] dl The level of detail the output should contain. */
-      void dump(std::ostream &s, DumpDetail dl) const override;
+    /** Print the contents of this object in a human-readable format.
+     * @param[in,out] s The stream to write the data to.
+     * @param[in] dl The level of detail the output should contain. */
+    void dump(std::ostream &s, DumpDetail dl) const override;
 
-         /** Defines the config of NavData::signal, specifically sat
-          * (not xmitSat).
-          * @return SVConfig value; noInfo if an invalid value is present. */
-      GPSSVConfig getSVConfig() const noexcept;
+    /** Defines the config of NavData::signal, specifically sat
+     * (not xmitSat).
+     * @return SVConfig value; noInfo if an invalid value is present. */
+    GPSSVConfig getSVConfig() const noexcept;
 
-         /// Whether Anti-Spoof is on for this satellite.
-      bool antispoofOn{false};
-         /// The 3-bit SV configuration (defaults to noInfo).
-      uint8_t svConfig{0};
+    /// Whether Anti-Spoof is on for this satellite.
+    bool antispoofOn{false};
+    /// The 3-bit SV configuration (defaults to noInfo).
+    uint8_t svConfig{0};
 };
 
-      //@}
+//@}
 } // namespace gnsstk
 
 #endif // GNSSTK_GPSNavConfig_HPP

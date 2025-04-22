@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,50 +42,50 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Class containing data elements unique to the Klobuchar iono model.
-   class KlobucharIonoNavData : public IonoNavData
-   {
-   public:
-         /// Sets the nav message type.
-      KlobucharIonoNavData();
+/// Class containing data elements unique to the Klobuchar iono model.
+class KlobucharIonoNavData : public IonoNavData
+{
+  public:
+    /// Sets the nav message type.
+    KlobucharIonoNavData();
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @todo implement some checking.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override
-      { return true; }
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @todo implement some checking.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override
+    {
+        return true;
+    }
 
-         /** Print the contents of this KlobucharIonoNavData object in a
-          * human-readable format.
-          * @param[in,out] s The stream to write the data to.
-          * @param[in] dl The level of detail the output should contain. */
-      void dump(std::ostream& s, DumpDetail dl) const override;
+    /** Print the contents of this KlobucharIonoNavData object in a
+     * human-readable format.
+     * @param[in,out] s The stream to write the data to.
+     * @param[in] dl The level of detail the output should contain. */
+    void dump(std::ostream &s, DumpDetail dl) const override;
 
-         /** Get the ionospheric correction in meters.
-          * @param[in] when The time of the observation to correct.
-          * @param[in] rxgeo The receiver's geodetic position.
-          * @param[in] svgeo The observed satellite's geodetic position.
-          * @param[in] band The carrier band of the signal being corrected.
-          * @return The ionospheric delay, in meters, on band. */
-      double getIonoCorr(const CommonTime& when,
-                         const Position& rxgeo,
-                         const Position& svgeo,
-                         CarrierBand band) const override;
+    /** Get the ionospheric correction in meters.
+     * @param[in] when The time of the observation to correct.
+     * @param[in] rxgeo The receiver's geodetic position.
+     * @param[in] svgeo The observed satellite's geodetic position.
+     * @param[in] band The carrier band of the signal being corrected.
+     * @return The ionospheric delay, in meters, on band. */
+    double getIonoCorr(const CommonTime &when, const Position &rxgeo, const Position &svgeo,
+                       CarrierBand band) const override;
 
-         // alpha/beta terms are seconds, seconds/semi-circle,
-         // seconds/semi-circle**2, seconds/semi-circle**3.  Refer to
-         // IS-GPS-200 Table 20-X.
-      double alpha[4]; ///< alpha terms of Klobuchar model, using semi-circles.
-      double beta[4];  ///< beta terms of Klobuchar model, using semi-circles.
-   };
+    // alpha/beta terms are seconds, seconds/semi-circle,
+    // seconds/semi-circle**2, seconds/semi-circle**3.  Refer to
+    // IS-GPS-200 Table 20-X.
+    double alpha[4]; ///< alpha terms of Klobuchar model, using semi-circles.
+    double beta[4];  ///< beta terms of Klobuchar model, using semi-circles.
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_KLOBUCHARIONODATA_HPP

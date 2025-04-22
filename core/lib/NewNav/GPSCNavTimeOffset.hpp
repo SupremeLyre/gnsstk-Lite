@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -44,49 +43,51 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Defines the class that provide the ability to convert
-       * between GPS and a supported time system (UTC, GLONASS,
-       * Galileo), using data extracted from GPS civil navigation
-       * messages.
-       * @note This class is used to encapsulate the data from message
-       *   types 33 and 35.  Message type 33 is for UTC conversion and
-       *   has additional factors not present in message type 35 (see
-       *   the data fields).  Additionally, the parameter subscripts
-       *   are different between the two, e.g. A<sub>0-n</sub> in
-       *   message type 33 vs A<sub>0GGTO</sub> in message type 35,
-       *   however mathematically they are identical terms and generic
-       *   names are used in this class to represent the data. */
-   class GPSCNavTimeOffset : public StdNavTimeOffset
-   {
-   public:
-         /// Initialize all data to 0.
-      GPSCNavTimeOffset();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GPSCNavTimeOffset>(*this); }
+/** Defines the class that provide the ability to convert
+ * between GPS and a supported time system (UTC, GLONASS,
+ * Galileo), using data extracted from GPS civil navigation
+ * messages.
+ * @note This class is used to encapsulate the data from message
+ *   types 33 and 35.  Message type 33 is for UTC conversion and
+ *   has additional factors not present in message type 35 (see
+ *   the data fields).  Additionally, the parameter subscripts
+ *   are different between the two, e.g. A<sub>0-n</sub> in
+ *   message type 33 vs A<sub>0GGTO</sub> in message type 35,
+ *   however mathematically they are identical terms and generic
+ *   names are used in this class to represent the data. */
+class GPSCNavTimeOffset : public StdNavTimeOffset
+{
+  public:
+    /// Initialize all data to 0.
+    GPSCNavTimeOffset();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GPSCNavTimeOffset>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-         /** Returns the time when the navigation message would have
-          * first been available to the user equipment, i.e. the time
-          * at which the final bit of a given broadcast navigation
-          * message is received.  This is used by
-          * NavDataFactoryWithStore::find() in User mode.
-          * @return transmit time + 12s or 6s, depending on whether
-          *   this is CNAV on L5 or on L2.
-          */
-      CommonTime getUserTime() const override;
-   };
+    /** Returns the time when the navigation message would have
+     * first been available to the user equipment, i.e. the time
+     * at which the final bit of a given broadcast navigation
+     * message is received.  This is used by
+     * NavDataFactoryWithStore::find() in User mode.
+     * @return transmit time + 12s or 6s, depending on whether
+     *   this is CNAV on L5 or on L2.
+     */
+    CommonTime getUserTime() const override;
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GPSCNAVUTCTIMEOFFSET_HPP

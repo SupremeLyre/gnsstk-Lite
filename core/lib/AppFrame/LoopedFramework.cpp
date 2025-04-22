@@ -46,14 +46,14 @@
 namespace gnsstk
 {
 
-   void LoopedFramework::completeProcessing()
-   {
-      additionalSetup();
+void LoopedFramework::completeProcessing()
+{
+    additionalSetup();
 
-      spinUp();
+    spinUp();
 
-      while (!timeToDie)
-         process();
-   }
-
+    while (!timeToDie)
+        process();
 }
+
+} // namespace gnsstk

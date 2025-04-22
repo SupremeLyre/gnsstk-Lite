@@ -36,63 +36,59 @@
 //
 //==============================================================================
 
-
 #ifndef GNSSTK_GROUPPATHCORRECTOR_HPP
 #define GNSSTK_GROUPPATHCORRECTOR_HPP
 
+#include "CommonTime.hpp"
+#include "CorrectorType.hpp"
+#include "NavID.hpp"
+#include "ObsID.hpp"
+#include "Position.hpp"
+#include "SatID.hpp"
+#include "Xvt.hpp"
 #include <list>
 #include <memory>
-#include "Position.hpp"
-#include "Xvt.hpp"
-#include "SatID.hpp"
-#include "ObsID.hpp"
-#include "CommonTime.hpp"
-#include "NavID.hpp"
-#include "CorrectorType.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup GNSSsolutions
-      //@{
+/// @ingroup GNSSsolutions
+//@{
 
-      /** Provide an abstract base class that defines the interface
-       * for a series of classes that are used to compute pseudorange
-       * bias.  Used by GroupPathCorr. */
-   class GroupPathCorrector
-   {
-   public:
-         /// Set the #corrType to Unknown by default.
-      GroupPathCorrector()
-            : corrType(CorrectorType::Unknown)
-      {}
-         /** Get the bias in meters given the supplied state arguments.
-          * @param[in] rxPos The position of the GNSS receiver antenna.
-          * @param[in] svPos The position of the satellite with delayed signal.
-          * @param[in] sat The identity of the satellite with delayed signal.
-          * @param[in] obs The ID of the signal being un-delayed.
-          * @param[in] when The time of measurement.
-          * @param[in] nav The navigation message type of the signal.
-          * @param[out] corrOut The computed bias in meters.
-          * @return true if successful, false on error. */
-      virtual bool getCorr(const Position& rxPos, const Position& svPos,
-                           const SatID& sat, const ObsID& obs,
-                           const CommonTime& when, NavType nav,
-                           double& corrOut) = 0;
-         /// @copydoc getCorr(const Position&, const Position&, const SatID&, const ObsID&, const CommonTime&, NavType, double&)
-      virtual bool getCorr(const Position& rxPos, const Xvt& svPos,
-                           const SatID& sat, const ObsID& obs,
-                           const CommonTime& when, NavType nav,
-                           double& corrOut) = 0;
-         /// Set by child classes, indicates what type of bias is computed.
-      CorrectorType corrType;
-   }; // class GroupPathCorrector
+/** Provide an abstract base class that defines the interface
+ * for a series of classes that are used to compute pseudorange
+ * bias.  Used by GroupPathCorr. */
+class GroupPathCorrector
+{
+  public:
+    /// Set the #corrType to Unknown by default.
+    GroupPathCorrector() : corrType(CorrectorType::Unknown)
+    {
+    }
+    /** Get the bias in meters given the supplied state arguments.
+     * @param[in] rxPos The position of the GNSS receiver antenna.
+     * @param[in] svPos The position of the satellite with delayed signal.
+     * @param[in] sat The identity of the satellite with delayed signal.
+     * @param[in] obs The ID of the signal being un-delayed.
+     * @param[in] when The time of measurement.
+     * @param[in] nav The navigation message type of the signal.
+     * @param[out] corrOut The computed bias in meters.
+     * @return true if successful, false on error. */
+    virtual bool getCorr(const Position &rxPos, const Position &svPos, const SatID &sat, const ObsID &obs,
+                         const CommonTime &when, NavType nav, double &corrOut) = 0;
+    /// @copydoc getCorr(const Position&, const Position&, const SatID&, const ObsID&, const CommonTime&, NavType,
+    /// double&)
+    virtual bool getCorr(const Position &rxPos, const Xvt &svPos, const SatID &sat, const ObsID &obs,
+                         const CommonTime &when, NavType nav, double &corrOut) = 0;
+    /// Set by child classes, indicates what type of bias is computed.
+    CorrectorType corrType;
+}; // class GroupPathCorrector
 
-      /// Short-hand for shared_ptr.
-   typedef std::shared_ptr<GroupPathCorrector> GroupPathCorrectorPtr;
-      /// Short-hand for container.
-   typedef std::list<GroupPathCorrectorPtr> GroupPathCorrectorList;
+/// Short-hand for shared_ptr.
+typedef std::shared_ptr<GroupPathCorrector> GroupPathCorrectorPtr;
+/// Short-hand for container.
+typedef std::list<GroupPathCorrectorPtr> GroupPathCorrectorList;
 
-      //@}
+//@}
 
 } // namespace gnsstk
 

@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -41,29 +40,29 @@
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(GLOCSatType e)
-      {
-         switch (e)
-         {
-            case GLOCSatType::GLONASS_M:
-               return "GLONASS-M with L3 navigation payload transmits L3 CDMA"
-                  " signals";
-               break;
-            case GLOCSatType::GLONASS_K1:
-               return "GLONASS-K1 transmits L3 CDMA signals";
-               break;
-            case GLOCSatType::GLONASS_K2:
-               return "GLONASS-K2 transmits L1, L2, and L3 CDMA signals";
-               break;
-            case GLOCSatType::GLONASS_K1b:
-               return "GLONASS-K1 transmits L2 and L3 CDMA signals";
-               break;
-            default:
-               return "?????";
-               break;
-         }
-      }
-   }
+namespace StringUtils
+{
+std::string asString(GLOCSatType e)
+{
+    switch (e)
+    {
+    case GLOCSatType::GLONASS_M:
+        return "GLONASS-M with L3 navigation payload transmits L3 CDMA"
+               " signals";
+        break;
+    case GLOCSatType::GLONASS_K1:
+        return "GLONASS-K1 transmits L3 CDMA signals";
+        break;
+    case GLOCSatType::GLONASS_K2:
+        return "GLONASS-K2 transmits L1, L2, and L3 CDMA signals";
+        break;
+    case GLOCSatType::GLONASS_K1b:
+        return "GLONASS-K1 transmits L2 and L3 CDMA signals";
+        break;
+    default:
+        return "?????";
+        break;
+    }
 }
+} // namespace StringUtils
+} // namespace gnsstk

@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -47,30 +46,24 @@ static const double mintot = 0;
 
 namespace gnsstk
 {
-   GPSCNavTimeOffset ::
-   GPSCNavTimeOffset()
-   {
-      src = TimeSystem::GPS;
-   }
-
-
-   bool GPSCNavTimeOffset ::
-   validate() const
-   {
-         // see IS-GPS-200
-         // DN is defined in the ICD as being 1-7 but we also include
-         // the value 0 as valid because we won't always have anything
-         // else.
-      return ((dn <= maxDN) && (tot <= maxtot) && (tot >= mintot));
-   }
-
-
-   CommonTime GPSCNavTimeOffset ::
-   getUserTime() const
-   {
-      if (signal.nav == NavType::GPSCNAVL2)
-         return timeStamp + 12.0;
-      return timeStamp + 6.0;
-   }
+GPSCNavTimeOffset ::GPSCNavTimeOffset()
+{
+    src = TimeSystem::GPS;
 }
 
+bool GPSCNavTimeOffset ::validate() const
+{
+    // see IS-GPS-200
+    // DN is defined in the ICD as being 1-7 but we also include
+    // the value 0 as valid because we won't always have anything
+    // else.
+    return ((dn <= maxDN) && (tot <= maxtot) && (tot >= mintot));
+}
+
+CommonTime GPSCNavTimeOffset ::getUserTime() const
+{
+    if (signal.nav == NavType::GPSCNAVL2)
+        return timeStamp + 12.0;
+    return timeStamp + 6.0;
+}
+} // namespace gnsstk

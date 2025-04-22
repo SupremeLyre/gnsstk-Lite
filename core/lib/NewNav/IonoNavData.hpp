@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -44,51 +43,51 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Defines the interface for classes that provide the ability
-       * to compute ionospheric delay, using data extracted from GNSS
-       * navigation messages. */
-   class IonoNavData : public NavData
-   {
-   public:
-         /// Set the messageType
-      IonoNavData()
-      { signal.messageType = NavMessageType::Iono; }
+/** Defines the interface for classes that provide the ability
+ * to compute ionospheric delay, using data extracted from GNSS
+ * navigation messages. */
+class IonoNavData : public NavData
+{
+  public:
+    /// Set the messageType
+    IonoNavData()
+    {
+        signal.messageType = NavMessageType::Iono;
+    }
 
-         /// Obligatory virtual destructor.
-      virtual ~IonoNavData()
-      {}
+    /// Obligatory virtual destructor.
+    virtual ~IonoNavData()
+    {
+    }
 
-         /** Get the ionospheric correction in meters.
-          * @param[in] when The time of the observation to correct.
-          * @param[in] rxgeo The receiver's geodetic position.
-          * @param[in] svgeo The observed satellite's geodetic position.
-          * @param[in] band The carrier band of the signal being corrected.
-          * @return The ionospheric delay, in meters, on band. */
-      virtual double getIonoCorr(const CommonTime& when,
-                                 const Position& rxgeo,
-                                 const Position& svgeo,
-                                 CarrierBand band) const = 0;
+    /** Get the ionospheric correction in meters.
+     * @param[in] when The time of the observation to correct.
+     * @param[in] rxgeo The receiver's geodetic position.
+     * @param[in] svgeo The observed satellite's geodetic position.
+     * @param[in] band The carrier band of the signal being corrected.
+     * @return The ionospheric delay, in meters, on band. */
+    virtual double getIonoCorr(const CommonTime &when, const Position &rxgeo, const Position &svgeo,
+                               CarrierBand band) const = 0;
 
-         /// @copydoc NavData::isSameData
-      bool isSameData(const NavDataPtr& right) const override
-      {
-         Exception exc("Unimplemented function");
-         GNSSTK_THROW(exc);
-      }
-         /// @copydoc NavData::compare
-      std::list<std::string> compare(const NavDataPtr& right)
-         const override
-      {
-         Exception exc("Unimplemented function");
-         GNSSTK_THROW(exc);
-      }
-   };
+    /// @copydoc NavData::isSameData
+    bool isSameData(const NavDataPtr &right) const override
+    {
+        Exception exc("Unimplemented function");
+        GNSSTK_THROW(exc);
+    }
+    /// @copydoc NavData::compare
+    std::list<std::string> compare(const NavDataPtr &right) const override
+    {
+        Exception exc("Unimplemented function");
+        GNSSTK_THROW(exc);
+    }
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_IONODATA_HPP

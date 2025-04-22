@@ -36,59 +36,49 @@
 //
 //==============================================================================
 
-#include <iostream>
 #include <iomanip>
-#include <string>
+#include <iostream>
 #include <map>
+#include <string>
 
 #include "MetReader.hpp"
-#include "RinexMetStream.hpp"
 #include "RinexMetData.hpp"
+#include "RinexMetStream.hpp"
 
 using namespace std;
 
 namespace gnsstk
 {
-   MetReader ::
-   MetReader()
-         : verboseLevel(0)
-   {
-   }
-
-
-   MetReader ::
-   MetReader(const std::string& fn)
-         : verboseLevel(0)
-   {
-      if (!read(fn))
-      {
-         FileMissingException exc("Unable to read from "+fn);
-         GNSSTK_THROW(exc);
-      }
-   }
-
-
-   bool MetReader ::
-   read(const std::string& fn)
-   {
-      RinexMetStream rms;
-      rms.open(fn.c_str(), ios::in);
-      if (!rms)
-      {
-         return false;
-      }
-
-      RinexMetData rmd;
-      while (rms >> rmd)
-      {
-         WxObservation wob(
-            rmd.time,
-            rmd.data[RinexMetHeader::TD],
-            rmd.data[RinexMetHeader::PR],
-            rmd.data[RinexMetHeader::HR]);
-         wx.insertObservation(wob);
-      }
-      return true;
-   } // end of read()
-
+MetReader ::MetReader() : verboseLevel(0)
+{
 }
+
+MetReader ::MetReader(const std::string &fn) : verboseLevel(0)
+{
+    if (!read(fn))
+    {
+        FileMissingException exc("Unable to read from " + fn);
+        GNSSTK_THROW(exc);
+    }
+}
+
+bool MetReader ::read(const std::string &fn)
+{
+    RinexMetStream rms;
+    rms.open(fn.c_str(), ios::in);
+    if (!rms)
+    {
+        return false;
+    }
+
+    RinexMetData rmd;
+    while (rms >> rmd)
+    {
+        WxObservation wob(rmd.time, rmd.data[RinexMetHeader::TD], rmd.data[RinexMetHeader::PR],
+                          rmd.data[RinexMetHeader::HR]);
+        wx.insertObservation(wob);
+    }
+    return true;
+} // end of read()
+
+} // namespace gnsstk

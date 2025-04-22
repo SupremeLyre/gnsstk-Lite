@@ -46,189 +46,182 @@
 
 namespace gnsstk
 {
-      /// @ingroup TimeHandling
-      //@{
+/// @ingroup TimeHandling
+//@{
 
-      /** This class handles the week and seconds-of-week of the GAL
-       * TimeTag classes.  The GAL week is specified by
-       * 12-bit ModWeek, rollover at 4096, bitmask 0xFFF and
-       * epoch GAL_EPOCH_MJD */
-   class GALWeekSecond : public WeekSecond
-   {
-   public:
+/** This class handles the week and seconds-of-week of the GAL
+ * TimeTag classes.  The GAL week is specified by
+ * 12-bit ModWeek, rollover at 4096, bitmask 0xFFF and
+ * epoch GAL_EPOCH_MJD */
+class GALWeekSecond : public WeekSecond
+{
+  public:
+    /// Constructor.
+    GALWeekSecond(unsigned int w = 0, double s = 0., TimeSystem ts = TimeSystem::GAL) noexcept : WeekSecond(w, s)
+    {
+        timeSystem = ts;
+    }
 
-         /// Constructor.
-      GALWeekSecond(unsigned int w = 0,
-                    double s = 0.,
-                    TimeSystem ts = TimeSystem::GAL) noexcept
-            : WeekSecond(w,s)
-      { timeSystem = ts; }
+    /// Constructor from CommonTime
+    GALWeekSecond(const CommonTime &right)
+    {
+        convertFromCommonTime(right);
+    }
 
-         /// Constructor from CommonTime
-      GALWeekSecond( const CommonTime& right )
-      {
-         convertFromCommonTime( right );
-      }
+    /// Destructor.
+    ~GALWeekSecond() noexcept
+    {
+    }
 
-         /// Destructor.
-      ~GALWeekSecond() noexcept {}
+    /// Return the number of bits in the bitmask used to get the ModWeek from the
+    /// full week.
+    int Nbits(void) const
+    {
+        static const int n = 12;
+        return n;
+    }
 
-         /// Return the number of bits in the bitmask used to get the ModWeek from the
-         /// full week.
-      int Nbits(void) const
-      {
-         static const int n=12;
-         return n;
-      }
+    /// Return the bitmask used to get the ModWeek from the full week.
+    int bitmask(void) const
+    {
+        static const int bm = 0xFFF;
+        return bm;
+    }
 
-         /// Return the bitmask used to get the ModWeek from the full week.
-      int bitmask(void) const
-      {
-         static const int bm=0xFFF;
-         return bm;
-      }
+    /// Return the Modified Julian Date (MJD) of epoch for this system.
+    long MJDEpoch(void) const
+    {
+        static const long e = GAL_EPOCH_MJD;
+        return e;
+    }
 
-         /// Return the Modified Julian Date (MJD) of epoch for this system.
-      long MJDEpoch(void) const
-      {
-         static const long e=GAL_EPOCH_MJD;
-         return e;
-      }
+    /// Return a string containing the characters that this class
+    /// understands when printing times.
+    virtual std::string getPrintChars() const
+    {
+        return "TLlwgP";
+    }
 
-         /// Return a string containing the characters that this class
-         /// understands when printing times.
-      virtual std::string getPrintChars() const
-      {
-         return "TLlwgP";
-      }
+    /// Return a string containing the default format to use in printing.
+    virtual std::string getDefaultFormat() const
+    {
+        return "%L %g %P";
+    }
 
-         /// Return a string containing the default format to use in printing.
-      virtual std::string getDefaultFormat() const
-      {
-         return "%L %g %P";
-      }
-
-         /// This function formats this time to a string.  The exceptions
-         /// thrown would only be due to problems parsing the fmt string.
-      virtual std::string printf(const std::string& fmt) const
-      {
-         try {
+    /// This function formats this time to a string.  The exceptions
+    /// thrown would only be due to problems parsing the fmt string.
+    virtual std::string printf(const std::string &fmt) const
+    {
+        try
+        {
             using gnsstk::StringUtils::formattedPrint;
 
             std::string rv = fmt;
-            rv = formattedPrint( rv, getFormatPrefixInt() + "T",
-                                 "Tu", getEpoch() );
-            rv = formattedPrint( rv, getFormatPrefixInt() + "L",
-                                 "Lu", week );
-            rv = formattedPrint( rv, getFormatPrefixInt() + "l",
-                                 "lu", getModWeek() );
-            rv = formattedPrint( rv, getFormatPrefixInt() + "w",
-                                 "wu", getDayOfWeek() );
-            rv = formattedPrint( rv, getFormatPrefixFloat() + "g",
-                                 "gf", sow );
-            rv = formattedPrint( rv, getFormatPrefixInt() + "P",
-                                 "Ps", StringUtils::asString(timeSystem).c_str() );
+            rv = formattedPrint(rv, getFormatPrefixInt() + "T", "Tu", getEpoch());
+            rv = formattedPrint(rv, getFormatPrefixInt() + "L", "Lu", week);
+            rv = formattedPrint(rv, getFormatPrefixInt() + "l", "lu", getModWeek());
+            rv = formattedPrint(rv, getFormatPrefixInt() + "w", "wu", getDayOfWeek());
+            rv = formattedPrint(rv, getFormatPrefixFloat() + "g", "gf", sow);
+            rv = formattedPrint(rv, getFormatPrefixInt() + "P", "Ps", StringUtils::asString(timeSystem).c_str());
             return rv;
-         }
-         catch(gnsstk::StringUtils::StringException& e)
-         { GNSSTK_RETHROW(e); }
-      }
+        }
+        catch (gnsstk::StringUtils::StringException &e)
+        {
+            GNSSTK_RETHROW(e);
+        }
+    }
 
-         /// This function works similarly to printf.  Instead of filling
-         /// the format with data, it fills with error messages.
-      virtual std::string printError(const std::string& fmt) const
-      {
-         try {
+    /// This function works similarly to printf.  Instead of filling
+    /// the format with data, it fills with error messages.
+    virtual std::string printError(const std::string &fmt) const
+    {
+        try
+        {
             using gnsstk::StringUtils::formattedPrint;
             std::string rv = fmt;
 
-            rv = formattedPrint( rv, getFormatPrefixInt() + "T",
-                                 "Ts", "BadGALepoch");
-            rv = formattedPrint( rv, getFormatPrefixInt() + "L",
-                                 "Ls", "BadGALfweek");
-            rv = formattedPrint( rv, getFormatPrefixInt() + "l",
-                                 "ls", "BadGALmweek");
-            rv = formattedPrint( rv, getFormatPrefixInt() + "w",
-                                 "wu", "BadGALdow");
-            rv = formattedPrint( rv, getFormatPrefixFloat() + "g",
-                                 "gf", "BadGALsow");
-            rv = formattedPrint( rv, getFormatPrefixInt() + "P",
-                                 "Ps", "BadGALsys");
+            rv = formattedPrint(rv, getFormatPrefixInt() + "T", "Ts", "BadGALepoch");
+            rv = formattedPrint(rv, getFormatPrefixInt() + "L", "Ls", "BadGALfweek");
+            rv = formattedPrint(rv, getFormatPrefixInt() + "l", "ls", "BadGALmweek");
+            rv = formattedPrint(rv, getFormatPrefixInt() + "w", "wu", "BadGALdow");
+            rv = formattedPrint(rv, getFormatPrefixFloat() + "g", "gf", "BadGALsow");
+            rv = formattedPrint(rv, getFormatPrefixInt() + "P", "Ps", "BadGALsys");
             return rv;
-         }
-         catch(gnsstk::StringUtils::StringException& e)
-         { GNSSTK_RETHROW(e); }
-      }
+        }
+        catch (gnsstk::StringUtils::StringException &e)
+        {
+            GNSSTK_RETHROW(e);
+        }
+    }
 
-         /** Set this object using the information provided in \a info.
-          * @param[in] info the IdToValue object to which this object
-          *   shall be set.
-          * @return true if this object was successfully set using the
-          *   data in \a info, false if not. */
-      bool setFromInfo( const IdToValue& info )
-      {
+    /** Set this object using the information provided in \a info.
+     * @param[in] info the IdToValue object to which this object
+     *   shall be set.
+     * @return true if this object was successfully set using the
+     *   data in \a info, false if not. */
+    bool setFromInfo(const IdToValue &info)
+    {
 
-         for( IdToValue::const_iterator i = info.begin(); i != info.end(); i++ )
-         {
-               // based on the character, we know what to do...
-            switch ( i->first )
+        for (IdToValue::const_iterator i = info.begin(); i != info.end(); i++)
+        {
+            // based on the character, we know what to do...
+            switch (i->first)
             {
-               case 'T':
-                  setEpoch( gnsstk::StringUtils::asInt( i->second ) );
-                  break;
-               case 'L':
-                  week = gnsstk::StringUtils::asInt( i->second );
-                  break;
-               case 'l':
-                  setModWeek( gnsstk::StringUtils::asInt( i->second ) );
-                  break;
-               case 'w':
-                  sow = static_cast<double>(gnsstk::StringUtils::asInt(i->second))*SEC_PER_DAY;
-                  break;
-               case 'g':
-                  sow = gnsstk::StringUtils::asDouble( i->second );
-                  break;
-               case 'P':
-                  timeSystem = gnsstk::StringUtils::asTimeSystem(i->second);
-                  break;
-               default:
-                     // do nothing
-                  break;
+            case 'T':
+                setEpoch(gnsstk::StringUtils::asInt(i->second));
+                break;
+            case 'L':
+                week = gnsstk::StringUtils::asInt(i->second);
+                break;
+            case 'l':
+                setModWeek(gnsstk::StringUtils::asInt(i->second));
+                break;
+            case 'w':
+                sow = static_cast<double>(gnsstk::StringUtils::asInt(i->second)) * SEC_PER_DAY;
+                break;
+            case 'g':
+                sow = gnsstk::StringUtils::asDouble(i->second);
+                break;
+            case 'P':
+                timeSystem = gnsstk::StringUtils::asTimeSystem(i->second);
+                break;
+            default:
+                // do nothing
+                break;
             };
 
-         } // end of for loop
+        } // end of for loop
 
-         return true;
-      }
+        return true;
+    }
 
-
-         /** This is, unfortunately, a duplication of what's in
-          * GPSWeekSecond.  To make a polymorphic function in the
-          * parent class, WeekSecond, that worked for both GPS and
-          * Galileo would require a change of the API, and I don't
-          * want to do that right now. */
-      GALWeekSecond& weekRolloverAdj(const GALWeekSecond& refTime)
-      {
-         double diff = sow - refTime.sow;
-         if (diff < -HALFWEEK)
-         {
+    /** This is, unfortunately, a duplication of what's in
+     * GPSWeekSecond.  To make a polymorphic function in the
+     * parent class, WeekSecond, that worked for both GPS and
+     * Galileo would require a change of the API, and I don't
+     * want to do that right now. */
+    GALWeekSecond &weekRolloverAdj(const GALWeekSecond &refTime)
+    {
+        double diff = sow - refTime.sow;
+        if (diff < -HALFWEEK)
+        {
             week = refTime.week + 1;
-         }
-         else if (diff > HALFWEEK)
-         {
+        }
+        else if (diff > HALFWEEK)
+        {
             week = refTime.week - 1;
-         }
-         else
-         {
+        }
+        else
+        {
             week = refTime.week;
-         }
-         return *this;
-      }
+        }
+        return *this;
+    }
 
-   }; // end class GALWeekSecond
+}; // end class GALWeekSecond
 
-      //@}
+//@}
 
-} // namespace
+} // namespace gnsstk
 
 #endif // GNSSTK_GALWEEKSECOND_HPP

@@ -36,7 +36,6 @@
 //
 //==============================================================================
 
-
 #include "GroupPathCorr.hpp"
 #include "BCISCorrector.hpp"
 #include "BCIonoCorrector.hpp"
@@ -44,139 +43,119 @@
 
 namespace gnsstk
 {
-   bool GroupPathCorr ::
-   init(NavLibrary& navLib)
-   {
-      GroupPathCorrectorPtr ec1, ec2;
-      ec1 = std::make_shared<BCISCorrector>(navLib);
-      ec2 = std::make_shared<BCIonoCorrector>(navLib);
-      BCISCorrector *isc = dynamic_cast<BCISCorrector*>(ec1.get());
-      BCIonoCorrector *iono = dynamic_cast<BCIonoCorrector*>(ec2.get());
-      calcs.push_back(ec1);
-      calcs.push_back(ec2);
-         // No error conditions.  Yet.  Still returning true/false so
-         // that we CAN indicate error conditions in the future
-         // without an API change.
-      return true;
-   }
+bool GroupPathCorr ::init(NavLibrary &navLib)
+{
+    GroupPathCorrectorPtr ec1, ec2;
+    ec1 = std::make_shared<BCISCorrector>(navLib);
+    ec2 = std::make_shared<BCIonoCorrector>(navLib);
+    BCISCorrector *isc = dynamic_cast<BCISCorrector *>(ec1.get());
+    BCIonoCorrector *iono = dynamic_cast<BCIonoCorrector *>(ec2.get());
+    calcs.push_back(ec1);
+    calcs.push_back(ec2);
+    // No error conditions.  Yet.  Still returning true/false so
+    // that we CAN indicate error conditions in the future
+    // without an API change.
+    return true;
+}
 
-
-   bool GroupPathCorr ::
-   initGlobal(NavLibrary& navLib,
-              const std::string& rinMetFile)
-   {
-      if (!init(navLib))
-      {
-         return false;
-      }
-      GroupPathCorrectorPtr ec3;
-      ec3 = std::make_shared<gnsstk::GlobalTropCorrector>();
-      if (!rinMetFile.empty())
-      {
-         gnsstk::GlobalTropCorrector *trop;
-         trop = dynamic_cast<gnsstk::GlobalTropCorrector*>(ec3.get());
-         if (!trop->loadFile(rinMetFile))
-         {
+bool GroupPathCorr ::initGlobal(NavLibrary &navLib, const std::string &rinMetFile)
+{
+    if (!init(navLib))
+    {
+        return false;
+    }
+    GroupPathCorrectorPtr ec3;
+    ec3 = std::make_shared<gnsstk::GlobalTropCorrector>();
+    if (!rinMetFile.empty())
+    {
+        gnsstk::GlobalTropCorrector *trop;
+        trop = dynamic_cast<gnsstk::GlobalTropCorrector *>(ec3.get());
+        if (!trop->loadFile(rinMetFile))
+        {
             return false;
-         }
-      }
-      calcs.push_back(ec3);
-      return true;
-   }
+        }
+    }
+    calcs.push_back(ec3);
+    return true;
+}
 
-
-   bool GroupPathCorr ::
-   initNB(NavLibrary& navLib,
-          const std::string& rinMetFile)
-   {
-      if (!init(navLib))
-      {
-         return false;
-      }
-      GroupPathCorrectorPtr ec3;
-      ec3 = std::make_shared<gnsstk::NBTropCorrector>();
-      if (!rinMetFile.empty())
-      {
-         gnsstk::NBTropCorrector *trop;
-         trop = dynamic_cast<gnsstk::NBTropCorrector*>(ec3.get());
-         if (!trop->loadFile(rinMetFile))
-         {
+bool GroupPathCorr ::initNB(NavLibrary &navLib, const std::string &rinMetFile)
+{
+    if (!init(navLib))
+    {
+        return false;
+    }
+    GroupPathCorrectorPtr ec3;
+    ec3 = std::make_shared<gnsstk::NBTropCorrector>();
+    if (!rinMetFile.empty())
+    {
+        gnsstk::NBTropCorrector *trop;
+        trop = dynamic_cast<gnsstk::NBTropCorrector *>(ec3.get());
+        if (!trop->loadFile(rinMetFile))
+        {
             return false;
-         }
-      }
-      calcs.push_back(ec3);
-      return true;
-   }
+        }
+    }
+    calcs.push_back(ec3);
+    return true;
+}
 
-
-   bool GroupPathCorr ::
-   getCorr(const Position& rxPos, const Position& svPos,
-           const SatID& sat, const ObsID& obs, const CommonTime& when,
-           NavType nav, CorrectionResults& corrOut, CorrDupHandling dups)
-   {
-         // We always iterate through calcs in the same direction
-         // regardless of the value of dups.  It is a known
-         // compromise, so we don't have to duplicate code to use
-         // forward or reverse iterators.  You're never going to have
-         // hundreds of group path correctors, as there simply aren't
-         // that many models in existence, so it's a reasonable choice
-         // for a handful of items to iterate over.
-      bool rv = true;
-      corrOut.clear();
-      CorrectorTypeSet seen;
-      double tmp;
-      for (const auto& calc : calcs)
-      {
-         if ((dups == CorrDupHandling::ComputeFirst) &&
-             (seen.count(calc->corrType) > 0))
-         {
+bool GroupPathCorr ::getCorr(const Position &rxPos, const Position &svPos, const SatID &sat, const ObsID &obs,
+                             const CommonTime &when, NavType nav, CorrectionResults &corrOut, CorrDupHandling dups)
+{
+    // We always iterate through calcs in the same direction
+    // regardless of the value of dups.  It is a known
+    // compromise, so we don't have to duplicate code to use
+    // forward or reverse iterators.  You're never going to have
+    // hundreds of group path correctors, as there simply aren't
+    // that many models in existence, so it's a reasonable choice
+    // for a handful of items to iterate over.
+    bool rv = true;
+    corrOut.clear();
+    CorrectorTypeSet seen;
+    double tmp;
+    for (const auto &calc : calcs)
+    {
+        if ((dups == CorrDupHandling::ComputeFirst) && (seen.count(calc->corrType) > 0))
+        {
             continue;
-         }
-         if (!calc->getCorr(rxPos, svPos, sat, obs, when, nav, tmp))
-         {
+        }
+        if (!calc->getCorr(rxPos, svPos, sat, obs, when, nav, tmp))
+        {
             rv = false;
-         }
-         else
-         {
+        }
+        else
+        {
             CorrectionResult res(tmp, calc);
             corrOut.addResult(res);
             seen.insert(calc->corrType);
-         }
-      }
-      return rv;
-   }
+        }
+    }
+    return rv;
+}
 
+bool GroupPathCorr ::getCorr(const Position &rxPos, const Xvt &svPos, const SatID &sat, const ObsID &obs,
+                             const CommonTime &when, NavType nav, CorrectionResults &corrOut, CorrDupHandling dups)
+{
+    Position sp(svPos.x);
+    return getCorr(rxPos, sp, sat, obs, when, nav, corrOut, dups);
+}
 
-   bool GroupPathCorr ::
-   getCorr(const Position& rxPos, const Xvt& svPos,
-           const SatID& sat, const ObsID& obs, const CommonTime& when,
-           NavType nav, CorrectionResults& corrOut, CorrDupHandling dups)
-   {
-      Position sp(svPos.x);
-      return getCorr(rxPos, sp, sat, obs, when, nav, corrOut, dups);
-   }
+bool GroupPathCorr ::getCorr(const Position &rxPos, const Position &svPos, const SatID &sat, const ObsID &obs,
+                             const CommonTime &when, NavType nav, double &corrOut, CorrDupHandling dups)
+{
+    CorrectionResults res;
+    bool rv = getCorr(rxPos, svPos, sat, obs, when, nav, res, dups);
+    corrOut = res.getCorrSum(dups);
+    return rv;
+}
 
-
-   bool GroupPathCorr ::
-   getCorr(const Position& rxPos, const Position& svPos,
-           const SatID& sat, const ObsID& obs, const CommonTime& when,
-           NavType nav, double& corrOut, CorrDupHandling dups)
-   {
-      CorrectionResults res;
-      bool rv = getCorr(rxPos, svPos, sat, obs, when, nav, res, dups);
-      corrOut = res.getCorrSum(dups);
-      return rv;
-   }
-
-
-   bool GroupPathCorr ::
-   getCorr(const Position& rxPos, const Xvt& svPos, const SatID& sat,
-           const ObsID& obs, const CommonTime& when, NavType nav,
-           double& corrOut, CorrDupHandling dups)
-   {
-      CorrectionResults res;
-      bool rv = getCorr(rxPos, svPos, sat, obs, when, nav, res, dups);
-      corrOut = res.getCorrSum(dups);
-      return rv;
-   }
+bool GroupPathCorr ::getCorr(const Position &rxPos, const Xvt &svPos, const SatID &sat, const ObsID &obs,
+                             const CommonTime &when, NavType nav, double &corrOut, CorrDupHandling dups)
+{
+    CorrectionResults res;
+    bool rv = getCorr(rxPos, svPos, sat, obs, when, nav, res, dups);
+    corrOut = res.getCorrSum(dups);
+    return rv;
+}
 } // namespace gnsstk

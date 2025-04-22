@@ -39,51 +39,56 @@
 #ifndef LNAVCOOKFILTER_HPP
 #define LNAVCOOKFILTER_HPP
 
-#include "NavFilter.hpp"
 #include "LNavFilterData.hpp"
+#include "NavFilter.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup NavFilter
-      //@{
+/// @ingroup NavFilter
+//@{
 
-      /** "Cook" GPS legacy nav messages by turning words upright.
-       * Data in LNavFilterData::sf are modified.
-       *
-       * @attention Processing depth = 1 epoch. */
-   class LNavCookFilter : public NavFilter
-   {
-   public:
-      LNavCookFilter();
+/** "Cook" GPS legacy nav messages by turning words upright.
+ * Data in LNavFilterData::sf are modified.
+ *
+ * @attention Processing depth = 1 epoch. */
+class LNavCookFilter : public NavFilter
+{
+  public:
+    LNavCookFilter();
 
-         /** Turn words in a GPS LNAV message upright.  This results
-          * in the expected 0x8b preamble in the TLM and subsequent
-          * bits as expected per the IS-GPS-200.
-          * @pre LNavFilterData::sf is set
-          * @param[in,out] msgBitsIn a list of LNavFilterData* objects
-          *   containing GPS LNAV data.
-          * @param[out] msgBitsOut the "cooked" subframes.  All
-          *   contents of msgBitsIn will be immediately seen in
-          *   msgBitsOut. */
-      virtual void validate(NavMsgList& msgBitsIn, NavMsgList& msgBitsOut);
+    /** Turn words in a GPS LNAV message upright.  This results
+     * in the expected 0x8b preamble in the TLM and subsequent
+     * bits as expected per the IS-GPS-200.
+     * @pre LNavFilterData::sf is set
+     * @param[in,out] msgBitsIn a list of LNavFilterData* objects
+     *   containing GPS LNAV data.
+     * @param[out] msgBitsOut the "cooked" subframes.  All
+     *   contents of msgBitsIn will be immediately seen in
+     *   msgBitsOut. */
+    virtual void validate(NavMsgList &msgBitsIn, NavMsgList &msgBitsOut);
 
-         /// Filter stores no data, therefore this does nothing.
-      virtual void finalize(NavMsgList& msgBitsOut)
-      {}
+    /// Filter stores no data, therefore this does nothing.
+    virtual void finalize(NavMsgList &msgBitsOut)
+    {
+    }
 
-         /// No internal storage of subframe data so return 0.
-      virtual unsigned processingDepth() const noexcept
-      { return 0; }
+    /// No internal storage of subframe data so return 0.
+    virtual unsigned processingDepth() const noexcept
+    {
+        return 0;
+    }
 
-         /// Turn an LNAV subframe data upright.
-      static void cookSubframe(LNavFilterData* fd);
+    /// Turn an LNAV subframe data upright.
+    static void cookSubframe(LNavFilterData *fd);
 
-         /// Return the filter name.
-      virtual std::string filterName() const noexcept
-      { return "Cook"; }
-   };
+    /// Return the filter name.
+    virtual std::string filterName() const noexcept
+    {
+        return "Cook";
+    }
+};
 
-      //@}
-}
+//@}
+} // namespace gnsstk
 
 #endif // LNAVCOOKFILTER_HPP

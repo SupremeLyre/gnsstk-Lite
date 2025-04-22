@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,41 +38,41 @@
 #ifndef GNSSTK_GLOFNAVPCODE_HPP
 #define GNSSTK_GLOFNAVPCODE_HPP
 
-#include <string>
 #include "EnumIterator.hpp"
+#include <string>
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Values for GLONASS FDMA nav message, Word P.  The values
-       * indicate whether the tau_c parameter and tau_GPS parameter
-       * are relayed from the control segment or calculated
-       * on-board the GLONASS-M satellite.
-       * @note This seems to imply P has no meaning on legacy
-       *   GLONASS, only in GLONASS-M. */
-   enum class GLOFNavPCode
-   {
-      Unknown      =-1, ///< Unknown/Uninitialized value.
-      CRelGPSRel   = 0, ///< C parameter relayed, GPS parameter relayed
-      CRelGPSCalc  = 1, ///< C parameter relayed, GPS parameter calculated
-      CCalcGPSRel  = 2, ///< C parameter calculated, GPS parameter relayed
-      CCalcGPSCalc = 3, ///< C parameter calculated, GPS parameter calculated
-      Last,             ///< Used to verify that all items are described at compile time
-   };
+/** Values for GLONASS FDMA nav message, Word P.  The values
+ * indicate whether the tau_c parameter and tau_GPS parameter
+ * are relayed from the control segment or calculated
+ * on-board the GLONASS-M satellite.
+ * @note This seems to imply P has no meaning on legacy
+ *   GLONASS, only in GLONASS-M. */
+enum class GLOFNavPCode
+{
+    Unknown = -1,     ///< Unknown/Uninitialized value.
+    CRelGPSRel = 0,   ///< C parameter relayed, GPS parameter relayed
+    CRelGPSCalc = 1,  ///< C parameter relayed, GPS parameter calculated
+    CCalcGPSRel = 2,  ///< C parameter calculated, GPS parameter relayed
+    CCalcGPSCalc = 3, ///< C parameter calculated, GPS parameter calculated
+    Last,             ///< Used to verify that all items are described at compile time
+};
 
-      /** Define an iterator so C++11 can do things like
-       * for (GLOFNavPCode i : GLOFNavPCodeIterator()) */
-   typedef EnumIterator<GLOFNavPCode, GLOFNavPCode::Unknown, GLOFNavPCode::Last> GLOFNavPCodeIterator;
+/** Define an iterator so C++11 can do things like
+ * for (GLOFNavPCode i : GLOFNavPCodeIterator()) */
+typedef EnumIterator<GLOFNavPCode, GLOFNavPCode::Unknown, GLOFNavPCode::Last> GLOFNavPCodeIterator;
 
-   namespace StringUtils
-   {
-         /// Convert GLOFNavPCode to a printable string for dump().
-      std::string asString(GLOFNavPCode e);
-   }
+namespace StringUtils
+{
+/// Convert GLOFNavPCode to a printable string for dump().
+std::string asString(GLOFNavPCode e);
+} // namespace StringUtils
 
-      //@}
+//@}
 
 } // namespace gnsstk
 

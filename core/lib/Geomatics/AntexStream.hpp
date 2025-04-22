@@ -50,45 +50,48 @@
 
 namespace gnsstk
 {
-   /// @ingroup FileHandling
-   //@{
+/// @ingroup FileHandling
+//@{
 
-   /// This class reads an Antex files. @sa gnsstk::AntexData and gnsstk::AntexHeader.
-   class AntexStream : public FFTextStream
-   {
-   public:
-      /// Default constructor
-      AntexStream() : headerRead(false) {}
+/// This class reads an Antex files. @sa gnsstk::AntexData and gnsstk::AntexHeader.
+class AntexStream : public FFTextStream
+{
+  public:
+    /// Default constructor
+    AntexStream() : headerRead(false)
+    {
+    }
 
-         /**
-          Constructor given a file name
-          @param fn the Antex file to open
-          @param mode how to open \a fn.
-         */
-      AntexStream(const char *fn, std::ios::openmode mode = std::ios::in)
-         : FFTextStream(fn, mode), headerRead(false)
-      {
-      }
+    /**
+     Constructor given a file name
+     @param fn the Antex file to open
+     @param mode how to open \a fn.
+    */
+    AntexStream(const char *fn, std::ios::openmode mode = std::ios::in) : FFTextStream(fn, mode), headerRead(false)
+    {
+    }
 
-      /// Destructor
-      virtual ~AntexStream() {}
+    /// Destructor
+    virtual ~AntexStream()
+    {
+    }
 
-      /// overrides open to reset the header
-      virtual void open(const char *fn, std::ios::openmode mode)
-      {
-         FFTextStream::open(fn, mode);
-         headerRead = false;
-         header     = AntexHeader();
-      }
+    /// overrides open to reset the header
+    virtual void open(const char *fn, std::ios::openmode mode)
+    {
+        FFTextStream::open(fn, mode);
+        headerRead = false;
+        header = AntexHeader();
+    }
 
-      /// Whether or not the AntexHeader has been read
-      bool headerRead;
+    /// Whether or not the AntexHeader has been read
+    bool headerRead;
 
-      /// The header for this file.
-      AntexHeader header;
-   };
+    /// The header for this file.
+    AntexHeader header;
+};
 
-   //@}
+//@}
 
 } // namespace gnsstk
 

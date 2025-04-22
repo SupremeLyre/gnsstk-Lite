@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -40,35 +39,40 @@
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(DumpDetail e) noexcept
-      {
-         switch (e)
-         {
-            case DumpDetail::Unknown: return "Unknown";
-            case DumpDetail::OneLine: return "OneLine";
-            case DumpDetail::Brief:   return "Brief";
-            case DumpDetail::Terse:   return "Terse";
-            case DumpDetail::Full:    return "Full";
-            default:                  return "???";
-         } // switch (e)
-      } // asString(DumpDetail)
+namespace StringUtils
+{
+std::string asString(DumpDetail e) noexcept
+{
+    switch (e)
+    {
+    case DumpDetail::Unknown:
+        return "Unknown";
+    case DumpDetail::OneLine:
+        return "OneLine";
+    case DumpDetail::Brief:
+        return "Brief";
+    case DumpDetail::Terse:
+        return "Terse";
+    case DumpDetail::Full:
+        return "Full";
+    default:
+        return "???";
+    } // switch (e)
+} // asString(DumpDetail)
 
-
-      DumpDetail asDumpDetail(const std::string& s) noexcept
-      {
-         if (s == "Unknown")
-            return DumpDetail::Unknown;
-         if (s == "OneLine")
-            return DumpDetail::OneLine;
-         if (s == "Brief")
-            return DumpDetail::Brief;
-         if (s == "Terse")
-            return DumpDetail::Terse;
-         if (s == "Full")
-            return DumpDetail::Full;
-         return DumpDetail::Unknown;
-      } // asDumpDetail(string)
-   } // namespace StringUtils
+DumpDetail asDumpDetail(const std::string &s) noexcept
+{
+    if (s == "Unknown")
+        return DumpDetail::Unknown;
+    if (s == "OneLine")
+        return DumpDetail::OneLine;
+    if (s == "Brief")
+        return DumpDetail::Brief;
+    if (s == "Terse")
+        return DumpDetail::Terse;
+    if (s == "Full")
+        return DumpDetail::Full;
+    return DumpDetail::Unknown;
+} // asDumpDetail(string)
+} // namespace StringUtils
 } // namespace gnsstk

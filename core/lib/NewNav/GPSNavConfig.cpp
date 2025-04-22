@@ -47,30 +47,28 @@
 
 namespace gnsstk
 {
-   GPSNavConfig ::
-   GPSNavConfig()
-   {
-      msgLenSec = 6.0;
-   }
+GPSNavConfig ::GPSNavConfig()
+{
+    msgLenSec = 6.0;
+}
 
-   void GPSNavConfig ::
-   dump(std::ostream &s, DumpDetail dl) const
-   {
-      const std::ios::fmtflags oldFlags{s.flags()};
-      s.setf(std::ios::fixed, std::ios::floatfield);
-      s.setf(std::ios::right, std::ios::adjustfield);
-      s.setf(std::ios::uppercase);
-      s.precision(0);
-      s.fill(' ');
+void GPSNavConfig ::dump(std::ostream &s, DumpDetail dl) const
+{
+    const std::ios::fmtflags oldFlags{s.flags()};
+    s.setf(std::ios::fixed, std::ios::floatfield);
+    s.setf(std::ios::right, std::ios::adjustfield);
+    s.setf(std::ios::uppercase);
+    s.precision(0);
+    s.fill(' ');
 
-      switch (dl)
-      {
-      case DumpDetail::OneLine:
-         NavData::dump(s, dl);
-         break;
-      case DumpDetail::Brief:
-         NavData::dump(s, dl);
-            // clang-format off
+    switch (dl)
+    {
+    case DumpDetail::OneLine:
+        NavData::dump(s, dl);
+        break;
+    case DumpDetail::Brief:
+        NavData::dump(s, dl);
+        // clang-format off
          s << "antispoof " << (antispoofOn ? "on" : "off") << '\n'
            << "svConfig = " << std::hex << static_cast<int>(svConfig) << std::dec << "  " << StringUtils::asString(svConfig) << '\n';
             // clang-format on         
@@ -87,23 +85,21 @@ namespace gnsstk
            << "Anti-Spoof flag: " << (antispoofOn ? '1' : '0') << '\n'
            << "SV config bits:  0x" << std::hex << std::setw(3) << std::setfill('0') << static_cast<int>(svConfig) << std::dec << '\n'
            << "SV config:       " << StringUtils::asString(getSVConfig()) << '\n';
-            // clang-format on
-         break;
-      }
-      s.flags(oldFlags);
-   }
+        // clang-format on
+        break;
+    }
+    s.flags(oldFlags);
+}
 
-   GPSSVConfig GPSNavConfig ::
-   getSVConfig() const noexcept
-   {
-      for (const auto &svConfigVal : GPSSVConfigIterator())
-      {
-         if (svConfig ==
-             static_cast<std::underlying_type<GPSSVConfig>::type>(svConfigVal))
-         {
+GPSSVConfig GPSNavConfig ::getSVConfig() const noexcept
+{
+    for (const auto &svConfigVal : GPSSVConfigIterator())
+    {
+        if (svConfig == static_cast<std::underlying_type<GPSSVConfig>::type>(svConfigVal))
+        {
             return svConfigVal;
-         }
-      }
-      return GPSSVConfig::noInfo;
-   }
+        }
+    }
+    return GPSSVConfig::noInfo;
+}
 } // namespace gnsstk

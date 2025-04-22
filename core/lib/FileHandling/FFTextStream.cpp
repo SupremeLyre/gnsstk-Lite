@@ -45,170 +45,141 @@
 
 namespace gnsstk
 {
-   FFTextStream ::
-   FFTextStream()
-   {
-      init();
-   }
+FFTextStream ::FFTextStream()
+{
+    init();
+}
 
+FFTextStream ::~FFTextStream()
+{
+}
 
-   FFTextStream ::
-   ~FFTextStream()
-   {
-   }
+FFTextStream ::FFTextStream(const char *fn, std::ios::openmode mode) : FFStream(fn, mode)
+{
+    init();
+}
 
+FFTextStream ::FFTextStream(const std::string &fn, std::ios::openmode mode) : FFStream(fn.c_str(), mode)
+{
+    init();
+}
 
-   FFTextStream ::
-   FFTextStream( const char* fn,
-                 std::ios::openmode mode )
-         : FFStream(fn, mode)
-   {
-      init();
-   }
+void FFTextStream ::open(const char *fn, std::ios::openmode mode)
+{
+    FFStream::open(fn, mode);
+    init();
+}
 
+void FFTextStream ::open(const std::string &fn, std::ios::openmode mode)
+{
+    open(fn.c_str(), mode);
+}
 
-   FFTextStream ::
-   FFTextStream( const std::string& fn,
-                 std::ios::openmode mode )
-         : FFStream( fn.c_str(), mode )
-   {
-      init();
-   }
+void FFTextStream ::init()
+{
+    lineNumber = 0;
+}
 
+void FFTextStream ::tryFFStreamGet(FFData &rec)
+{
+    unsigned int initialLineNumber = lineNumber;
 
-   void FFTextStream ::
-   open( const char* fn,
-         std::ios::openmode mode )
-   {
-      FFStream::open(fn, mode);
-      init();
-   }
+    try
+    {
+        FFStream::tryFFStreamGet(rec);
+    }
+    catch (gnsstk::Exception &e)
+    {
+        e.addText(std::string("Near file line ") + gnsstk::StringUtils::asString(lineNumber));
+        lineNumber = initialLineNumber;
+        mostRecentException = e;
+        conditionalThrow();
+    }
+}
 
+void FFTextStream ::tryFFStreamPut(const FFData &rec)
+{
+    unsigned int initialLineNumber = lineNumber;
 
-   void FFTextStream ::
-   open( const std::string& fn,
-         std::ios::openmode mode )
-   {
-      open(fn.c_str(), mode);
-   }
+    try
+    {
+        FFStream::tryFFStreamPut(rec);
+    }
+    catch (gnsstk::Exception &e)
+    {
+        e.addText(std::string("Near file line ") + gnsstk::StringUtils::asString(lineNumber));
+        lineNumber = initialLineNumber;
+        mostRecentException = e;
+        conditionalThrow();
+    }
+}
 
-
-   void FFTextStream ::
-   init()
-   {
-      lineNumber = 0;
-   }
-
-
-   void FFTextStream ::
-   tryFFStreamGet(FFData& rec)
-   {
-      unsigned int initialLineNumber = lineNumber;
-
-      try
-      {
-         FFStream::tryFFStreamGet(rec);
-      }
-      catch(gnsstk::Exception& e)
-      {
-         e.addText( std::string("Near file line ") +
-                    gnsstk::StringUtils::asString(lineNumber) );
-         lineNumber = initialLineNumber;
-         mostRecentException = e;
-         conditionalThrow();
-      }
-   }
-
-
-   void FFTextStream ::
-   tryFFStreamPut(const FFData& rec)
-   {
-      unsigned int initialLineNumber = lineNumber;
-
-      try
-      {
-         FFStream::tryFFStreamPut(rec);
-      }
-      catch(gnsstk::Exception& e)
-      {
-         e.addText( std::string("Near file line ") +
-                    gnsstk::StringUtils::asString(lineNumber) );
-         lineNumber = initialLineNumber;
-         mostRecentException = e;
-         conditionalThrow();
-      }
-   }
-
-
-      // the reason for checking ffs.eof() in the try AND catch block is
-      // because if the user enabled exceptions on the stream with exceptions()
-      // then eof could throw an exception, in which case we need to catch it
-      // and rethrow an EOF or FFStream exception.  In any event, EndOfFile
-      // gets thrown whenever there's an EOF and expectEOF is true
-   void FFTextStream ::
-   formattedGetLine( std::string& line,
-                     const bool expectEOF )
-   {
-      try
-      {
-         std::getline(*this, line);
-            // Remove CR characters left over in the buffer from windows files
-         size_t crpos = line.find_last_not_of('\r');
-         if ((crpos+1) < line.length())
-            line.erase(crpos+1);
-         for (int i=0; i<line.length(); i++)
-         {
+// the reason for checking ffs.eof() in the try AND catch block is
+// because if the user enabled exceptions on the stream with exceptions()
+// then eof could throw an exception, in which case we need to catch it
+// and rethrow an EOF or FFStream exception.  In any event, EndOfFile
+// gets thrown whenever there's an EOF and expectEOF is true
+void FFTextStream ::formattedGetLine(std::string &line, const bool expectEOF)
+{
+    try
+    {
+        std::getline(*this, line);
+        // Remove CR characters left over in the buffer from windows files
+        size_t crpos = line.find_last_not_of('\r');
+        if ((crpos + 1) < line.length())
+            line.erase(crpos + 1);
+        for (int i = 0; i < line.length(); i++)
+        {
             if (!isprint(line[i]))
             {
-               FFStreamError err("Non-text data in file.");
-               GNSSTK_THROW(err);
+                FFStreamError err("Non-text data in file.");
+                GNSSTK_THROW(err);
             }
-         }
+        }
 
-         lineNumber++;
-         if(fail() && !eof())
-         {
+        lineNumber++;
+        if (fail() && !eof())
+        {
             FFStreamError err("Line too long");
             GNSSTK_THROW(err);
-         }
-            // catch EOF when stream exceptions are disabled
-         if ((line.size() == 0) && eof())
-         {
+        }
+        // catch EOF when stream exceptions are disabled
+        if ((line.size() == 0) && eof())
+        {
             if (expectEOF)
             {
-               EndOfFile err("EOF encountered");
-               GNSSTK_THROW(err);
+                EndOfFile err("EOF encountered");
+                GNSSTK_THROW(err);
             }
             else
             {
-               FFStreamError err("Unexpected EOF encountered");
-               GNSSTK_THROW(err);
+                FFStreamError err("Unexpected EOF encountered");
+                GNSSTK_THROW(err);
             }
-         }
-      }
-      catch(std::exception &e)
-      {
-            // catch EOF when exceptions are enabled
-         if ( (line.size() == 0) && eof())
-         {
+        }
+    }
+    catch (std::exception &e)
+    {
+        // catch EOF when exceptions are enabled
+        if ((line.size() == 0) && eof())
+        {
             if (expectEOF)
             {
-               EndOfFile err("EOF encountered");
-               GNSSTK_THROW(err);
+                EndOfFile err("EOF encountered");
+                GNSSTK_THROW(err);
             }
             else
             {
-               FFStreamError err("Unexpected EOF");
-               GNSSTK_THROW(err);
+                FFStreamError err("Unexpected EOF");
+                GNSSTK_THROW(err);
             }
-         }
-         else
-         {
-            FFStreamError err("Critical file error: " +
-                              std::string(e.what()));
+        }
+        else
+        {
+            FFStreamError err("Critical file error: " + std::string(e.what()));
             GNSSTK_THROW(err);
-         }
-      }
-   }  // End of method 'FFTextStream::formattedGetLine()'
+        }
+    }
+} // End of method 'FFTextStream::formattedGetLine()'
 
-}  // End of namespace gnsstk
+} // End of namespace gnsstk

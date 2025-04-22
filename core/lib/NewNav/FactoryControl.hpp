@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,37 +42,37 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Class to use for configuring NavDataFactory and
-       * PNBNavDataFactory objects.  The parameters may not always
-       * apply to any given factory. */
-   class FactoryControl
-   {
-   public:
-         /// Initialize data to reasonable defaults.
-      FactoryControl()
-            : bdsTimeZZfilt(false), timeOffsFilt(TimeOffsetFilter::NoFilt)
-      {}
+/** Class to use for configuring NavDataFactory and
+ * PNBNavDataFactory objects.  The parameters may not always
+ * apply to any given factory. */
+class FactoryControl
+{
+  public:
+    /// Initialize data to reasonable defaults.
+    FactoryControl() : bdsTimeZZfilt(false), timeOffsFilt(TimeOffsetFilter::NoFilt)
+    {
+    }
 
-         /** If true, ignore BeiDou time offsets with A0 and A1 terms
-          * both zero. */
-      bool bdsTimeZZfilt;
+    /** If true, ignore BeiDou time offsets with A0 and A1 terms
+     * both zero. */
+    bool bdsTimeZZfilt;
 
-         /** Specify how NavDataFactoryWithStore::addNavData() should
-          * process TimeOffsetData objects. 
-          * @note This only applies to classes derived from
-          *   StdNavTimeOffset, which currently excludes
-          *   RinexTimeOffset and GLOFNavUT1TimeOffset.
-          * @todo Determine if RinexTimeOffset or GLOFNavUT1TimeOffset
-          *   can be refactored so they derive from StdNavTimeOffset,
-          *   or at the very least can/should be filtered via
-          *   TimeOffsetUnique in NavDataFactoryWithStore. */
-      TimeOffsetFilter timeOffsFilt;
-   };
+    /** Specify how NavDataFactoryWithStore::addNavData() should
+     * process TimeOffsetData objects.
+     * @note This only applies to classes derived from
+     *   StdNavTimeOffset, which currently excludes
+     *   RinexTimeOffset and GLOFNavUT1TimeOffset.
+     * @todo Determine if RinexTimeOffset or GLOFNavUT1TimeOffset
+     *   can be refactored so they derive from StdNavTimeOffset,
+     *   or at the very least can/should be filtered via
+     *   TimeOffsetUnique in NavDataFactoryWithStore. */
+    TimeOffsetFilter timeOffsFilt;
+};
 
-      //@}
+//@}
 
 } // namespace gnsstk
 

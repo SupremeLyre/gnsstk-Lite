@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -44,44 +43,41 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Standard version of Callback used in conjunction with
-       * NavDataFactoryWithStoreFile::loadIntoMap(). */
-   class NavDataFactoryStoreCallback : public NavDataFactoryCallback
-   {
-   public:
-         /** Initialize the factory pointer.  Maps default to internals.
-          * @warning Because this is a "classic" pointer and not a
-          *   shared_ptr, care must be taken to ensure that the object
-          *   isn't deleted before the callback is done with it. */
-      NavDataFactoryStoreCallback(NavDataFactoryWithStore* ndf);
-         /** Initialize the factory pointer with separate data maps.
-          * @warning Because this is a "classic" pointer and not a
-          *   shared_ptr, care must be taken to ensure that the object
-          *   isn't deleted before the callback is done with it. */
-      NavDataFactoryStoreCallback(
-         NavDataFactoryWithStore* ndf,
-         NavMessageMap& othNavMap,
-         NavNearMessageMap& othNavNearMap,
-         NavDataFactoryWithStore::OffsetCvtMap& othOfsMap);
+/** Standard version of Callback used in conjunction with
+ * NavDataFactoryWithStoreFile::loadIntoMap(). */
+class NavDataFactoryStoreCallback : public NavDataFactoryCallback
+{
+  public:
+    /** Initialize the factory pointer.  Maps default to internals.
+     * @warning Because this is a "classic" pointer and not a
+     *   shared_ptr, care must be taken to ensure that the object
+     *   isn't deleted before the callback is done with it. */
+    NavDataFactoryStoreCallback(NavDataFactoryWithStore *ndf);
+    /** Initialize the factory pointer with separate data maps.
+     * @warning Because this is a "classic" pointer and not a
+     *   shared_ptr, care must be taken to ensure that the object
+     *   isn't deleted before the callback is done with it. */
+    NavDataFactoryStoreCallback(NavDataFactoryWithStore *ndf, NavMessageMap &othNavMap,
+                                NavNearMessageMap &othNavNearMap, NavDataFactoryWithStore::OffsetCvtMap &othOfsMap);
 
-         /// Factory to use to call addNavData.
-      NavDataFactoryWithStore *fact;
-         /// Map in which to store user-order data.
-      NavMessageMap& navMap;
-         /// Map in which to store nearest-order data.
-      NavNearMessageMap& navNearMap;
-         /// Map in which to store time offset data.
-      NavDataFactoryWithStore::OffsetCvtMap& ofsMap;
-         /** Store processed data internally.
-          * @param[in] navOut The data to process in the callback.
-          * @return true if successful. */
-      bool process(const NavDataPtr& navOut) override;
-   };
+    /// Factory to use to call addNavData.
+    NavDataFactoryWithStore *fact;
+    /// Map in which to store user-order data.
+    NavMessageMap &navMap;
+    /// Map in which to store nearest-order data.
+    NavNearMessageMap &navNearMap;
+    /// Map in which to store time offset data.
+    NavDataFactoryWithStore::OffsetCvtMap &ofsMap;
+    /** Store processed data internally.
+     * @param[in] navOut The data to process in the callback.
+     * @return true if successful. */
+    bool process(const NavDataPtr &navOut) override;
+};
 
-      //@}
+//@}
 } // namespace gnsstk
 
 #endif // GNSSTK_NAVDATAFACTORYSTORECALLBACK_HPP

@@ -37,47 +37,45 @@
 //==============================================================================
 
 /*
-* CNavFilterData.cpp
-*/
+ * CNavFilterData.cpp
+ */
 #include "CNavFilterData.hpp"
 
 namespace gnsstk
 {
-   CNavFilterData::CNavFilterData():
-       NavFilterKey()
-       {}
-
-   CNavFilterData::CNavFilterData(gnsstk::PackedNavBits* pnbArg):
-      NavFilterKey()
-   {
-      loadData(pnbArg);
-   }
-
-   void CNavFilterData::loadData(PackedNavBits* pnbArg)
-   {
-      timeStamp = pnbArg->getTransmitTime();
-      rxID = pnbArg->getRxID();
-      stationID = "unk";
-      prn = pnbArg->getsatSys().id;
-      carrier = pnbArg->getobsID().band;
-      code    = pnbArg->getobsID().code;
-
-      pnb = pnbArg;
-   }
-
-   void CNavFilterData::
-   dump(std::ostream& s) const
-   {
-         // This outputs the "common" information
-      NavFilterKey::dump(s);
-
-         // Dump bits as 32 bit words
-      pnb->outputPackedBits(s,10);
-   }
-
-   std::ostream& operator<<(std::ostream& s, const CNavFilterData& nfd)
-   {
-      nfd.dump(s);
-      return s;
-   }
+CNavFilterData::CNavFilterData() : NavFilterKey()
+{
 }
+
+CNavFilterData::CNavFilterData(gnsstk::PackedNavBits *pnbArg) : NavFilterKey()
+{
+    loadData(pnbArg);
+}
+
+void CNavFilterData::loadData(PackedNavBits *pnbArg)
+{
+    timeStamp = pnbArg->getTransmitTime();
+    rxID = pnbArg->getRxID();
+    stationID = "unk";
+    prn = pnbArg->getsatSys().id;
+    carrier = pnbArg->getobsID().band;
+    code = pnbArg->getobsID().code;
+
+    pnb = pnbArg;
+}
+
+void CNavFilterData::dump(std::ostream &s) const
+{
+    // This outputs the "common" information
+    NavFilterKey::dump(s);
+
+    // Dump bits as 32 bit words
+    pnb->outputPackedBits(s, 10);
+}
+
+std::ostream &operator<<(std::ostream &s, const CNavFilterData &nfd)
+{
+    nfd.dump(s);
+    return s;
+}
+} // namespace gnsstk

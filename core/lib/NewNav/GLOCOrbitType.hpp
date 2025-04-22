@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,18 +42,17 @@
 
 namespace gnsstk
 {
-      /// Values for Word TO in the almanac data.
-   enum class GLOCOrbitType
-   {
-      Unknown = -1,   ///< Unknown/Uninitialized value.
-      Circ19100 = 0,  ///< Circular orbit of 19,100km.
-   };
+/// Values for Word TO in the almanac data.
+enum class GLOCOrbitType
+{
+    Unknown = -1,  ///< Unknown/Uninitialized value.
+    Circ19100 = 0, ///< Circular orbit of 19,100km.
+};
 
-
-   namespace StringUtils
-   {
-      std::string asString(GLOCOrbitType e);
-   }
+namespace StringUtils
+{
+std::string asString(GLOCOrbitType e);
 }
+} // namespace gnsstk
 
 #endif // GNSSTK_GLOCORBITTYPE_HPP

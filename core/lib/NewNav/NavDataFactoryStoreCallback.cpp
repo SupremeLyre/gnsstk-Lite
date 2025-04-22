@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -40,27 +39,20 @@
 
 namespace gnsstk
 {
-   NavDataFactoryStoreCallback ::
-   NavDataFactoryStoreCallback(NavDataFactoryWithStore* ndf)
-         : fact(ndf), navMap(ndf->data), navNearMap(ndf->nearestData),
-           ofsMap(ndf->offsetData)
-   {}
-
-
-   NavDataFactoryStoreCallback ::
-   NavDataFactoryStoreCallback(
-      NavDataFactoryWithStore* ndf,
-      NavMessageMap& othNavMap,
-      NavNearMessageMap& othNavNearMap,
-      NavDataFactoryWithStore::OffsetCvtMap& othOfsMap)
-         : fact(ndf), navMap(othNavMap), navNearMap(othNavNearMap),
-           ofsMap(othOfsMap)
-   {}
-
-
-   bool NavDataFactoryStoreCallback ::
-   process(const NavDataPtr& navOut)
-   {
-      return fact->addNavData(navOut, navMap, navNearMap, ofsMap);
-   }
+NavDataFactoryStoreCallback ::NavDataFactoryStoreCallback(NavDataFactoryWithStore *ndf)
+    : fact(ndf), navMap(ndf->data), navNearMap(ndf->nearestData), ofsMap(ndf->offsetData)
+{
 }
+
+NavDataFactoryStoreCallback ::NavDataFactoryStoreCallback(NavDataFactoryWithStore *ndf, NavMessageMap &othNavMap,
+                                                          NavNearMessageMap &othNavNearMap,
+                                                          NavDataFactoryWithStore::OffsetCvtMap &othOfsMap)
+    : fact(ndf), navMap(othNavMap), navNearMap(othNavNearMap), ofsMap(othOfsMap)
+{
+}
+
+bool NavDataFactoryStoreCallback ::process(const NavDataPtr &navOut)
+{
+    return fact->addNavData(navOut, navMap, navNearMap, ofsMap);
+}
+} // namespace gnsstk

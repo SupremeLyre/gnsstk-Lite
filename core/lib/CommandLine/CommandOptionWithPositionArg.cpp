@@ -41,44 +41,44 @@
  * Command line options with position (class Position) arguments
  */
 
-#include "StringUtils.hpp"
 #include "CommandOptionWithPositionArg.hpp"
+#include "StringUtils.hpp"
 
 using namespace std;
 
 namespace gnsstk
 {
-   string CommandOptionWithPositionArg :: checkArguments()
-   {
-      string errstr = CommandOptionWithAnyArg::checkArguments();
+string CommandOptionWithPositionArg ::checkArguments()
+{
+    string errstr = CommandOptionWithAnyArg::checkArguments();
 
-      if( errstr != string() )
-         return errstr;
+    if (errstr != string())
+        return errstr;
 
-      vector<string>::size_type vecIndex;
-      for( vecIndex = 0; vecIndex < value.size(); vecIndex++ )
-      {
-         string thisPosSpec = getPositionSpec( vecIndex );
-         if( thisPosSpec != string() )
-         {
+    vector<string>::size_type vecIndex;
+    for (vecIndex = 0; vecIndex < value.size(); vecIndex++)
+    {
+        string thisPosSpec = getPositionSpec(vecIndex);
+        if (thisPosSpec != string())
+        {
             try
             {
-               Position pos;
-               pos.setToString( value[vecIndex], thisPosSpec );
-               positions.push_back( pos );
+                Position pos;
+                pos.setToString(value[vecIndex], thisPosSpec);
+                positions.push_back(pos);
             }
             catch (...)
             {
-               errstr += "\"" + value[vecIndex] + "\" is not a valid position.";
+                errstr += "\"" + value[vecIndex] + "\" is not a valid position.";
             }
-         }
-         else
-         {
+        }
+        else
+        {
             errstr += "\"" + value[vecIndex] + "\" is not a valid position.";
-         }
-      }
+        }
+    }
 
-      return errstr;
-   } // end of checkArguments()
+    return errstr;
+} // end of checkArguments()
 
-}
+} // namespace gnsstk

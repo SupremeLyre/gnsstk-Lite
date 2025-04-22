@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -44,39 +43,41 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Defines the class that provide the ability to convert
-       * between GPS and a supported time system (UTC, GLONASS,
-       * Galileo), using data extracted from GPS civil navigation
-       * messages.
-       * @note This class is used to encapsulate the data from pages 1
-       *   and 2.  Page 1 is for UTC conversion and has additional
-       *   factors not present in page 2 (see the data fields).
-       *   Additionally, the parameter subscripts are different
-       *   between the two, e.g. A<sub>0-n</sub> in page 1 vs
-       *   A<sub>0-GGTO</sub> in page 2, however mathematically they
-       *   are identical terms and generic names are used in this
-       *   class to represent the data. */
-   class GPSCNav2TimeOffset : public StdNavTimeOffset
-   {
-   public:
-         /// Initialize all data to 0.
-      GPSCNav2TimeOffset();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GPSCNav2TimeOffset>(*this); }
+/** Defines the class that provide the ability to convert
+ * between GPS and a supported time system (UTC, GLONASS,
+ * Galileo), using data extracted from GPS civil navigation
+ * messages.
+ * @note This class is used to encapsulate the data from pages 1
+ *   and 2.  Page 1 is for UTC conversion and has additional
+ *   factors not present in page 2 (see the data fields).
+ *   Additionally, the parameter subscripts are different
+ *   between the two, e.g. A<sub>0-n</sub> in page 1 vs
+ *   A<sub>0-GGTO</sub> in page 2, however mathematically they
+ *   are identical terms and generic names are used in this
+ *   class to represent the data. */
+class GPSCNav2TimeOffset : public StdNavTimeOffset
+{
+  public:
+    /// Initialize all data to 0.
+    GPSCNav2TimeOffset();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GPSCNav2TimeOffset>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
-   };
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GPSCNAV2UTCTIMEOFFSET_HPP

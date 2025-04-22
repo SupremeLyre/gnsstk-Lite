@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,36 +42,36 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Class that defines nav message data information that is
-       * shared between BDS D2 Nav almanac and ephemeris messages. */
-   class BDSD2NavData : public OrbitDataBDS
-   {
-   public:
-         /// inclination offset, this + delta i = i0, defined in SIS-ICD.
-      static constexpr double refioffset = 0.3;
+/** Class that defines nav message data information that is
+ * shared between BDS D2 Nav almanac and ephemeris messages. */
+class BDSD2NavData : public OrbitDataBDS
+{
+  public:
+    /// inclination offset, this + delta i = i0, defined in SIS-ICD.
+    static constexpr double refioffset = 0.3;
 
-         /// Initialize data members.
-      BDSD2NavData();
+    /// Initialize data members.
+    BDSD2NavData();
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-      uint32_t pre;  ///< The preamble from word 1 of the subframe.
-      uint32_t rev;  ///< The rev field from word 1 of the subframe.
-      uint8_t fraID; ///< The subframe ID (FraID) from word 1 of the subframe.
-         /* In format D2, SOW refers to the leading edge of preamble
-          * first bit in subframe 1 of each frame. */
-      uint32_t sow;  ///< Seconds of week from word 1-2 of the subframe.
-   };
+    uint32_t pre;  ///< The preamble from word 1 of the subframe.
+    uint32_t rev;  ///< The rev field from word 1 of the subframe.
+    uint8_t fraID; ///< The subframe ID (FraID) from word 1 of the subframe.
+                   /* In format D2, SOW refers to the leading edge of preamble
+                    * first bit in subframe 1 of each frame. */
+    uint32_t sow;  ///< Seconds of week from word 1-2 of the subframe.
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_BDSD2NAVDATA_HPP

@@ -46,25 +46,25 @@
 
 namespace gnsstk
 {
-   void FFData::putRecord(FFStream& s) const
-   {
-      s.tryFFStreamPut(*this);
-   }
-
-   void FFData::getRecord(FFStream& s)
-   {
-      s.tryFFStreamGet(*this);
-   }
-
-   std::ostream& operator<<(FFStream& o, const FFData& f)
-   {
-      f.putRecord(o);
-      return o;
-   }
-
-   std::istream& operator>>(FFStream& i, FFData& f)
-   {
-      f.getRecord(i);
-      return i;
-   }
+void FFData::putRecord(FFStream &s) const
+{
+    s.tryFFStreamPut(*this);
 }
+
+void FFData::getRecord(FFStream &s)
+{
+    s.tryFFStreamGet(*this);
+}
+
+std::ostream &operator<<(FFStream &o, const FFData &f)
+{
+    f.putRecord(o);
+    return o;
+}
+
+std::istream &operator>>(FFStream &i, FFData &f)
+{
+    f.getRecord(i);
+    return i;
+}
+} // namespace gnsstk

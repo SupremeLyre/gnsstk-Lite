@@ -41,60 +41,53 @@
 
 namespace gnsstk
 {
-   bool BasicTimeSystemConverter ::
-   getOffset(TimeSystem fromSys, TimeSystem toSys,
-             const CommonTime& t, double& offs)
-   {
-      if (fromSys == toSys)
-      {
-            // nothing to do
-         offs = 0.;
-         return true;
-      }
-         // Make sure to do enum comparison first as that is much less
-         // expensive than time comparison.
-      if ((fromSys == fromSystem) && (toSys == toSystem) &&
-          (t >= fromTimeStamp) && (t <= toTimeStamp))
-      {
-         offs = toffs;
-         return true;
-      }
-      CivilTime civ(t);
-      try
-      {
-         offs = - getTimeSystemCorrection(fromSys, toSys, civ.year, civ.month,
-                                          civ.day);
-      }
-      catch (gnsstk::Exception& exc)
-      {
-         std::cerr << exc << std::endl;
-         return false;
-      }
-      return true;
-   }
+bool BasicTimeSystemConverter ::getOffset(TimeSystem fromSys, TimeSystem toSys, const CommonTime &t, double &offs)
+{
+    if (fromSys == toSys)
+    {
+        // nothing to do
+        offs = 0.;
+        return true;
+    }
+    // Make sure to do enum comparison first as that is much less
+    // expensive than time comparison.
+    if ((fromSys == fromSystem) && (toSys == toSystem) && (t >= fromTimeStamp) && (t <= toTimeStamp))
+    {
+        offs = toffs;
+        return true;
+    }
+    CivilTime civ(t);
+    try
+    {
+        offs = -getTimeSystemCorrection(fromSys, toSys, civ.year, civ.month, civ.day);
+    }
+    catch (gnsstk::Exception &exc)
+    {
+        std::cerr << exc << std::endl;
+        return false;
+    }
+    return true;
+}
 
-
-   bool BasicTimeSystemConverter ::
-   explore(TimeSystem fromSys, TimeSystem toSys,
-           const CommonTime& fromTime, const CommonTime& toTime)
-   {
-      double offs1, offs2;
-      if (getOffset(fromSys, toSys, fromTime, offs1) &&
-          getOffset(fromSys, toSys, toTime, offs2))
-      {
-         if (offs1 == offs2)
-         {
+bool BasicTimeSystemConverter ::explore(TimeSystem fromSys, TimeSystem toSys, const CommonTime &fromTime,
+                                        const CommonTime &toTime)
+{
+    double offs1, offs2;
+    if (getOffset(fromSys, toSys, fromTime, offs1) && getOffset(fromSys, toSys, toTime, offs2))
+    {
+        if (offs1 == offs2)
+        {
             fromSystem = fromSys;
             toSystem = toSys;
             fromTimeStamp = fromTime;
             toTimeStamp = toTime;
             toffs = offs1;
-         }
-         return true;
-      }
-      else
-      {
-         return false;
-      }
-   }
+        }
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
+} // namespace gnsstk

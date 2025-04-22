@@ -40,28 +40,25 @@
 
 namespace gnsstk
 {
-   CNavCookFilter ::
-   CNavCookFilter()
-   {
-   }
-
-
-   void CNavCookFilter ::
-   validate(NavMsgList& msgBitsIn, NavMsgList& msgBitsOut)
-   {
-      NavMsgList::iterator i;
-      for (i = msgBitsIn.begin(); i != msgBitsIn.end(); i++)
-      {
-         CNavFilterData *fd = dynamic_cast<CNavFilterData*>(*i);
-         cookSubframe(fd);
-         msgBitsOut.push_back(fd);
-      }
-   }
-
-   void CNavCookFilter ::
-   cookSubframe(CNavFilterData* fd)
-   {
-      unsigned word = fd->pnb->asUnsignedLong(0,8,1.0);
-      if (word!=0x8b) fd->pnb->invert();
-   }
+CNavCookFilter ::CNavCookFilter()
+{
 }
+
+void CNavCookFilter ::validate(NavMsgList &msgBitsIn, NavMsgList &msgBitsOut)
+{
+    NavMsgList::iterator i;
+    for (i = msgBitsIn.begin(); i != msgBitsIn.end(); i++)
+    {
+        CNavFilterData *fd = dynamic_cast<CNavFilterData *>(*i);
+        cookSubframe(fd);
+        msgBitsOut.push_back(fd);
+    }
+}
+
+void CNavCookFilter ::cookSubframe(CNavFilterData *fd)
+{
+    unsigned word = fd->pnb->asUnsignedLong(0, 8, 1.0);
+    if (word != 0x8b)
+        fd->pnb->invert();
+}
+} // namespace gnsstk

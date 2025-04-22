@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -46,84 +45,64 @@
 
 namespace gnsstk
 {
-   inline Xvt GLOCNavAlm::NumberCruncher ::
-   getXvt(const GLOCNavAlm& alm,
-          const gnsstk::CommonTime& toi)
-   {
-      setDeltatpr(alm.Toa, toi);
-      setW(alm.deltaT);
-      setTdr(alm.deltaT, alm.deltaTdot);
-      setn();
-      uncorrected.setData(alm, Tdr, n, Deltatpr);
-      setE0(alm.ecc);
-      setL1(alm.ecc);
-      setL(alm.deltaT, alm.deltaTdot);
-      setB();
-      k1.setData(B, L1, uncorrected);
-      k2.setData(B, L, uncorrected);
-      corrected.setData(L, uncorrected, k1, k2);
-      return corrected.getXvt(toi);
-   }
+inline Xvt GLOCNavAlm::NumberCruncher ::getXvt(const GLOCNavAlm &alm, const gnsstk::CommonTime &toi)
+{
+    setDeltatpr(alm.Toa, toi);
+    setW(alm.deltaT);
+    setTdr(alm.deltaT, alm.deltaTdot);
+    setn();
+    uncorrected.setData(alm, Tdr, n, Deltatpr);
+    setE0(alm.ecc);
+    setL1(alm.ecc);
+    setL(alm.deltaT, alm.deltaTdot);
+    setB();
+    k1.setData(B, L1, uncorrected);
+    k2.setData(B, L, uncorrected);
+    corrected.setData(L, uncorrected, k1, k2);
+    return corrected.getXvt(toi);
+}
 
+inline void GLOCNavAlm::NumberCruncher ::setDeltatpr(const gnsstk::CommonTime &almTime, const gnsstk::CommonTime &ti)
+{
+    Deltatpr = ti - almTime;
+}
 
-   inline void GLOCNavAlm::NumberCruncher ::
-   setDeltatpr(const gnsstk::CommonTime& almTime, const gnsstk::CommonTime& ti)
-   {
-      Deltatpr = ti - almTime;
-   }
+inline void GLOCNavAlm::NumberCruncher ::setW(double DeltaTA)
+{
+    W = Deltatpr / (Tav + DeltaTA);
+}
 
+inline void GLOCNavAlm::NumberCruncher ::setTdr(double DeltaTA, double DeltaTdotA)
+{
+    Tdr = Tav + DeltaTA + (2 * W + 1) * DeltaTdotA;
+}
 
-   inline void GLOCNavAlm::NumberCruncher ::
-   setW(double DeltaTA)
-   {
-      W = Deltatpr / (Tav + DeltaTA);
-   }
+inline void GLOCNavAlm::NumberCruncher ::setn()
+{
+    n = (2.0 * gnsstk::PI) / Tdr;
+}
 
+inline void GLOCNavAlm::NumberCruncher ::setE0(double epsilonA)
+{
+    double E0Term1 = (1.0 - epsilonA) / (1.0 + epsilonA);
+    double E0Term2 = sqrt(E0Term1) * tan(uncorrected.getomega() / 2.0);
+    E0 = -2.0 * atan(E0Term2);
+}
 
-   inline void GLOCNavAlm::NumberCruncher ::
-   setTdr(double DeltaTA, double DeltaTdotA)
-   {
-      Tdr = Tav + DeltaTA + (2*W + 1) * DeltaTdotA;
-   }
+inline void GLOCNavAlm::NumberCruncher ::setL1(double epsilonA)
+{
+    L1 = uncorrected.getomega() + E0 - (epsilonA * sin(E0));
+}
 
+inline void GLOCNavAlm::NumberCruncher ::setL(double DeltaTA, double DeltaTdotA)
+{
+    L = L1 + n * (Deltatpr - ((Tav + DeltaTA) * W) - (DeltaTdotA * W * W));
+}
 
-   inline void GLOCNavAlm::NumberCruncher ::
-   setn()
-   {
-      n = (2.0*gnsstk::PI)/Tdr;
-   }
-
-
-   inline void GLOCNavAlm::NumberCruncher ::
-   setE0(double epsilonA)
-   {
-      double E0Term1 = (1.0 - epsilonA) / (1.0 + epsilonA);
-      double E0Term2 = sqrt(E0Term1) * tan(uncorrected.getomega() / 2.0);
-      E0 = -2.0 * atan(E0Term2);
-   }
-
-
-   inline void GLOCNavAlm::NumberCruncher ::
-   setL1(double epsilonA)
-   {
-      L1 = uncorrected.getomega() + E0 - (epsilonA * sin(E0));
-   }
-
-
-   inline void GLOCNavAlm::NumberCruncher ::
-   setL(double DeltaTA, double DeltaTdotA)
-   {
-      L = L1 + n * (Deltatpr - ((Tav+DeltaTA)*W) - (DeltaTdotA*W*W));
-   }
-
-
-   inline void GLOCNavAlm::NumberCruncher ::
-   setB()
-   {
-      B = ((3.0 * J20 * ae * ae) /
-           (2.0 * uncorrected.geta() * uncorrected.geta()));
-   }
+inline void GLOCNavAlm::NumberCruncher ::setB()
+{
+    B = ((3.0 * J20 * ae * ae) / (2.0 * uncorrected.geta() * uncorrected.geta()));
+}
 } // namespace gnsstk
 
-#endif //GNSSTK_GLOCNAVALMNUMBERCRUNCHER_CPP
-
+#endif // GNSSTK_GLOCNAVALMNUMBERCRUNCHER_CPP

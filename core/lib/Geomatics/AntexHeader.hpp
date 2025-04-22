@@ -50,115 +50,125 @@
 
 namespace gnsstk
 {
-   /// @ingroup ANTEX
-   //@{
+/// @ingroup ANTEX
+//@{
 
-      /**
-      * This class models the header for an ANTEX antenna file
-      * @sa gnsstk::AntexData and gnsstk::AntexStream.
-      */
-   class AntexHeader : public AntexBase
-   {
-   public:
-      /// Default and only constructor.
-      AntexHeader() : valid(false), version(1.4) {}
-      /// Clear (empty out) header
-      inline void clear()
-      {
-         version = 1.4;
-         valid   = false;
-         commentList.clear();
-      }
+/**
+ * This class models the header for an ANTEX antenna file
+ * @sa gnsstk::AntexData and gnsstk::AntexStream.
+ */
+class AntexHeader : public AntexBase
+{
+  public:
+    /// Default and only constructor.
+    AntexHeader() : valid(false), version(1.4)
+    {
+    }
+    /// Clear (empty out) header
+    inline void clear()
+    {
+        version = 1.4;
+        valid = false;
+        commentList.clear();
+    }
 
-         /// @name AntexHeaderFormatStrings
-         /// ANTEX Header Formatting Strings
-         //@{
-      GNSSTK_EXPORT
-      static const std::string versionString;         ///< "ANTEX VERSION / SYST"
-      GNSSTK_EXPORT
-      static const std::string pcvTypeString;         ///< "PCV TYPE / REFANT"
-      GNSSTK_EXPORT
-      static const std::string headerCommentString;   ///< "COMMENT"
-      GNSSTK_EXPORT
-      static const std::string endOfHeaderString;     ///< "END OF HEADER"
-         //@}
+    /// @name AntexHeaderFormatStrings
+    /// ANTEX Header Formatting Strings
+    //@{
+    GNSSTK_EXPORT
+    static const std::string versionString; ///< "ANTEX VERSION / SYST"
+    GNSSTK_EXPORT
+    static const std::string pcvTypeString; ///< "PCV TYPE / REFANT"
+    GNSSTK_EXPORT
+    static const std::string headerCommentString; ///< "COMMENT"
+    GNSSTK_EXPORT
+    static const std::string endOfHeaderString; ///< "END OF HEADER"
+                                                //@}
 
-         /// Validity bits for the ANTEX Header
-         /// NB. if version is updated, add allValid<ver> and update isValid()
-      enum validBits
-      {
-         versionValid = 0x01,        ///< "ANTEX VERSION / SYST"
-         systemValid  = 0x02,        ///< "ANTEX VERSION / SYST"
-         pcvTypeValid = 0x04,        ///< "PCV TYPE / REFANT"
-         commentValid = 0x08,        ///< "COMMENT"
-         endValid     = 0x080000000, ///< "END OF HEADER"
-         allValid13   = 0x080000007  ///< mask for all required valid fields
-      };
+    /// Validity bits for the ANTEX Header
+    /// NB. if version is updated, add allValid<ver> and update isValid()
+    enum validBits
+    {
+        versionValid = 0x01,     ///< "ANTEX VERSION / SYST"
+        systemValid = 0x02,      ///< "ANTEX VERSION / SYST"
+        pcvTypeValid = 0x04,     ///< "PCV TYPE / REFANT"
+        commentValid = 0x08,     ///< "COMMENT"
+        endValid = 0x080000000,  ///< "END OF HEADER"
+        allValid13 = 0x080000007 ///< mask for all required valid fields
+    };
 
-      /// @name AntexHeaderValues
-      //@{
-      unsigned long valid;
-      double version;           ///< ANTEX VERSION & TYPE
-      char system;              ///< The ANTEX satellite system
-      char pcvType;             ///< The PCV type (A:absolute R:relative)
-      std::string refAntType;   ///< Reference antenna type
-      std::string refAntSerNum; ///< Reference antenna serial number
-      std::vector<std::string> commentList; ///< Comments in header (optional)
-                                            //@}
+    /// @name AntexHeaderValues
+    //@{
+    unsigned long valid;
+    double version;                       ///< ANTEX VERSION & TYPE
+    char system;                          ///< The ANTEX satellite system
+    char pcvType;                         ///< The PCV type (A:absolute R:relative)
+    std::string refAntType;               ///< Reference antenna type
+    std::string refAntSerNum;             ///< Reference antenna serial number
+    std::vector<std::string> commentList; ///< Comments in header (optional)
+                                          //@}
 
-      /// Destructor
-      virtual ~AntexHeader() {}
+    /// Destructor
+    virtual ~AntexHeader()
+    {
+    }
 
-      // our common interface
-      /// AntexHeader is a "header" so this function always returns true.
-      virtual bool isHeader() const { return true; }
+    // our common interface
+    /// AntexHeader is a "header" so this function always returns true.
+    virtual bool isHeader() const
+    {
+        return true;
+    }
 
-         /**
-          This is a simple output function.
-          It writes the version, name and antenna number of this ANTEX header.
-         */
-      virtual void dump(std::ostream& s) const;
+    /**
+     This is a simple output function.
+     It writes the version, name and antenna number of this ANTEX header.
+    */
+    virtual void dump(std::ostream &s) const;
 
-         /**
-          Parse a single header record, and modify valid accordingly.
-          Used by reallyGetRecord for AntexHeader
-          @throw FFStreamError
-         */
-      void ParseHeaderRecord(std::string& line);
+    /**
+     Parse a single header record, and modify valid accordingly.
+     Used by reallyGetRecord for AntexHeader
+     @throw FFStreamError
+    */
+    void ParseHeaderRecord(std::string &line);
 
-         /**
-          Write all valid header records to the given stream.
-          Used by reallyPutRecord for AntexHeader
-          @throw FFSTreamError
-          @throw StringUtils::StringException
-         */
-      void WriteHeaderRecords(FFStream& s) const;
+    /**
+     Write all valid header records to the given stream.
+     Used by reallyPutRecord for AntexHeader
+     @throw FFSTreamError
+     @throw StringUtils::StringException
+    */
+    void WriteHeaderRecords(FFStream &s) const;
 
-      /// Return boolean : is this a valid Rinex header?
-      bool isValid() const { return ((valid & allValid13) == allValid13); }
+    /// Return boolean : is this a valid Rinex header?
+    bool isValid() const
+    {
+        return ((valid & allValid13) == allValid13);
+    }
 
-   protected:
-         /** outputs this record to the stream correctly formatted.
-         * @throw std::exception
-         * @throw FFStreamError
-         * @throw StringUtils::StringException
-         */
-      virtual void reallyPutRecord(FFStream& s) const;
+  protected:
+    /** outputs this record to the stream correctly formatted.
+     * @throw std::exception
+     * @throw FFStreamError
+     * @throw StringUtils::StringException
+     */
+    virtual void reallyPutRecord(FFStream &s) const;
 
-         /**
-          This function retrieves the ANTEX Header from the given FFStream.
-          If an stream error is encountered, the stream is reset to its
-           original position and its fail-bit is set.
-          @throw std::exception
-          @throw StringException when a StringUtils function fails
-          @throw FFStreamError when exceptions(failbit) is set and
-           a read or formatting error occurs.  This also resets the
-           stream to its pre-read position.  */
-      virtual void reallyGetRecord(FFStream& s);
+    /**
+     This function retrieves the ANTEX Header from the given FFStream.
+     If an stream error is encountered, the stream is reset to its
+      original position and its fail-bit is set.
+     @throw std::exception
+     @throw StringException when a StringUtils function fails
+     @throw FFStreamError when exceptions(failbit) is set and
+      a read or formatting error occurs.  This also resets the
+      stream to its pre-read position.  */
+    virtual void reallyGetRecord(FFStream &s);
 
-   }; // end class AntexHeader
+}; // end class AntexHeader
 
-   //@}
+//@}
 
 } // namespace gnsstk
 

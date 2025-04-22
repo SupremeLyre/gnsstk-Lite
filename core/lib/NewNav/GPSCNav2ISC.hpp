@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,78 +42,79 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Class containing data elements unique to GPS CNAV2 ISC data.
-   class GPSCNav2ISC : public InterSigCorr
-   {
-   public:
-         /// Sets the internal data members.
-      GPSCNav2ISC();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GPSCNav2ISC>(*this); }
+/// Class containing data elements unique to GPS CNAV2 ISC data.
+class GPSCNav2ISC : public InterSigCorr
+{
+  public:
+    /// Sets the internal data members.
+    GPSCNav2ISC();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GPSCNav2ISC>(*this);
+    }
 
-         /** Print the actual corrections provided by this object in a
-          * human-readable format.  Typically called by dump().
-          * @param[in,out] s The stream to write the data to. */
-      void dumpCorrections(std::ostream& s) const override;
+    /** Print the actual corrections provided by this object in a
+     * human-readable format.  Typically called by dump().
+     * @param[in,out] s The stream to write the data to. */
+    void dumpCorrections(std::ostream &s) const override;
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-         /** Returns the time when the navigation message would have
-          * first been available to the user equipment, i.e. the time
-          * at which the final bit of a given broadcast navigation
-          * message is received.  This is used by
-          * NavDataFactoryWithStore::find() in User mode.
-          * @return transmit time of subframe 2 + 12s or transmit time
-          *   of subframe 3 + 5.48s, whichever is more recent.
-          */
-      CommonTime getUserTime() const override;
+    /** Returns the time when the navigation message would have
+     * first been available to the user equipment, i.e. the time
+     * at which the final bit of a given broadcast navigation
+     * message is received.  This is used by
+     * NavDataFactoryWithStore::find() in User mode.
+     * @return transmit time of subframe 2 + 12s or transmit time
+     *   of subframe 3 + 5.48s, whichever is more recent.
+     */
+    CommonTime getUserTime() const override;
 
-         /** Get inter-signal corrections for the single-frequency user.
-          * @param[in] oid The carrier band and tracking code of the
-          *   signal to get the correction for.
-          * @param[out] corr The correction in seconds for the given band/code.
-          * @return true If band/code are valid for this object and
-          *   corr was set according to available data. */
-      bool getISC(const ObsID& oid, double& corr) const override;
+    /** Get inter-signal corrections for the single-frequency user.
+     * @param[in] oid The carrier band and tracking code of the
+     *   signal to get the correction for.
+     * @param[out] corr The correction in seconds for the given band/code.
+     * @return true If band/code are valid for this object and
+     *   corr was set according to available data. */
+    bool getISC(const ObsID &oid, double &corr) const override;
 
-         /** Get inter-signal corrections for the dual-frequency user.
-          * @param[in] oid1 The carrier band/tracking code of the
-          *   primary signal that was used to create a dual-frequency,
-          *   iono-free combined pseudorange.
-          * @param[in] oid2 The carrier band/tracking code of the
-          *   secondary signal to get the correction for.
-          * @param[out] corr The correction in seconds for the given
-          *   band/code pair.
-          * @return true If bands/codes are valid for this object and
-          *   corr was set according to available data. */
-      bool getISC(const ObsID& oid1, const ObsID& oid2, double& corr)
-         const override;
+    /** Get inter-signal corrections for the dual-frequency user.
+     * @param[in] oid1 The carrier band/tracking code of the
+     *   primary signal that was used to create a dual-frequency,
+     *   iono-free combined pseudorange.
+     * @param[in] oid2 The carrier band/tracking code of the
+     *   secondary signal to get the correction for.
+     * @param[out] corr The correction in seconds for the given
+     *   band/code pair.
+     * @return true If bands/codes are valid for this object and
+     *   corr was set according to available data. */
+    bool getISC(const ObsID &oid1, const ObsID &oid2, double &corr) const override;
 
-         /** @todo deal with the fact that there are two subframes in
-          * this, i.e. implement a proper getUserTime() method */
+    /** @todo deal with the fact that there are two subframes in
+     * this, i.e. implement a proper getUserTime() method */
 
-      bool haveSF2;     ///< True if iscL1CP and iscL1CD are set.
-      bool haveSF3;     ///< True if iscL1CA,iscL2C,iscL5I5,iscL5Q5 are set.
-      CommonTime xmit2; ///< Transmit time of subframe 2.
-      CommonTime xmit3; ///< Transmit time of subframe 3.
-      double iscL1CP;   ///< Intersignal corrections for L1 CP.
-      double iscL1CD;   ///< Intersignal corrections for L1 CD.
-      double iscL1CA;   ///< Intersignal corrections for L1 C/A.
-      double iscL2C;    ///< Intersignal corrections for L2C.
-      double iscL5I5;   ///< Intersignal corrections for L5 in-phase.
-      double iscL5Q5;   ///< Intersignal corrections for L5 quadrature.
-   };
+    bool haveSF2;     ///< True if iscL1CP and iscL1CD are set.
+    bool haveSF3;     ///< True if iscL1CA,iscL2C,iscL5I5,iscL5Q5 are set.
+    CommonTime xmit2; ///< Transmit time of subframe 2.
+    CommonTime xmit3; ///< Transmit time of subframe 3.
+    double iscL1CP;   ///< Intersignal corrections for L1 CP.
+    double iscL1CD;   ///< Intersignal corrections for L1 CD.
+    double iscL1CA;   ///< Intersignal corrections for L1 C/A.
+    double iscL2C;    ///< Intersignal corrections for L2C.
+    double iscL5I5;   ///< Intersignal corrections for L5 in-phase.
+    double iscL5Q5;   ///< Intersignal corrections for L5 quadrature.
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GPSCNAV2ISC_HPP

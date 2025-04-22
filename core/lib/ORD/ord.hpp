@@ -51,15 +51,17 @@
 
 #include <vector>
 
-#include "IonoModelStore.hpp"
 #include "CommonTime.hpp"
-#include "SatID.hpp"
-#include "Position.hpp"
+#include "IonoModelStore.hpp"
 #include "NavLibrary.hpp"
+#include "Position.hpp"
+#include "SatID.hpp"
 #include "TropModel.hpp"
 
-namespace gnsstk {
-namespace ord {
+namespace gnsstk
+{
+namespace ord
+{
 
 /// Given a set of frequency and pseudorange pairs, attempts to compensate
 /// for ionospheric effects. Vectors are used because they carry a size
@@ -67,8 +69,7 @@ namespace ord {
 /// @param frequencies Signal frequencies.
 /// @param pseudoranges Pseudorange values for frequencies.
 /// @return Corrected pseudorange in meters
-double IonosphereFreeRange(const std::vector<double>& frequencies,
-        const std::vector<double>& pseudoranges);
+double IonosphereFreeRange(const std::vector<double> &frequencies, const std::vector<double> &pseudoranges);
 
 /// Given an ionosphere model, and locations of receiver and satellite,
 /// range correction due to ionospheric effects.
@@ -78,9 +79,8 @@ double IonosphereFreeRange(const std::vector<double>& frequencies,
 /// @param rxLoc The location of the receiver.
 /// @param svXvt The location of the satellite at time of interest.
 /// @return Range correction (delta) in meters
-double IonosphereModelCorrection(const gnsstk::IonoModelStore& ionoModel,
-        const gnsstk::CommonTime& time, CarrierBand band,
-        const gnsstk::Position& rxLoc, const gnsstk::Xvt& svXvt);
+double IonosphereModelCorrection(const gnsstk::IonoModelStore &ionoModel, const gnsstk::CommonTime &time,
+                                 CarrierBand band, const gnsstk::Position &rxLoc, const gnsstk::Xvt &svXvt);
 
 /// Given a satellite id, a time, and an ephemeris store, retrieves the
 /// satellite location/velocity in xvt instance. This is a relatively thin
@@ -90,8 +90,7 @@ double IonosphereModelCorrection(const gnsstk::IonoModelStore& ionoModel,
 /// @param time The time of interest.
 /// @param ephemeris The ephemeris to query against.
 /// @return Xvt instance containing satellite location/velocity
-gnsstk::Xvt getSvXvt(const gnsstk::SatID& sat_id, const gnsstk::CommonTime& time,
-        NavLibrary& ephemeris);
+gnsstk::Xvt getSvXvt(const gnsstk::SatID &sat_id, const gnsstk::CommonTime &time, NavLibrary &ephemeris);
 
 /// Calculate the raw range at RECEIVE time per RECEIVER clock.
 /// @deprecated This function is deprecated as of the December 2022 release
@@ -103,14 +102,14 @@ gnsstk::Xvt getSvXvt(const gnsstk::SatID& sat_id, const gnsstk::CommonTime& time
 /// @param ephemeris The ephemeris to query against.
 /// @param sv_xvt Final SV Position/Velocity returned here.
 /// @return Range in meters
-double RawRange1(const gnsstk::Position& rx_loc, const gnsstk::SatID& sat_id,
-        const gnsstk::CommonTime& time,
-        NavLibrary& ephemeris, gnsstk::Xvt& sv_xvt);
+double RawRange1(const gnsstk::Position &rx_loc, const gnsstk::SatID &sat_id, const gnsstk::CommonTime &time,
+                 NavLibrary &ephemeris, gnsstk::Xvt &sv_xvt);
 
 /// Calculate the raw range at TRANSMIT time per the RECEIVER clock.
 /// @deprecated This function is deprecated as of the December 2022 release
 ///   Use RawRange::fromNominalReceiveWithObs() instead
-/// @see CorrectedEphemerisRange::ComputeAtTransmitTime(const CommonTime&, const double&, const Position&, const SatID, NavLibrary&, NavSearchOrder, SVHealth, NavValidityType)
+/// @see CorrectedEphemerisRange::ComputeAtTransmitTime(const CommonTime&, const double&, const Position&, const SatID,
+/// NavLibrary&, NavSearchOrder, SVHealth, NavValidityType)
 /// @param pseudorange Pseudorange in meters to seed the calculation.
 /// @param rx_loc The location of the receiver.
 /// @param sat_id Identifier for the satellite
@@ -118,9 +117,8 @@ double RawRange1(const gnsstk::Position& rx_loc, const gnsstk::SatID& sat_id,
 /// @param ephemeris The ephemeris to query against.
 /// @param sv_xvt Final SV Position/Velocity returned here.
 /// @return Range in meters
-double RawRange2(double pseudorange, const gnsstk::Position& rx_loc,
-        const gnsstk::SatID& sat_id, const gnsstk::CommonTime& time,
-        NavLibrary& ephemeris, gnsstk::Xvt& sv_xvt);
+double RawRange2(double pseudorange, const gnsstk::Position &rx_loc, const gnsstk::SatID &sat_id,
+                 const gnsstk::CommonTime &time, NavLibrary &ephemeris, gnsstk::Xvt &sv_xvt);
 
 /// Calculate the raw range at TRANSMIT time per the SATELLITE clock
 /// @deprecated This function is deprecated as of the December 2022 release
@@ -133,36 +131,35 @@ double RawRange2(double pseudorange, const gnsstk::Position& rx_loc,
 /// @param ephemeris The ephemeris to query against.
 /// @param sv_xvt Final SV Position/Velocity returned here.
 /// @return Range in meters
-double RawRange3(double pseudorange, const gnsstk::Position& rx_loc,
-        const gnsstk::SatID& sat_id, const gnsstk::CommonTime& time,
-        NavLibrary& ephemeris, gnsstk::Xvt& sv_xvt);
+double RawRange3(double pseudorange, const gnsstk::Position &rx_loc, const gnsstk::SatID &sat_id,
+                 const gnsstk::CommonTime &time, NavLibrary &ephemeris, gnsstk::Xvt &sv_xvt);
 
 /// Calculate the raw range at TRANSMIT time per RECEIVER clock, without
 /// seeding the pseudorange.
 /// @deprecated This function is deprecated as of the December 2022 release
 ///   Use RawRange::fromNominalReceive() instead
-/// @see CorrectedEphemerisRange::ComputeAtTransmitTime(const CommonTime& trNom, const Position&, const SatID, NavLibrary&, NavSearchOrder, SVHealth, NavValidityType)
+/// @see CorrectedEphemerisRange::ComputeAtTransmitTime(const CommonTime& trNom, const Position&, const SatID,
+/// NavLibrary&, NavSearchOrder, SVHealth, NavValidityType)
 /// @param rx_loc The location of the receiver.
 /// @param sat_id Identifier for the satellite
 /// @param time The nominal receive time.
 /// @param ephemeris The ephemeris to query against.
 /// @param sv_xvt Final SV Position/Velocity returned here.
 /// @return Range in meters
-double RawRange4(const gnsstk::Position& rx_loc, const gnsstk::SatID& sat_id,
-        const gnsstk::CommonTime& time,
-        NavLibrary& ephemeris, gnsstk::Xvt& sv_xvt);
+double RawRange4(const gnsstk::Position &rx_loc, const gnsstk::SatID &sat_id, const gnsstk::CommonTime &time,
+                 NavLibrary &ephemeris, gnsstk::Xvt &sv_xvt);
 
 /// Calculate the range delta due to clock bias.
 /// Note: Most of the work is actually done by the Xvt object.
 /// @param svXvt Satellite location/velocity
 /// @returns Range correction (delta) in meters
-double SvClockBiasCorrection(const gnsstk::Xvt& svXvt);
+double SvClockBiasCorrection(const gnsstk::Xvt &svXvt);
 
 // Calculate the range delta due to relativistic effects
 // Note: Most of the work is actually done by the Xvt object.
 /// @param svXvt Satellite location/velocity
 /// @returns Range correction (delta) in meters
-double SvRelativityCorrection(gnsstk::Xvt& svXvt);
+double SvRelativityCorrection(gnsstk::Xvt &svXvt);
 
 /// Given a troposphere model, and locations of receiver and satellite,
 /// calculates tropospheric effects.
@@ -170,8 +167,8 @@ double SvRelativityCorrection(gnsstk::Xvt& svXvt);
 /// @param rx_loc The location of the receiver.
 /// @param sv_xvt The location of the satellite at time of interest.
 /// @return Range correction (delta) in meters
-double TroposphereCorrection(const gnsstk::TropModel& trop_model,
-        const gnsstk::Position& rx_loc, const gnsstk::Xvt& sv_xvt);
+double TroposphereCorrection(const gnsstk::TropModel &trop_model, const gnsstk::Position &rx_loc,
+                             const gnsstk::Xvt &sv_xvt);
 
 /// Example method that applies _all_ corrections to generate an Observed Range Deviation.
 /// This is intended to be a sample showing how the above methods will be used.
@@ -204,7 +201,7 @@ double calculate_ord(const std::vector<CarrierBand>& bands,
         int range_method);
  */
 
-}  // namespace ord
-}  // namespace gnsstk
+} // namespace ord
+} // namespace gnsstk
 
-#endif  // CORE_LIB_ORD_ORD_HPP_
+#endif // CORE_LIB_ORD_ORD_HPP_

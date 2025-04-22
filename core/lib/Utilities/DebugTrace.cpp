@@ -36,40 +36,36 @@
 //
 //==============================================================================
 
+#include "DebugTrace.hpp"
 #include <iostream>
 #include <sstream>
-#include "DebugTrace.hpp"
 
 namespace gnsstk
 {
-   std::atomic<unsigned> DebugTrace::indent(0);
-   std::atomic<bool> DebugTrace::enabled(false);
+std::atomic<unsigned> DebugTrace::indent(0);
+std::atomic<bool> DebugTrace::enabled(false);
 
-
-   DebugTrace :: DebugTrace(const std::string funcName)
-         : functionName(funcName)
-   {
-      std::ostringstream os;
-      os << "+ " << functionName << std::endl;
-      trace(os.str());
-      indent += 3;
-   }
-
-
-   DebugTrace :: ~DebugTrace()
-   {
-      indent -= 3;
-      std::ostringstream os;
-      os << "- " << functionName << std::endl;
-      trace(os.str());
-   }
-
-
-   void DebugTrace :: trace(const std::string& s)
-   {
-      if (enabled)
-      {
-         std::cerr << std::string(indent, ' ') << s;
-      }
-   }
+DebugTrace ::DebugTrace(const std::string funcName) : functionName(funcName)
+{
+    std::ostringstream os;
+    os << "+ " << functionName << std::endl;
+    trace(os.str());
+    indent += 3;
 }
+
+DebugTrace ::~DebugTrace()
+{
+    indent -= 3;
+    std::ostringstream os;
+    os << "- " << functionName << std::endl;
+    trace(os.str());
+}
+
+void DebugTrace ::trace(const std::string &s)
+{
+    if (enabled)
+    {
+        std::cerr << std::string(indent, ' ') << s;
+    }
+}
+} // namespace gnsstk

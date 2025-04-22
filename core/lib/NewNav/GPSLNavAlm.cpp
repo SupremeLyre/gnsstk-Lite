@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,50 +42,38 @@ using namespace std;
 
 namespace gnsstk
 {
-   GPSLNavAlm ::
-   GPSLNavAlm()
-         : healthBits(0xff),
-           deltai(0.0),
-           toa(0.0)
-   {
-      signal.messageType = NavMessageType::Almanac;
-      msgLenSec = 6.0;
-   }
-
-
-   bool GPSLNavAlm ::
-   validate() const
-   {
-      return GPSLNavData::validate();
-   }
-
-
-   void GPSLNavAlm ::
-   fixFit()
-   {
-         // Set the fit times to toa-70h through toa+74 hours.  This
-         // is an estimate based on IS-GPS-200 Table 20-XIII.
-      beginFit = Toe - (70.0 * 3600.0);
-      endFit   = Toe + (74.0 * 3600.0);
-   }
-
-
-   void GPSLNavAlm ::
-   dumpSVStatus(std::ostream& s) const
-   {
-      const ios::fmtflags oldFlags = s.flags();
-      s.setf(ios::scientific, ios::floatfield);
-      s << "           PAGE OVERHEAD" << endl
-        << endl
-        << "                SOW    DOW:HH:MM:SS" << endl
-        << printTime(xmitTime,"Transmit   : %6.0g  %3a-%1w:%02H:%02M:%02S")
-        << endl
-        << endl
-        << "           SV STATUS" << endl
-        << endl
-        << "Health              : " << setw(9)
-        << static_cast<unsigned>(healthBits)
-        << " (" << gnsstk::StringUtils::asString(health) << ")" << endl;
-      s.flags(oldFlags);
-   }
+GPSLNavAlm ::GPSLNavAlm() : healthBits(0xff), deltai(0.0), toa(0.0)
+{
+    signal.messageType = NavMessageType::Almanac;
+    msgLenSec = 6.0;
 }
+
+bool GPSLNavAlm ::validate() const
+{
+    return GPSLNavData::validate();
+}
+
+void GPSLNavAlm ::fixFit()
+{
+    // Set the fit times to toa-70h through toa+74 hours.  This
+    // is an estimate based on IS-GPS-200 Table 20-XIII.
+    beginFit = Toe - (70.0 * 3600.0);
+    endFit = Toe + (74.0 * 3600.0);
+}
+
+void GPSLNavAlm ::dumpSVStatus(std::ostream &s) const
+{
+    const ios::fmtflags oldFlags = s.flags();
+    s.setf(ios::scientific, ios::floatfield);
+    s << "           PAGE OVERHEAD" << endl
+      << endl
+      << "                SOW    DOW:HH:MM:SS" << endl
+      << printTime(xmitTime, "Transmit   : %6.0g  %3a-%1w:%02H:%02M:%02S") << endl
+      << endl
+      << "           SV STATUS" << endl
+      << endl
+      << "Health              : " << setw(9) << static_cast<unsigned>(healthBits) << " ("
+      << gnsstk::StringUtils::asString(health) << ")" << endl;
+    s.flags(oldFlags);
+}
+} // namespace gnsstk

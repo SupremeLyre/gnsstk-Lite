@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -40,38 +39,44 @@
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(CorrectorType e) noexcept
-      {
-         switch (e)
-         {
-            case CorrectorType::Unknown:    return "Unknown";
-            case CorrectorType::Trop:       return "Trop";
-            case CorrectorType::Iono:       return "Iono";
-            case CorrectorType::ISC:        return "ISC";
-            case CorrectorType::Multipath:  return "Multipath";
-            case CorrectorType::RxChlBias:  return "RxChlBias";
-            default:                        return "???";
-         } // switch (e)
-      } // asString(CorrectorType)
+namespace StringUtils
+{
+std::string asString(CorrectorType e) noexcept
+{
+    switch (e)
+    {
+    case CorrectorType::Unknown:
+        return "Unknown";
+    case CorrectorType::Trop:
+        return "Trop";
+    case CorrectorType::Iono:
+        return "Iono";
+    case CorrectorType::ISC:
+        return "ISC";
+    case CorrectorType::Multipath:
+        return "Multipath";
+    case CorrectorType::RxChlBias:
+        return "RxChlBias";
+    default:
+        return "???";
+    } // switch (e)
+} // asString(CorrectorType)
 
-
-      CorrectorType asCorrectorType(const std::string& s) noexcept
-      {
-         if (s == "Unknown")
-            return CorrectorType::Unknown;
-         if (s == "Trop")
-            return CorrectorType::Trop;
-         if (s == "Iono")
-            return CorrectorType::Iono;
-         if (s == "ISC")
-            return CorrectorType::ISC;
-         if (s == "Multipath")
-            return CorrectorType::Multipath;
-         if (s == "RxChlBias")
-            return CorrectorType::RxChlBias;
-         return CorrectorType::Unknown;
-      } // asCorrectorType(string)
-   } // namespace StringUtils
+CorrectorType asCorrectorType(const std::string &s) noexcept
+{
+    if (s == "Unknown")
+        return CorrectorType::Unknown;
+    if (s == "Trop")
+        return CorrectorType::Trop;
+    if (s == "Iono")
+        return CorrectorType::Iono;
+    if (s == "ISC")
+        return CorrectorType::ISC;
+    if (s == "Multipath")
+        return CorrectorType::Multipath;
+    if (s == "RxChlBias")
+        return CorrectorType::RxChlBias;
+    return CorrectorType::Unknown;
+} // asCorrectorType(string)
+} // namespace StringUtils
 } // namespace gnsstk

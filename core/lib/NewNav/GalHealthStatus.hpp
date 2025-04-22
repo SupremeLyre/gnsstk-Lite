@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,39 +38,39 @@
 #ifndef GNSSTK_GALHEALTHSTATUS_HPP
 #define GNSSTK_GALHEALTHSTATUS_HPP
 
-#include <string>
 #include "EnumIterator.hpp"
+#include <string>
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Identify different types of SV health states.
-   enum class GalHealthStatus
-   {
-      Unknown = -1,     ///< Health is not known or is uninitialized.
-      OK = 0,           ///< Signal OK.
-      OutOfService = 1, ///< Signal out of service.
-      WillBeOOS = 2,    ///< Signal will be out of service.
-      InTest = 3,       ///< Signal Component currently in Test
-      Last              ///< Used to create an iterator.
-   };
+/// Identify different types of SV health states.
+enum class GalHealthStatus
+{
+    Unknown = -1,     ///< Health is not known or is uninitialized.
+    OK = 0,           ///< Signal OK.
+    OutOfService = 1, ///< Signal out of service.
+    WillBeOOS = 2,    ///< Signal will be out of service.
+    InTest = 3,       ///< Signal Component currently in Test
+    Last              ///< Used to create an iterator.
+};
 
-      /** Define an iterator so C++11 can do things like
-       * for (GalHealthStatus i : GalHealthStatusIterator()) */
-   typedef EnumIterator<GalHealthStatus, GalHealthStatus::Unknown, GalHealthStatus::Last> GalHealthStatusIterator;
+/** Define an iterator so C++11 can do things like
+ * for (GalHealthStatus i : GalHealthStatusIterator()) */
+typedef EnumIterator<GalHealthStatus, GalHealthStatus::Unknown, GalHealthStatus::Last> GalHealthStatusIterator;
 
-   namespace StringUtils
-   {
-         /// Convert a GalHealthStatus to a whitespace-free string name.
-      std::string asString(GalHealthStatus e) noexcept;
-         /// Convert a string name to an GalHealthStatus
-      GalHealthStatus asGalHealthStatus(const std::string& s) noexcept;
-   }
+namespace StringUtils
+{
+/// Convert a GalHealthStatus to a whitespace-free string name.
+std::string asString(GalHealthStatus e) noexcept;
+/// Convert a string name to an GalHealthStatus
+GalHealthStatus asGalHealthStatus(const std::string &s) noexcept;
+} // namespace StringUtils
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GALHEALTHSTATUS_HPP

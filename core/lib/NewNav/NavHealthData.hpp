@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -44,44 +43,47 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Abstract base class for classes that provide satellite
-       * health information. */
-   class NavHealthData : public NavData
-   {
-   public:
-         /// Set our message type to health so we don't have to in every leaf.
-      NavHealthData()
-      { signal.messageType = NavMessageType::Health; }
+/** Abstract base class for classes that provide satellite
+ * health information. */
+class NavHealthData : public NavData
+{
+  public:
+    /// Set our message type to health so we don't have to in every leaf.
+    NavHealthData()
+    {
+        signal.messageType = NavMessageType::Health;
+    }
 
-         /** Returns the time for the data to be used when searching
-          * in "Nearest" mode. */
-      CommonTime getNearTime() const override
-      { return timeStamp; }
+    /** Returns the time for the data to be used when searching
+     * in "Nearest" mode. */
+    CommonTime getNearTime() const override
+    {
+        return timeStamp;
+    }
 
-         /** Defines the status of NavData::signal, specifically sat
-          * (not xmitSat). */
-      virtual SVHealth getHealth() const = 0;
+    /** Defines the status of NavData::signal, specifically sat
+     * (not xmitSat). */
+    virtual SVHealth getHealth() const = 0;
 
-         /// @copydoc NavData::isSameData
-      bool isSameData(const NavDataPtr& right) const override
-      {
-         Exception exc("Unimplemented function");
-         GNSSTK_THROW(exc);
-      }
-         /// @copydoc NavData::compare
-      std::list<std::string> compare(const NavDataPtr& right)
-         const override
-      {
-         Exception exc("Unimplemented function");
-         GNSSTK_THROW(exc);
-      }
-   };
+    /// @copydoc NavData::isSameData
+    bool isSameData(const NavDataPtr &right) const override
+    {
+        Exception exc("Unimplemented function");
+        GNSSTK_THROW(exc);
+    }
+    /// @copydoc NavData::compare
+    std::list<std::string> compare(const NavDataPtr &right) const override
+    {
+        Exception exc("Unimplemented function");
+        GNSSTK_THROW(exc);
+    }
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_NAVHEALTHDATA_HPP

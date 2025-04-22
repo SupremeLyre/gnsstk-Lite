@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -40,32 +39,36 @@
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(NavValidityType e) noexcept
-      {
-         switch (e)
-         {
-            case NavValidityType::Unknown:     return "Unknown";
-            case NavValidityType::ValidOnly:   return "ValidOnly";
-            case NavValidityType::InvalidOnly: return "InvalidOnly";
-            case NavValidityType::Any:         return "Any";
-            default:                           return "???";
-         } // switch (e)
-      } // asString(NavValidityType)
+namespace StringUtils
+{
+std::string asString(NavValidityType e) noexcept
+{
+    switch (e)
+    {
+    case NavValidityType::Unknown:
+        return "Unknown";
+    case NavValidityType::ValidOnly:
+        return "ValidOnly";
+    case NavValidityType::InvalidOnly:
+        return "InvalidOnly";
+    case NavValidityType::Any:
+        return "Any";
+    default:
+        return "???";
+    } // switch (e)
+} // asString(NavValidityType)
 
-
-      NavValidityType asNavValidityType(const std::string& s) noexcept
-      {
-         if (s == "Unknown")
-            return NavValidityType::Unknown;
-         if (s == "ValidOnly")
-            return NavValidityType::ValidOnly;
-         if (s == "InvalidOnly")
-            return NavValidityType::InvalidOnly;
-         if (s == "Any")
-            return NavValidityType::Any;
-         return NavValidityType::Unknown;
-      } // asNavValidityType(string)
-   } // namespace StringUtils
+NavValidityType asNavValidityType(const std::string &s) noexcept
+{
+    if (s == "Unknown")
+        return NavValidityType::Unknown;
+    if (s == "ValidOnly")
+        return NavValidityType::ValidOnly;
+    if (s == "InvalidOnly")
+        return NavValidityType::InvalidOnly;
+    if (s == "Any")
+        return NavValidityType::Any;
+    return NavValidityType::Unknown;
+} // asNavValidityType(string)
+} // namespace StringUtils
 } // namespace gnsstk

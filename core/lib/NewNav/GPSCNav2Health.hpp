@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,51 +42,57 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Wrapper for the 1-bit health status in GPS CNav2 subframe 2 or 3.
-   class GPSCNav2Health : public NavHealthData
-   {
-   public:
-         /// Initialize to unhealthy.
-      GPSCNav2Health();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GPSCNav2Health>(*this); }
+/// Wrapper for the 1-bit health status in GPS CNav2 subframe 2 or 3.
+class GPSCNav2Health : public NavHealthData
+{
+  public:
+    /// Initialize to unhealthy.
+    GPSCNav2Health();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GPSCNav2Health>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true always as there is nothing to check in this class.
-          */
-      bool validate() const override
-      { return true; }
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true always as there is nothing to check in this class.
+     */
+    bool validate() const override
+    {
+        return true;
+    }
 
-         /** Print the contents of this object in a human-readable
-          * format.
-          * @param[in,out] s The stream to write the data to.
-          * @param[in] dl The level of detail the output should contain. */
-      void dump(std::ostream& s, DumpDetail dl) const override;
+    /** Print the contents of this object in a human-readable
+     * format.
+     * @param[in,out] s The stream to write the data to.
+     * @param[in] dl The level of detail the output should contain. */
+    void dump(std::ostream &s, DumpDetail dl) const override;
 
-         /** Defines the status of NavData::signal, specifically sat
-          * (not xmitSat).
-          * @return Healthy if no health bits are set. */
-      SVHealth getHealth() const override
-      { return (health ? SVHealth::Unhealthy : SVHealth::Healthy); }
+    /** Defines the status of NavData::signal, specifically sat
+     * (not xmitSat).
+     * @return Healthy if no health bits are set. */
+    SVHealth getHealth() const override
+    {
+        return (health ? SVHealth::Unhealthy : SVHealth::Healthy);
+    }
 
-         /** Alter the message length depending on whether this health
-          * data as having originated from an ephemeris or almanac
-          * message.
-          * @param[in] e If true, this health was derived from ephemeris data.
-          */
-      void setEph(bool e);
+    /** Alter the message length depending on whether this health
+     * data as having originated from an ephemeris or almanac
+     * message.
+     * @param[in] e If true, this health was derived from ephemeris data.
+     */
+    void setEph(bool e);
 
-         /// 1-bit health.
-      bool health;
-   };
+    /// 1-bit health.
+    bool health;
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GPSCNAV2HEALTH_HPP

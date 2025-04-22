@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -42,136 +41,115 @@
 
 namespace gnsstk
 {
-   const std::string NavData :: dumpTimeFmt("%3a-%w   %3j   %5.0s   %02m/%02d/%04Y   %02H:%02M:%02S");
-   const std::string NavData :: dumpTimeFmtBrief("%4Y/%02m/%02d %03j %02H:%02M:%02S");
-   gnsstk::SatMetaDataStore *NavData::satMetaDataStore = nullptr;
+const std::string NavData ::dumpTimeFmt("%3a-%w   %3j   %5.0s   %02m/%02d/%04Y   %02H:%02M:%02S");
+const std::string NavData ::dumpTimeFmtBrief("%4Y/%02m/%02d %03j %02H:%02M:%02S");
+gnsstk::SatMetaDataStore *NavData::satMetaDataStore = nullptr;
 
-   NavData ::
-   NavData()
-         : msgLenSec(0),
-           weekFmt("%4F(%4G)")
-   {
-   }
-
-
-   bool NavData ::
-   isSameData(const NavDataPtr& right) const
-   {
-      return ((timeStamp == right->timeStamp) &&
-              (signal == right->signal));
-   }
-
-
-   std::list<std::string> NavData ::
-   compare(const NavDataPtr& right) const
-   {
-      std::list<std::string> rv;
-         // old nav implementation clearly didn't check this
-         // if (timeStamp != right->timeStamp)
-         //    rv.push_back("timeStamp");
-      if (signal != right->signal)
-         rv.push_back("signal");
-      return rv;
-   }
-
-
-   void NavData ::
-   dump(std::ostream& s, DumpDetail dl) const
-   {
-      s << getDumpTime(dl,timeStamp) << " " << signal << std::endl;
-   }
-
-
-   std::string NavData ::
-   getSignalString() const
-   {
-      using namespace std;
-      ostringstream s;
-      s << "PRN : " << setw(2) << signal.sat;;
-      string svn;
-      if (getSVN(signal.sat, timeStamp, svn))
-      {
-         s << " / " << "SVN : " << setw(2) << svn;
-      }
-      if (signal.messageType == NavMessageType::Almanac)
-      {
-            // for almanacs, print the transmitting satellite as well.
-         s << endl
-           << "XMIT: " << setw(2) << signal.xmitSat;
-         if (getSVN(signal.xmitSat, timeStamp, svn))
-         {
-            s << " / " << "SVN : " << setw(2) << svn;
-         }
-      }
-      s << endl;
-         // All the obs data is derived from the transmitting
-         // satellite so it makes sense to list it underneath the XMIT
-         // tag.
-      if (!signal.obs.freqOffsWild)
-      {
-         s << "FREQ: " << signal.obs.freqOffs << endl;
-      }
-      s << "CODE: " << gnsstk::StringUtils::asString(signal.nav)
-        << " " << gnsstk::StringUtils::asString(signal.obs.band)
-        << " " << gnsstk::StringUtils::asString(signal.obs.code) << endl;
-      if (signal.obs.xmitAnt != gnsstk::XmitAnt::Any)
-      {
-         s << "ANT : " << gnsstk::StringUtils::asString(signal.obs.xmitAnt)
-           << endl;
-      }
-      return s.str();
-   }
-
-
-   std::string NavData ::
-   getDumpTimeHdr(DumpDetail dl) const
-   {
-      std::string hdr;
-      switch (dl)
-      {
-         case DumpDetail::Full:
-            if (!weekFmt.empty())
-            {
-               hdr = "Week(10bt)     SOW   ";
-            }
-            hdr += "  DOW   UTD     SOD   MM/DD/YYYY   HH:MM:SS";
-            break;
-      }
-      return hdr;
-   }
-
-
-   std::string NavData ::
-   getDumpTime(DumpDetail dl, const CommonTime& t) const
-   {
-      std::string fmt;
-      switch (dl)
-      {
-         case DumpDetail::OneLine:
-         case DumpDetail::Brief:
-            fmt = dumpTimeFmtBrief;
-            break;
-         case DumpDetail::Full:
-            if (weekFmt.empty())
-            {
-               fmt = dumpTimeFmt;
-            }
-            else
-            {
-               fmt = weekFmt + "  %6.0g   " + dumpTimeFmt;
-            }
-            break;
-      }
-      if (fmt.empty())
-         return fmt;
-      return printTime(t, fmt);
-   }
-
-
-   std::string NavData ::
-   getClassName() const
-   {
-      return demangle(typeid(*this).name());
-   }
+NavData ::NavData() : msgLenSec(0), weekFmt("%4F(%4G)")
+{
 }
 
+bool NavData ::isSameData(const NavDataPtr &right) const
+{
+    return ((timeStamp == right->timeStamp) && (signal == right->signal));
+}
+
+std::list<std::string> NavData ::compare(const NavDataPtr &right) const
+{
+    std::list<std::string> rv;
+    // old nav implementation clearly didn't check this
+    // if (timeStamp != right->timeStamp)
+    //    rv.push_back("timeStamp");
+    if (signal != right->signal)
+        rv.push_back("signal");
+    return rv;
+}
+
+void NavData ::dump(std::ostream &s, DumpDetail dl) const
+{
+    s << getDumpTime(dl, timeStamp) << " " << signal << std::endl;
+}
+
+std::string NavData ::getSignalString() const
+{
+    using namespace std;
+    ostringstream s;
+    s << "PRN : " << setw(2) << signal.sat;
+    ;
+    string svn;
+    if (getSVN(signal.sat, timeStamp, svn))
+    {
+        s << " / " << "SVN : " << setw(2) << svn;
+    }
+    if (signal.messageType == NavMessageType::Almanac)
+    {
+        // for almanacs, print the transmitting satellite as well.
+        s << endl << "XMIT: " << setw(2) << signal.xmitSat;
+        if (getSVN(signal.xmitSat, timeStamp, svn))
+        {
+            s << " / " << "SVN : " << setw(2) << svn;
+        }
+    }
+    s << endl;
+    // All the obs data is derived from the transmitting
+    // satellite so it makes sense to list it underneath the XMIT
+    // tag.
+    if (!signal.obs.freqOffsWild)
+    {
+        s << "FREQ: " << signal.obs.freqOffs << endl;
+    }
+    s << "CODE: " << gnsstk::StringUtils::asString(signal.nav) << " " << gnsstk::StringUtils::asString(signal.obs.band)
+      << " " << gnsstk::StringUtils::asString(signal.obs.code) << endl;
+    if (signal.obs.xmitAnt != gnsstk::XmitAnt::Any)
+    {
+        s << "ANT : " << gnsstk::StringUtils::asString(signal.obs.xmitAnt) << endl;
+    }
+    return s.str();
+}
+
+std::string NavData ::getDumpTimeHdr(DumpDetail dl) const
+{
+    std::string hdr;
+    switch (dl)
+    {
+    case DumpDetail::Full:
+        if (!weekFmt.empty())
+        {
+            hdr = "Week(10bt)     SOW   ";
+        }
+        hdr += "  DOW   UTD     SOD   MM/DD/YYYY   HH:MM:SS";
+        break;
+    }
+    return hdr;
+}
+
+std::string NavData ::getDumpTime(DumpDetail dl, const CommonTime &t) const
+{
+    std::string fmt;
+    switch (dl)
+    {
+    case DumpDetail::OneLine:
+    case DumpDetail::Brief:
+        fmt = dumpTimeFmtBrief;
+        break;
+    case DumpDetail::Full:
+        if (weekFmt.empty())
+        {
+            fmt = dumpTimeFmt;
+        }
+        else
+        {
+            fmt = weekFmt + "  %6.0g   " + dumpTimeFmt;
+        }
+        break;
+    }
+    if (fmt.empty())
+        return fmt;
+    return printTime(t, fmt);
+}
+
+std::string NavData ::getClassName() const
+{
+    return demangle(typeid(*this).name());
+}
+} // namespace gnsstk

@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -42,19 +41,19 @@ using namespace std;
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(GLOFNavSatType e)
-      {
-         switch (e)
-         {
-            case GLOFNavSatType::GLONASS:
-               return "GLONASS SV";
-            case GLOFNavSatType::GLONASS_M:
-               return "GLONASS-M SV";
-            default:
-               return "??????";
-         }
-      } // asString(GLOFNavData::SatType e)
-   } // namespace StringUtils
+namespace StringUtils
+{
+std::string asString(GLOFNavSatType e)
+{
+    switch (e)
+    {
+    case GLOFNavSatType::GLONASS:
+        return "GLONASS SV";
+    case GLOFNavSatType::GLONASS_M:
+        return "GLONASS-M SV";
+    default:
+        return "??????";
+    }
+} // asString(GLOFNavData::SatType e)
+} // namespace StringUtils
 } // namespace gnsstk

@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,41 +42,43 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Class containing data elements unique to GPS CNav ionospheric data.
-   class GPSCNavIono : public KlobucharIonoNavData
-   {
-   public:
-         /// Sets the nav message type.
-      GPSCNavIono();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GPSCNavIono>(*this); }
+/// Class containing data elements unique to GPS CNav ionospheric data.
+class GPSCNavIono : public KlobucharIonoNavData
+{
+  public:
+    /// Sets the nav message type.
+    GPSCNavIono();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GPSCNavIono>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-         /** Returns the time when the navigation message would have
-          * first been available to the user equipment, i.e. the time
-          * at which the final bit of a given broadcast navigation
-          * message is received.  This is used by
-          * NavDataFactoryWithStore::find() in User mode.
-          * @return transmit time + 12s or 6s, depending on whether
-          *   this is CNAV on L5 or on L2.
-          */
-      CommonTime getUserTime() const override;
+    /** Returns the time when the navigation message would have
+     * first been available to the user equipment, i.e. the time
+     * at which the final bit of a given broadcast navigation
+     * message is received.  This is used by
+     * NavDataFactoryWithStore::find() in User mode.
+     * @return transmit time + 12s or 6s, depending on whether
+     *   this is CNAV on L5 or on L2.
+     */
+    CommonTime getUserTime() const override;
 
-      uint32_t pre; ///< The preamble from the start of the subframe.
-      bool alert;   ///< Alert flag
-   };
+    uint32_t pre; ///< The preamble from the start of the subframe.
+    bool alert;   ///< Alert flag
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GPSCNAVIONO_HPP

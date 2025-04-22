@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,39 +38,39 @@
 #ifndef GNSSTK_DUMPDETAIL_HPP
 #define GNSSTK_DUMPDETAIL_HPP
 
-#include <string>
 #include "EnumIterator.hpp"
+#include <string>
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Specify level of detail for dump output.
-   enum class DumpDetail
-   {
-      Unknown, ///< Uninitialized or unknown value.
-      OneLine, ///< Limit output to minimal information on a single line.
-      Brief,   ///< Limit output to <= 5 lines of minimal information.
-      Terse,   ///< Aptly named, multiple lines of output with no labels.
-      Full,    ///< Include all detailed information.
-      Last     ///< Used to create an iterator.
-   };
+/// Specify level of detail for dump output.
+enum class DumpDetail
+{
+    Unknown, ///< Uninitialized or unknown value.
+    OneLine, ///< Limit output to minimal information on a single line.
+    Brief,   ///< Limit output to <= 5 lines of minimal information.
+    Terse,   ///< Aptly named, multiple lines of output with no labels.
+    Full,    ///< Include all detailed information.
+    Last     ///< Used to create an iterator.
+};
 
-      /** Define an iterator so C++11 can do things like
-       * for (DumpDetail i : DumpDetailIterator()) */
-   typedef EnumIterator<DumpDetail, DumpDetail::Unknown, DumpDetail::Last> DumpDetailIterator;
+/** Define an iterator so C++11 can do things like
+ * for (DumpDetail i : DumpDetailIterator()) */
+typedef EnumIterator<DumpDetail, DumpDetail::Unknown, DumpDetail::Last> DumpDetailIterator;
 
-   namespace StringUtils
-   {
-         /// Convert a DumpDetail to a whitespace-free string name.
-      std::string asString(DumpDetail e) noexcept;
-         /// Convert a string name to an DumpDetail
-      DumpDetail asDumpDetail(const std::string& s) noexcept;
-   }
+namespace StringUtils
+{
+/// Convert a DumpDetail to a whitespace-free string name.
+std::string asString(DumpDetail e) noexcept;
+/// Convert a string name to an DumpDetail
+DumpDetail asDumpDetail(const std::string &s) noexcept;
+} // namespace StringUtils
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_DUMPDETAIL_HPP

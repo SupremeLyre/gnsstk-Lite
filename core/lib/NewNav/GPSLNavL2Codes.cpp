@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -42,19 +41,23 @@ using namespace std;
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(GPSLNavL2Codes e)
-      {
-         switch (e)
-         {
-            case GPSLNavL2Codes::Invalid1: return "Invalid1";
-            case GPSLNavL2Codes::Pcode:    return "P only";
-            case GPSLNavL2Codes::CAcode:   return "C/A only";
-            case GPSLNavL2Codes::Invalid2: return "Invalid2";
-            default:                       return "Unknown";
-         }
-      } // asString(GPSLNavL2Codes e)
-   } // namespace StringUtils
+namespace StringUtils
+{
+std::string asString(GPSLNavL2Codes e)
+{
+    switch (e)
+    {
+    case GPSLNavL2Codes::Invalid1:
+        return "Invalid1";
+    case GPSLNavL2Codes::Pcode:
+        return "P only";
+    case GPSLNavL2Codes::CAcode:
+        return "C/A only";
+    case GPSLNavL2Codes::Invalid2:
+        return "Invalid2";
+    default:
+        return "Unknown";
+    }
+} // asString(GPSLNavL2Codes e)
+} // namespace StringUtils
 } // namespace gnsstk
-

@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,40 +42,42 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Class containing data elements unique to GPS CNav reduced almanac.
-   class GPSCNavRedAlm : public GPSCNavAlm
-   {
-   public:
-         /// Set data to default values.
-      GPSCNavRedAlm();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GPSCNavRedAlm>(*this); }
+/// Class containing data elements unique to GPS CNav reduced almanac.
+class GPSCNavRedAlm : public GPSCNavAlm
+{
+  public:
+    /// Set data to default values.
+    GPSCNavRedAlm();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GPSCNavRedAlm>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @todo implement some checking.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @todo implement some checking.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-         /** Sets the fixed values (e.g. delta i) according to the
-          * satellite system.  GPS has different reference values for
-          * the reduced almanac from QZSS.  This method should be
-          * called to fill out the remaining values in the reduced
-          * almanac after loading the bits from the packet and setting
-          * the signal. */
-      void fixValues();
+    /** Sets the fixed values (e.g. delta i) according to the
+     * satellite system.  GPS has different reference values for
+     * the reduced almanac from QZSS.  This method should be
+     * called to fill out the remaining values in the reduced
+     * almanac after loading the bits from the packet and setting
+     * the signal. */
+    void fixValues();
 
-      double deltaA;      ///< Semi-major axis relative to reference value.
-      double phi0;        ///< Argument of latitude at reference time (M0+w).
-   };
+    double deltaA; ///< Semi-major axis relative to reference value.
+    double phi0;   ///< Argument of latitude at reference time (M0+w).
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GPSCNAVREDALM_HPP

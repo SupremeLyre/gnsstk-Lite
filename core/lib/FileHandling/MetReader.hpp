@@ -46,31 +46,31 @@
 
 namespace gnsstk
 {
-      /** Class for reading weather (meteorological) data from a RINEX
-       * MET file and storing it internally for look-up. */
-   class MetReader
-   {
-   public:
-         /// Initialize internal data structures.
-      MetReader();
+/** Class for reading weather (meteorological) data from a RINEX
+ * MET file and storing it internally for look-up. */
+class MetReader
+{
+  public:
+    /// Initialize internal data structures.
+    MetReader();
 
-         /** Initialize and load a RINEX MET file.
-          * @param[in] fn The path to the RINEX MET file.
-          * @throw FileMissingException if unable to open fn. */
-      MetReader(const std::string& fn);
+    /** Initialize and load a RINEX MET file.
+     * @param[in] fn The path to the RINEX MET file.
+     * @throw FileMissingException if unable to open fn. */
+    MetReader(const std::string &fn);
 
-         /** Load the data from a RINEX MET file.
-          * @param[in] fn The path to the RINEX MET file.
-          * @post wx contains the valid weather data loaded from fn. 
-          * @return false if the file can't be opened. */
-      bool read(const std::string& fn);
+    /** Load the data from a RINEX MET file.
+     * @param[in] fn The path to the RINEX MET file.
+     * @post wx contains the valid weather data loaded from fn.
+     * @return false if the file can't be opened. */
+    bool read(const std::string &fn);
 
-         /** This doesn't actually do anything, but it's here for
-          * backwards compatibility. */
-      unsigned verboseLevel;
+    /** This doesn't actually do anything, but it's here for
+     * backwards compatibility. */
+    unsigned verboseLevel;
 
-         /// The storage for all weather data read.
-      gnsstk::WxObsData wx;
-   };
-}
+    /// The storage for all weather data read.
+    gnsstk::WxObsData wx;
+};
+} // namespace gnsstk
 #endif

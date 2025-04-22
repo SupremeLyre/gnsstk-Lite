@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,54 +38,58 @@
 #ifndef GNSSTK_GALFNAVHEALTH_HPP
 #define GNSSTK_GALFNAVHEALTH_HPP
 
-#include "NavHealthData.hpp"
-#include "GalHealthStatus.hpp"
 #include "GalDataValid.hpp"
+#include "GalHealthStatus.hpp"
+#include "NavHealthData.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Wrapper for the combined Signal Health Status (SHS) and Data
-       * Validity Status (DVS) associated with Galileo satellites. */
-   class GalFNavHealth : public NavHealthData
-   {
-   public:
-         /// Initialize to unhealthy using a value typically not seen in health.
-      GalFNavHealth();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GalFNavHealth>(*this); }
+/** Wrapper for the combined Signal Health Status (SHS) and Data
+ * Validity Status (DVS) associated with Galileo satellites. */
+class GalFNavHealth : public NavHealthData
+{
+  public:
+    /// Initialize to unhealthy using a value typically not seen in health.
+    GalFNavHealth();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GalFNavHealth>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true always as there is nothing to check in this class.
-          */
-      bool validate() const override
-      { return true; }
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true always as there is nothing to check in this class.
+     */
+    bool validate() const override
+    {
+        return true;
+    }
 
-         /** Print the contents of this object in a human-readable
-          * format.
-          * @param[in,out] s The stream to write the data to.
-          * @param[in] dl The level of detail the output should contain. */
-      void dump(std::ostream& s, DumpDetail dl) const override;
+    /** Print the contents of this object in a human-readable
+     * format.
+     * @param[in,out] s The stream to write the data to.
+     * @param[in] dl The level of detail the output should contain. */
+    void dump(std::ostream &s, DumpDetail dl) const override;
 
-         /** Defines the status of NavData::signal, specifically sat
-          * (not xmitSat).
-          * @return Rolled-up health status based on internal data. */
-      SVHealth getHealth() const override;
+    /** Defines the status of NavData::signal, specifically sat
+     * (not xmitSat).
+     * @return Rolled-up health status based on internal data. */
+    SVHealth getHealth() const override;
 
-         /// Signal health status (SHS)
-      GalHealthStatus sigHealthStatus;
-         /// Data Validity Status (DVS)
-      GalDataValid dataValidityStatus;
-         /// Signal in space accuracy index (OS-SIS-ICD tbl 76)
-      uint8_t sisaIndex;
-   };
+    /// Signal health status (SHS)
+    GalHealthStatus sigHealthStatus;
+    /// Data Validity Status (DVS)
+    GalDataValid dataValidityStatus;
+    /// Signal in space accuracy index (OS-SIS-ICD tbl 76)
+    uint8_t sisaIndex;
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GALFNAVHEALTH_HPP

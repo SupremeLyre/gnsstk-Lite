@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,51 +38,53 @@
 #ifndef GNSSTK_GLOFNAVHEALTH_HPP
 #define GNSSTK_GLOFNAVHEALTH_HPP
 
-#include "ValidType.hpp"
 #include "NavHealthData.hpp"
+#include "ValidType.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Wrapper for the health status data scattered throughout the
-       * GLONASS Civil F NAV data. */
-   class GLOFNavHealth : public NavHealthData
-   {
-   public:
-         /// Initialize to unhealthy using a value typically not seen in health.
-      GLOFNavHealth();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GLOFNavHealth>(*this); }
+/** Wrapper for the health status data scattered throughout the
+ * GLONASS Civil F NAV data. */
+class GLOFNavHealth : public NavHealthData
+{
+  public:
+    /// Initialize to unhealthy using a value typically not seen in health.
+    GLOFNavHealth();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GLOFNavHealth>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true if any of the data are usable.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true if any of the data are usable.
+     */
+    bool validate() const override;
 
-         /** Print the contents of this object in a human-readable
-          * format.
-          * @param[in,out] s The stream to write the data to.
-          * @param[in] dl The level of detail the output should contain. */
-      void dump(std::ostream& s, DumpDetail dl) const override;
+    /** Print the contents of this object in a human-readable
+     * format.
+     * @param[in,out] s The stream to write the data to.
+     * @param[in] dl The level of detail the output should contain. */
+    void dump(std::ostream &s, DumpDetail dl) const override;
 
-         /** Defines the status of NavData::signal, specifically sat
-          * (not xmitSat).
-          * @return Healthy if no health bits are set. */
-      SVHealth getHealth() const override;
+    /** Defines the status of NavData::signal, specifically sat
+     * (not xmitSat).
+     * @return Healthy if no health bits are set. */
+    SVHealth getHealth() const override;
 
-         // We use ValidType to account for the fact that the health
-         // data can be a variety of combinations.
-      ValidType<uint8_t> healthBits; ///< The 3-bit B_n value.
-      ValidType<bool> ln; ///< The l_n health bit in strings 3,5,7,9,11,13,15.
-      ValidType<bool> Cn; ///< The C_n health bit in strings 6,8,10,12,14.
-   };
+    // We use ValidType to account for the fact that the health
+    // data can be a variety of combinations.
+    ValidType<uint8_t> healthBits; ///< The 3-bit B_n value.
+    ValidType<bool> ln;            ///< The l_n health bit in strings 3,5,7,9,11,13,15.
+    ValidType<bool> Cn;            ///< The C_n health bit in strings 6,8,10,12,14.
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GLOFNAVHEALTH_HPP

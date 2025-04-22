@@ -49,170 +49,175 @@
 
 namespace gnsstk
 {
-   //---------------------------------------------------------------------------------
-   // TD NB pffrac is never used.
-   // NB WindowFilter does not find outliers
-   //---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
+// TD NB pffrac is never used.
+// NB WindowFilter does not find outliers
+//---------------------------------------------------------------------------------
 
-      /**
-       class FilterHit is used in stats to hold the filter results.
-       The 'results' object used by the filters to indicate presence of 'events'
-       : outlier(s), a slip or the beginning-of-data (BOD). Each filter's
-       analyze() function returns a std::vector of one or more these objects;
-       always with at least one element: the first is usually a BOD, but if
-       there are outliers at the start, it can be type outlier.
-       Calling the filter's getStats(FilterHit) will return statistics on the
-       filter quantities (not the data) in the segment that _begins_ at the
-       event.
-      */
-   template <class T> class FilterHit
-   {
-   public:
-         /// enum used to indicate the kind of event in this result
-      typedef enum EventType
-      {
-         BOD = 0, ///< beginning of data
-         outlier, ///< outlier(s) - npts is the number of outliers
-         slip,    ///< slip (discontinuity)
-         other    ///< never used?
-      } event;
+/**
+ class FilterHit is used in stats to hold the filter results.
+ The 'results' object used by the filters to indicate presence of 'events'
+ : outlier(s), a slip or the beginning-of-data (BOD). Each filter's
+ analyze() function returns a std::vector of one or more these objects;
+ always with at least one element: the first is usually a BOD, but if
+ there are outliers at the start, it can be type outlier.
+ Calling the filter's getStats(FilterHit) will return statistics on the
+ filter quantities (not the data) in the segment that _begins_ at the
+ event.
+*/
+template <class T> class FilterHit
+{
+  public:
+    /// enum used to indicate the kind of event in this result
+    typedef enum EventType
+    {
+        BOD = 0, ///< beginning of data
+        outlier, ///< outlier(s) - npts is the number of outliers
+        slip,    ///< slip (discontinuity)
+        other    ///< never used?
+    } event;
 
-         /// empty and only constructor
-      FilterHit()
-         : index(-1), type(BOD), npts(0), ngood(0), score(0), step(T(0)),
-           sigma(T(0)), dx(T(0)), haveStats(false)
-      {
-      }
+    /// empty and only constructor
+    FilterHit() : index(-1), type(BOD), npts(0), ngood(0), score(0), step(T(0)), sigma(T(0)), dx(T(0)), haveStats(false)
+    {
+    }
 
-      // member data
-      event type;           ///< type of event: BOD, outlier(s), slip, other
+    // member data
+    event type; ///< type of event: BOD, outlier(s), slip, other
 
-      unsigned int
-         index;             ///< index in the data array(s) at which this event occurs
-      unsigned int
-         npts;              ///< number data points in segment (= a delta index)
-      unsigned int ngood;   ///< number of good (flag==0) points in this segment
-      unsigned int
-         score;             ///< weight of slip (=100)
+    unsigned int index; ///< index in the data array(s) at which this event occurs
+    unsigned int npts;  ///< number data points in segment (= a delta index)
+    unsigned int ngood; ///< number of good (flag==0) points in this segment
+    unsigned int score; ///< weight of slip (=100)
 
-      T step;               ///< for a slip, an estimate of the step in the data
-      T sigma;              ///< for a slip, RSS future and past sigma on the data
-      T dx;                 ///< step in xdata: before SLIP or after OUT
+    T step;  ///< for a slip, an estimate of the step in the data
+    T sigma; ///< for a slip, RSS future and past sigma on the data
+    T dx;    ///< step in xdata: before SLIP or after OUT
 
-      bool haveStats;       ///< set true when getStats() is called
-      // see getStats() - meanings depend on filter
-      T min, max, med, mad; ///< robust stats on the filter quantities (not data)
+    bool haveStats; ///< set true when getStats() is called
+    // see getStats() - meanings depend on filter
+    T min, max, med, mad; ///< robust stats on the filter quantities (not data)
 
-      std::string msg;      ///< message from analysis
+    std::string msg; ///< message from analysis
 
-         /// return true if this is BOD
-      bool isBOD() { return (type == BOD); }
+    /// return true if this is BOD
+    bool isBOD()
+    {
+        return (type == BOD);
+    }
 
-         /// return true if this is outlier
-      bool isOutlier() { return (type == outlier); }
+    /// return true if this is outlier
+    bool isOutlier()
+    {
+        return (type == outlier);
+    }
 
-         /// return true if this is slip
-      bool isSlip() { return (type == slip); }
+    /// return true if this is slip
+    bool isSlip()
+    {
+        return (type == slip);
+    }
 
-         /// return the analysis message
-      std::string analMsg() const { return msg; }
+    /// return the analysis message
+    std::string analMsg() const
+    {
+        return msg;
+    }
 
-         /// return as a single string with just type, index and npts
-      std::string asString(const int osp = 3) const
-      {
-         std::stringstream oss;
-         switch (type)
-         {
-            case BOD:
-               oss << "BOD";
-               break;
-            case outlier:
-               oss << "OUT";
-               break;
-            case slip:
-               oss << "SLIP";
-               break;
-            default:
-            case other:
-               oss << "other";
-               break;
-         }
-         oss << std::fixed << std::setprecision(osp);
+    /// return as a single string with just type, index and npts
+    std::string asString(const int osp = 3) const
+    {
+        std::stringstream oss;
+        switch (type)
+        {
+        case BOD:
+            oss << "BOD";
+            break;
+        case outlier:
+            oss << "OUT";
+            break;
+        case slip:
+            oss << "SLIP";
+            break;
+        default:
+        case other:
+            oss << "other";
+            break;
+        }
+        oss << std::fixed << std::setprecision(osp);
 
-         // ind npts step dx sig score - be sure this order matches
-         // asStringRead()
-         oss << " " << index << " " << npts << " " << dx;
-         if (type == slip)
-         {
+        // ind npts step dx sig score - be sure this order matches
+        // asStringRead()
+        oss << " " << index << " " << npts << " " << dx;
+        if (type == slip)
+        {
             oss << " " << step << " " << sigma << " " << score;
-         }
-         else
-         {
+        }
+        else
+        {
             oss << " ?"
                 << " ?"
                 << " ?";
-         }
+        }
 
-         return oss.str();
-      }
+        return oss.str();
+    }
 
-         /**
-          return as a single human-readable string giving all the relevant info
-          @param osp precision for fixed format
-         */
-      std::string asStringRead(const int osp = 3) const
-      {
-         std::stringstream oss;
-         switch (type)
-         {
-            case BOD:
-               oss << "BOD";
-               break;
-            case outlier:
-               oss << "OUT";
-               break;
-            case slip:
-               oss << "SLIP";
-               break;
-            default:
-            case other:
-               oss << "other";
-               break;
-         }
-         oss << " ind=" << index << " npts=" << npts << " ngood=" << ngood
-             << std::fixed << std::setprecision(osp) << " x_gap=" << dx;
-         if (type == slip)
-         {
-            oss << " step=" << step << " sig=" << sigma << " score=" << score
-                << (score < 100 ? " SMALL" : "");
-         }
+    /**
+     return as a single human-readable string giving all the relevant info
+     @param osp precision for fixed format
+    */
+    std::string asStringRead(const int osp = 3) const
+    {
+        std::stringstream oss;
+        switch (type)
+        {
+        case BOD:
+            oss << "BOD";
+            break;
+        case outlier:
+            oss << "OUT";
+            break;
+        case slip:
+            oss << "SLIP";
+            break;
+        default:
+        case other:
+            oss << "other";
+            break;
+        }
+        oss << " ind=" << index << " npts=" << npts << " ngood=" << ngood << std::fixed << std::setprecision(osp)
+            << " x_gap=" << dx;
+        if (type == slip)
+        {
+            oss << " step=" << step << " sig=" << sigma << " score=" << score << (score < 100 ? " SMALL" : "");
+        }
 
-         return oss.str();
-      }
+        return oss.str();
+    }
 
-         /**
-          return as a longer single string containing asString() plus stats
-          @param osp precision for fixed format
-         */
-      std::string asStatsString(const int osp = 3) const
-      {
-         std::stringstream oss;
-         oss << asString(osp) << std::fixed << std::setprecision(osp);
-         if (!haveStats)
-         {
+    /**
+     return as a longer single string containing asString() plus stats
+     @param osp precision for fixed format
+    */
+    std::string asStatsString(const int osp = 3) const
+    {
+        std::stringstream oss;
+        oss << asString(osp) << std::fixed << std::setprecision(osp);
+        if (!haveStats)
+        {
             oss << "; NoSt";
-         }
-         else
-         {
-            oss << " min=" << min << " max=" << max << " med=" << med
-                << " mad=" << mad;
-         }
-         return oss.str();
-      }
+        }
+        else
+        {
+            oss << " min=" << min << " max=" << max << " med=" << med << " mad=" << mad;
+        }
+        return oss.str();
+    }
 
-   }; // end class FilterHit
+}; // end class FilterHit
 
-   //---------------------------------------------------------------------------------
-   //---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 } // namespace gnsstk
 #endif // #define STATISTICAL_FILTER_HIT_INCLUDE

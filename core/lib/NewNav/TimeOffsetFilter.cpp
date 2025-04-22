@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -41,34 +40,38 @@
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(TimeOffsetFilter e) noexcept
-      {
-         switch (e)
-         {
-            case TimeOffsetFilter::Unknown:  return "Unknown";
-            case TimeOffsetFilter::NoFilt:   return "NoFilt";
-            case TimeOffsetFilter::BySV:     return "BySV";
-            case TimeOffsetFilter::BySignal: return "BySignal";
-            default:                         return "???";
-         } // switch (e)
-      } // asString(TimeOffsetFilter)
+namespace StringUtils
+{
+std::string asString(TimeOffsetFilter e) noexcept
+{
+    switch (e)
+    {
+    case TimeOffsetFilter::Unknown:
+        return "Unknown";
+    case TimeOffsetFilter::NoFilt:
+        return "NoFilt";
+    case TimeOffsetFilter::BySV:
+        return "BySV";
+    case TimeOffsetFilter::BySignal:
+        return "BySignal";
+    default:
+        return "???";
+    } // switch (e)
+} // asString(TimeOffsetFilter)
 
-
-      TimeOffsetFilter asTimeOffsetFilter(const std::string& s) noexcept
-      {
-         std::string copy(s);
-         gnsstk::StringUtils::lowerCase(copy);
-         if (copy == "unknown")
-            return TimeOffsetFilter::Unknown;
-         if (copy == "nofilt")
-            return TimeOffsetFilter::NoFilt;
-         if (copy == "bysv")
-            return TimeOffsetFilter::BySV;
-         if (copy == "bysignal")
-            return TimeOffsetFilter::BySignal;
-         return TimeOffsetFilter::Unknown;
-      } // asTimeOffsetFilter(string)
-   } // namespace StringUtils
+TimeOffsetFilter asTimeOffsetFilter(const std::string &s) noexcept
+{
+    std::string copy(s);
+    gnsstk::StringUtils::lowerCase(copy);
+    if (copy == "unknown")
+        return TimeOffsetFilter::Unknown;
+    if (copy == "nofilt")
+        return TimeOffsetFilter::NoFilt;
+    if (copy == "bysv")
+        return TimeOffsetFilter::BySV;
+    if (copy == "bysignal")
+        return TimeOffsetFilter::BySignal;
+    return TimeOffsetFilter::Unknown;
+} // asTimeOffsetFilter(string)
+} // namespace StringUtils
 } // namespace gnsstk

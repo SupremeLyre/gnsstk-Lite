@@ -36,7 +36,6 @@
 //
 //==============================================================================
 
-
 #ifndef GNSSTK_BCISCCORRECTOR_HPP
 #define GNSSTK_BCISCCORRECTOR_HPP
 
@@ -45,37 +44,35 @@
 
 namespace gnsstk
 {
-      /// @ingroup GNSSsolutions
-      //@{
+/// @ingroup GNSSsolutions
+//@{
 
-      /** Compute group path correction due to inter-signal bias on
-       * the satellite, using information available from the broadcast
-       * navigation message.
-       *
-       * @attention The #navLib variable must be set to a valid
-       * object for the getCorr() methods to return successfully. */
-   class BCISCorrector : public GroupPathCorrector
-   {
-   public:
-         /** Set the #corrType to ISC for GroupPathCorr.
-          * @param[in] nl The NavLibrary to use to obtain ISC data. */
-      BCISCorrector(NavLibrary& nl);
-         /// @copydoc GroupPathCorrector::getCorr(const Position&, const Position&, const SatID&, const ObsID&, const CommonTime&, NavType, double&)
-      bool getCorr(const Position& rxPos, const Position& svPos,
-                   const SatID& sat, const ObsID& obs,
-                   const CommonTime& when, NavType nav,
-                   double& corrOut) override;
-         /// @copydoc GroupPathCorrector::getCorr(const Position&, const Position&, const SatID&, const ObsID&, const CommonTime&, NavType, double&)
-      bool getCorr(const Position& rxPos, const Xvt& svPos,
-                   const SatID& sat, const ObsID& obs,
-                   const CommonTime& when, NavType nav,
-                   double& corrOut) override;
+/** Compute group path correction due to inter-signal bias on
+ * the satellite, using information available from the broadcast
+ * navigation message.
+ *
+ * @attention The #navLib variable must be set to a valid
+ * object for the getCorr() methods to return successfully. */
+class BCISCorrector : public GroupPathCorrector
+{
+  public:
+    /** Set the #corrType to ISC for GroupPathCorr.
+     * @param[in] nl The NavLibrary to use to obtain ISC data. */
+    BCISCorrector(NavLibrary &nl);
+    /// @copydoc GroupPathCorrector::getCorr(const Position&, const Position&, const SatID&, const ObsID&, const
+    /// CommonTime&, NavType, double&)
+    bool getCorr(const Position &rxPos, const Position &svPos, const SatID &sat, const ObsID &obs,
+                 const CommonTime &when, NavType nav, double &corrOut) override;
+    /// @copydoc GroupPathCorrector::getCorr(const Position&, const Position&, const SatID&, const ObsID&, const
+    /// CommonTime&, NavType, double&)
+    bool getCorr(const Position &rxPos, const Xvt &svPos, const SatID &sat, const ObsID &obs, const CommonTime &when,
+                 NavType nav, double &corrOut) override;
 
-         /// Reference to the nav library from which we will get ISC data.
-      NavLibrary& navLib;
-   }; // class BCISCorrector
+    /// Reference to the nav library from which we will get ISC data.
+    NavLibrary &navLib;
+}; // class BCISCorrector
 
-      //@}
+//@}
 
 } // namespace gnsstk
 

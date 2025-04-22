@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,91 +42,72 @@ using namespace std;
 
 namespace gnsstk
 {
-   const double GalFNavAlm::refA = 29600000;
-   const double GalFNavAlm::refioffset = (56.0 * PI / 180.0);
+const double GalFNavAlm::refA = 29600000;
+const double GalFNavAlm::refioffset = (56.0 * PI / 180.0);
 
-   GalFNavAlm ::
-   GalFNavAlm()
-         : dAhalf(0.0),
-           deltai(0.0),
-           wna(0),
-           t0a(0.0),
-           ioda5(0),
-           ioda6(0),
-           hsE5a(GalHealthStatus::Unknown)
-   {
-      signal.messageType = NavMessageType::Almanac;
-      weekFmt = "%4L(%4l)";
-         // Galileo F/NAV nominal page transmit time is 10 seconds per
-         // OS-SIS-ICD figure 14.
-      msgLenSec = 10.0;
-      frame = RefFrameSys::ITRF;
-   }
-
-
-   bool GalFNavAlm ::
-   validate() const
-   {
-      return true;
-   }
-
-
-   CommonTime GalFNavAlm ::
-   getUserTime() const
-   {
-      return std::max(xmitTime, xmit2) + msgLenSec;
-   }
-
-
-   void GalFNavAlm ::
-   fixFit()
-   {
-         /// @todo set the fit interval correctly
-         // Set the fit times to transmit time through toa+74 hours.
-      beginFit = xmitTime;
-      endFit   = Toe + (74.0 * 3600.0);
-   }
-
-
-   void GalFNavAlm ::
-   fixHealth()
-   {
-      switch (hsE5a)
-      {
-         case GalHealthStatus::OK:
-            health = SVHealth::Healthy;
-            break;
-         case GalHealthStatus::OutOfService:
-         case GalHealthStatus::InTest:
-            health = SVHealth::Unhealthy;
-            break;
-         case GalHealthStatus::WillBeOOS:
-            health = SVHealth::Degraded;
-            break;
-         default:
-            health = SVHealth::Unknown;
-            break;
-      }
-   }
-
-
-   void GalFNavAlm ::
-   dumpSVStatus(std::ostream& s) const
-   {
-      const ios::fmtflags oldFlags = s.flags();
-      s.setf(ios::scientific, ios::floatfield);
-      s << "           PAGE OVERHEAD" << endl
-        << endl
-        << "                SOW    DOW:HH:MM:SS         IODa" << endl
-        << printTime(xmitTime,"Part 1 TOW : %6.0g  %3a-%1w:%02H:%02M:%02S")
-        << setw(13) << (unsigned)ioda5 << endl
-        << printTime(xmit2,"Part 2 TOW : %6.0g  %3a-%1w:%02H:%02M:%02S")
-        << setw(13) << (unsigned)ioda6 << endl
-        << endl
-        << "           SV STATUS" << endl
-        << endl
-        << "E5a_HS              : " << setw(9) << static_cast<int>(hsE5a)
-        << " (" << gnsstk::StringUtils::asString(hsE5a) << ")" << endl;
-      s.flags(oldFlags);
-   }
+GalFNavAlm ::GalFNavAlm()
+    : dAhalf(0.0), deltai(0.0), wna(0), t0a(0.0), ioda5(0), ioda6(0), hsE5a(GalHealthStatus::Unknown)
+{
+    signal.messageType = NavMessageType::Almanac;
+    weekFmt = "%4L(%4l)";
+    // Galileo F/NAV nominal page transmit time is 10 seconds per
+    // OS-SIS-ICD figure 14.
+    msgLenSec = 10.0;
+    frame = RefFrameSys::ITRF;
 }
+
+bool GalFNavAlm ::validate() const
+{
+    return true;
+}
+
+CommonTime GalFNavAlm ::getUserTime() const
+{
+    return std::max(xmitTime, xmit2) + msgLenSec;
+}
+
+void GalFNavAlm ::fixFit()
+{
+    /// @todo set the fit interval correctly
+    // Set the fit times to transmit time through toa+74 hours.
+    beginFit = xmitTime;
+    endFit = Toe + (74.0 * 3600.0);
+}
+
+void GalFNavAlm ::fixHealth()
+{
+    switch (hsE5a)
+    {
+    case GalHealthStatus::OK:
+        health = SVHealth::Healthy;
+        break;
+    case GalHealthStatus::OutOfService:
+    case GalHealthStatus::InTest:
+        health = SVHealth::Unhealthy;
+        break;
+    case GalHealthStatus::WillBeOOS:
+        health = SVHealth::Degraded;
+        break;
+    default:
+        health = SVHealth::Unknown;
+        break;
+    }
+}
+
+void GalFNavAlm ::dumpSVStatus(std::ostream &s) const
+{
+    const ios::fmtflags oldFlags = s.flags();
+    s.setf(ios::scientific, ios::floatfield);
+    s << "           PAGE OVERHEAD" << endl
+      << endl
+      << "                SOW    DOW:HH:MM:SS         IODa" << endl
+      << printTime(xmitTime, "Part 1 TOW : %6.0g  %3a-%1w:%02H:%02M:%02S") << setw(13) << (unsigned)ioda5 << endl
+      << printTime(xmit2, "Part 2 TOW : %6.0g  %3a-%1w:%02H:%02M:%02S") << setw(13) << (unsigned)ioda6 << endl
+      << endl
+      << "           SV STATUS" << endl
+      << endl
+      << "E5a_HS              : " << setw(9) << static_cast<int>(hsE5a) << " (" << gnsstk::StringUtils::asString(hsE5a)
+      << ")" << endl;
+    s.flags(oldFlags);
+}
+} // namespace gnsstk

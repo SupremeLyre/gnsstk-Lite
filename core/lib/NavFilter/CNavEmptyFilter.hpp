@@ -43,43 +43,48 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFilter
-      //@{
+/// @ingroup NavFilter
+//@{
 
-      /** Filter GPS CNAV subframes with empty contents.  In
-       *  this case "empty" means bits 38-276 are all zero
-       *  or bits 38-276 are alternating 1/0.  See IS-GPS-200
-       *  Section 30.3.3.
-       *
-       * @attention Processing depth = 1 epoch. */
-   class CNavEmptyFilter : public NavFilter
-   {
-   public:
-      CNavEmptyFilter();
+/** Filter GPS CNAV subframes with empty contents.  In
+ *  this case "empty" means bits 38-276 are all zero
+ *  or bits 38-276 are alternating 1/0.  See IS-GPS-200
+ *  Section 30.3.3.
+ *
+ * @attention Processing depth = 1 epoch. */
+class CNavEmptyFilter : public NavFilter
+{
+  public:
+    CNavEmptyFilter();
 
-         /** Filter subframes in msgBitsIn that are empty.
-          * @pre CNavFilterData::sf is set
-          * @param[in,out] msgBitsIn A list of CNavFilterData* objects
-          *   containing GPS legacy navigation messages (id 2).
-          * @param[out] msgBitsOut The messages successfully passing
-          *   the filter. */
-      virtual void validate(NavMsgList& msgBitsIn, NavMsgList& msgBitsOut);
+    /** Filter subframes in msgBitsIn that are empty.
+     * @pre CNavFilterData::sf is set
+     * @param[in,out] msgBitsIn A list of CNavFilterData* objects
+     *   containing GPS legacy navigation messages (id 2).
+     * @param[out] msgBitsOut The messages successfully passing
+     *   the filter. */
+    virtual void validate(NavMsgList &msgBitsIn, NavMsgList &msgBitsOut);
 
-         /// Filter stores no data, therefore this does nothing.
-      virtual void finalize(NavMsgList& msgBitsOut)
-      {}
+    /// Filter stores no data, therefore this does nothing.
+    virtual void finalize(NavMsgList &msgBitsOut)
+    {
+    }
 
-         /// No internal storage of subframe data so return 0.
-      virtual unsigned processingDepth() const noexcept
-      { return 0; }
+    /// No internal storage of subframe data so return 0.
+    virtual unsigned processingDepth() const noexcept
+    {
+        return 0;
+    }
 
-         /// Return the filter name.
-      virtual std::string filterName() const noexcept
-      { return "Empty"; }
-   };
+    /// Return the filter name.
+    virtual std::string filterName() const noexcept
+    {
+        return "Empty";
+    }
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // CNAVEMPTYFILTER_HPP

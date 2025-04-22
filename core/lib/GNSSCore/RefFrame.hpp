@@ -39,97 +39,104 @@
 #ifndef GNSSTK_REFFRAME_HPP
 #define GNSSTK_REFFRAME_HPP
 
-#include "RefFrameSys.hpp"
 #include "RefFrameRlz.hpp"
+#include "RefFrameSys.hpp"
 #include "ReferenceFrame.hpp" // deprecated
 
 namespace gnsstk
 {
-      /// @ingroup geodeticgroup
-      //@{
+/// @ingroup geodeticgroup
+//@{
 
-      /** Class for keeping track of specific reference frame system
-       * and realization pairs. */
-   class RefFrame
-   {
-   public:
-         /// Set both system and realization to Unknown.
-      RefFrame();
-         /** Construct a RefFrame from a RefFrameRlz.  The system is
-          * set from an assumption based on the specified realization.
-          * @see getRefFrameSys().
-          * @post system and realization are set. 
-          * @param[in] rlz The reference frame realization being used. */
-      RefFrame(RefFrameRlz rlz);
-         /** Construct a RefFrame from a RefFrameSys and a time stamp.
-          * The realization is set based on the time of publication.
-          * @see getRefFrameRlz().
-          * @post system and realization are set. 
-          * @param[in] sys The reference frame system being used.
-          * @param[in] when The timestamp when the reference frame
-          *   system was being used, maps to a realization. */
-      RefFrame(RefFrameSys sys, const gnsstk::CommonTime& when);
-         /** Construct from a string representation of a realization
-          * (e.g. from an SP3 file header).
-          * @post system and realization are set. 
-          * @param[in] str The string representation of the ref frame
-          *   realization
-          * @param[in] when The time the reference frame is being
-          *   used.  If \a str is insufficient on its own to translate
-          *   to a realization, str will be treated as a system and an
-          *   attempt will be made to convert the system + when to a
-          *   realization. */
-      RefFrame(const std::string& str, const gnsstk::CommonTime& when);
-         /// Compare this with right.
-      bool operator==(const RefFrame& right) const noexcept
-      { return (system == right.system) && (realization == right.realization); }
-         /// Compare this with right.
-      bool operator!=(const RefFrame& right) const noexcept
-      { return (system != right.system) || (realization != right.realization); }
-         /// Ordering for maps etc.
-      bool operator<(const RefFrame& right) const noexcept;
-         /// Return the reference frame system represented by this object.
-      RefFrameSys getSystem() const noexcept
-      { return system; }
-         /// Return the reference frame realization represented by this object.
-      RefFrameRlz getRealization() const noexcept
-      { return realization; }
+/** Class for keeping track of specific reference frame system
+ * and realization pairs. */
+class RefFrame
+{
+  public:
+    /// Set both system and realization to Unknown.
+    RefFrame();
+    /** Construct a RefFrame from a RefFrameRlz.  The system is
+     * set from an assumption based on the specified realization.
+     * @see getRefFrameSys().
+     * @post system and realization are set.
+     * @param[in] rlz The reference frame realization being used. */
+    RefFrame(RefFrameRlz rlz);
+    /** Construct a RefFrame from a RefFrameSys and a time stamp.
+     * The realization is set based on the time of publication.
+     * @see getRefFrameRlz().
+     * @post system and realization are set.
+     * @param[in] sys The reference frame system being used.
+     * @param[in] when The timestamp when the reference frame
+     *   system was being used, maps to a realization. */
+    RefFrame(RefFrameSys sys, const gnsstk::CommonTime &when);
+    /** Construct from a string representation of a realization
+     * (e.g. from an SP3 file header).
+     * @post system and realization are set.
+     * @param[in] str The string representation of the ref frame
+     *   realization
+     * @param[in] when The time the reference frame is being
+     *   used.  If \a str is insufficient on its own to translate
+     *   to a realization, str will be treated as a system and an
+     *   attempt will be made to convert the system + when to a
+     *   realization. */
+    RefFrame(const std::string &str, const gnsstk::CommonTime &when);
+    /// Compare this with right.
+    bool operator==(const RefFrame &right) const noexcept
+    {
+        return (system == right.system) && (realization == right.realization);
+    }
+    /// Compare this with right.
+    bool operator!=(const RefFrame &right) const noexcept
+    {
+        return (system != right.system) || (realization != right.realization);
+    }
+    /// Ordering for maps etc.
+    bool operator<(const RefFrame &right) const noexcept;
+    /// Return the reference frame system represented by this object.
+    RefFrameSys getSystem() const noexcept
+    {
+        return system;
+    }
+    /// Return the reference frame realization represented by this object.
+    RefFrameRlz getRealization() const noexcept
+    {
+        return realization;
+    }
 
-         /** @deprecated This is a temporary implementation to maintain
-          * some usability of the original HelmertTransform class and
-          * will be removed in the future. */
-      bool operator==(ReferenceFrame orf) const noexcept;
-         /** @deprecated This is a temporary implementation to maintain
-          * some usability of the original HelmertTransform class and
-          * will be removed in the future. */
-      RefFrame(ReferenceFrame orf, const gnsstk::CommonTime& when);
-   private:
-         /// The reference frame system this object represents.
-      RefFrameSys system;
-         /// The reference frame realization this object represents.
-      RefFrameRlz realization;
+    /** @deprecated This is a temporary implementation to maintain
+     * some usability of the original HelmertTransform class and
+     * will be removed in the future. */
+    bool operator==(ReferenceFrame orf) const noexcept;
+    /** @deprecated This is a temporary implementation to maintain
+     * some usability of the original HelmertTransform class and
+     * will be removed in the future. */
+    RefFrame(ReferenceFrame orf, const gnsstk::CommonTime &when);
 
-      friend std::ostream& operator<<(std::ostream& s, const RefFrame& rf);
-   };
+  private:
+    /// The reference frame system this object represents.
+    RefFrameSys system;
+    /// The reference frame realization this object represents.
+    RefFrameRlz realization;
 
+    friend std::ostream &operator<<(std::ostream &s, const RefFrame &rf);
+};
 
-      /// A little something to use for TransformerMap.
-   using RefFramePair = std::pair<RefFrame, RefFrame>;
+/// A little something to use for TransformerMap.
+using RefFramePair = std::pair<RefFrame, RefFrame>;
 
-
-      /** Stream output operator for RefFrame, obviously.
-       * @param[in,out] s The stream to write to.
-       * @param[in] rf The RefFrame object to write.
-       * @return the reference s, after writing. */
-   inline std::ostream& operator<<(std::ostream& s, const RefFrame& rf)
-   {
-         // just print the realization, it should be enough.
-      s << gnsstk::StringUtils::asString(rf.realization);
-      return s;
-   }
-
-      //@}
-
+/** Stream output operator for RefFrame, obviously.
+ * @param[in,out] s The stream to write to.
+ * @param[in] rf The RefFrame object to write.
+ * @return the reference s, after writing. */
+inline std::ostream &operator<<(std::ostream &s, const RefFrame &rf)
+{
+    // just print the realization, it should be enough.
+    s << gnsstk::StringUtils::asString(rf.realization);
+    return s;
 }
+
+//@}
+
+} // namespace gnsstk
 
 #endif // GNSSTK_REFFRAME_HPP

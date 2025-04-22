@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,40 +38,40 @@
 #ifndef GNSSTK_NAVVALIDITYTYPE_HPP
 #define GNSSTK_NAVVALIDITYTYPE_HPP
 
-#include <string>
 #include "EnumIterator.hpp"
+#include <string>
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Enumeration used to determine how to handle valid and
-       * invalid navigation data.  Validity is defined in the
-       * individual ICDs, where ranges and such are defined. */
-   enum class NavValidityType
-   {
-      Unknown,     ///< Only used as an initial value.
-      ValidOnly,   ///< Only load/find nav messages that pass validity checks.
-      InvalidOnly, ///< Only load/find nav messages that fail validity checks.
-      Any,         ///< Load/find nav messages regardless of validity checks.
-      Last         ///< Used to create an iterator.
-   };
+/** Enumeration used to determine how to handle valid and
+ * invalid navigation data.  Validity is defined in the
+ * individual ICDs, where ranges and such are defined. */
+enum class NavValidityType
+{
+    Unknown,     ///< Only used as an initial value.
+    ValidOnly,   ///< Only load/find nav messages that pass validity checks.
+    InvalidOnly, ///< Only load/find nav messages that fail validity checks.
+    Any,         ///< Load/find nav messages regardless of validity checks.
+    Last         ///< Used to create an iterator.
+};
 
-      /** Define an iterator so C++11 can do things like
-       * for (NavValidityType i : NavValidityTypeIterator()) */
-   typedef EnumIterator<NavValidityType, NavValidityType::Unknown, NavValidityType::Last> NavValidityTypeIterator;
+/** Define an iterator so C++11 can do things like
+ * for (NavValidityType i : NavValidityTypeIterator()) */
+typedef EnumIterator<NavValidityType, NavValidityType::Unknown, NavValidityType::Last> NavValidityTypeIterator;
 
-   namespace StringUtils
-   {
-         /// Convert a NavValidityType to a whitespace-free string name.
-      std::string asString(NavValidityType e) noexcept;
-         /// Convert a string name to an NavValidityType
-      NavValidityType asNavValidityType(const std::string& s) noexcept;
-   }
+namespace StringUtils
+{
+/// Convert a NavValidityType to a whitespace-free string name.
+std::string asString(NavValidityType e) noexcept;
+/// Convert a string name to an NavValidityType
+NavValidityType asNavValidityType(const std::string &s) noexcept;
+} // namespace StringUtils
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_NAVVALIDITYTYPE_HPP

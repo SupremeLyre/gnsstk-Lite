@@ -42,32 +42,40 @@ using namespace std;
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(RefFrameSys e)
-         noexcept
-      {
-         switch (e)
-         {
-            case RefFrameSys::Unknown:    return "Unknown";
-            case RefFrameSys::WGS84:      return "WGS84";
-            case RefFrameSys::ITRF:       return "ITRF";
-            case RefFrameSys::PZ90:       return "PZ90";
-            case RefFrameSys::CGCS2000:   return "CGCS2000";
-            default:                      return "???";
-         }
-      }
+namespace StringUtils
+{
+std::string asString(RefFrameSys e) noexcept
+{
+    switch (e)
+    {
+    case RefFrameSys::Unknown:
+        return "Unknown";
+    case RefFrameSys::WGS84:
+        return "WGS84";
+    case RefFrameSys::ITRF:
+        return "ITRF";
+    case RefFrameSys::PZ90:
+        return "PZ90";
+    case RefFrameSys::CGCS2000:
+        return "CGCS2000";
+    default:
+        return "???";
+    }
+}
 
-
-      RefFrameSys asRefFrameSys(const std::string& s)
-         noexcept
-      {
-         if (s == "Unknown")      return RefFrameSys::Unknown;
-         if (s == "WGS84")        return RefFrameSys::WGS84;
-         if (s == "ITRF")         return RefFrameSys::ITRF;
-         if (s == "PZ90")         return RefFrameSys::PZ90;
-         if (s == "CGCS2000")     return RefFrameSys::CGCS2000;
-         return RefFrameSys::Unknown;
-      }
-   }
-}   // end namespace
+RefFrameSys asRefFrameSys(const std::string &s) noexcept
+{
+    if (s == "Unknown")
+        return RefFrameSys::Unknown;
+    if (s == "WGS84")
+        return RefFrameSys::WGS84;
+    if (s == "ITRF")
+        return RefFrameSys::ITRF;
+    if (s == "PZ90")
+        return RefFrameSys::PZ90;
+    if (s == "CGCS2000")
+        return RefFrameSys::CGCS2000;
+    return RefFrameSys::Unknown;
+}
+} // namespace StringUtils
+} // namespace gnsstk

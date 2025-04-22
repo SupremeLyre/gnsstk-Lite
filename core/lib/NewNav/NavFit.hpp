@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,20 +42,20 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Base class for orbit information for providing a polymorphic
-       * interface to begin/end fit times. */
-   class NavFit
-   {
-   public:
-      CommonTime beginFit; ///< Time at beginning of fit interval
-      CommonTime endFit;   ///< Time at end of fit interval
-   };
+/** Base class for orbit information for providing a polymorphic
+ * interface to begin/end fit times. */
+class NavFit
+{
+  public:
+    CommonTime beginFit; ///< Time at beginning of fit interval
+    CommonTime endFit;   ///< Time at end of fit interval
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_NAVFIT_HPP

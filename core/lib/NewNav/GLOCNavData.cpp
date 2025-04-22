@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -44,19 +43,16 @@ using namespace std;
 
 namespace gnsstk
 {
-   GLOCNavData ::
-   GLOCNavData()
-   {
-      weekFmt = "";
-         // Default to Any so that empty headers in GLOCNavEph won't
-         // cause an exception when calling getUserTime()
-      timeStamp.setTimeSystem(TimeSystem::Any);
-   }
-
-
-   bool GLOCNavData ::
-   validate() const
-   {
-      return (header.validate());
-   }
+GLOCNavData ::GLOCNavData()
+{
+    weekFmt = "";
+    // Default to Any so that empty headers in GLOCNavEph won't
+    // cause an exception when calling getUserTime()
+    timeStamp.setTimeSystem(TimeSystem::Any);
 }
+
+bool GLOCNavData ::validate() const
+{
+    return (header.validate());
+}
+} // namespace gnsstk

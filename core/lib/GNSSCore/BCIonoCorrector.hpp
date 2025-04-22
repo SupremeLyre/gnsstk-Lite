@@ -36,7 +36,6 @@
 //
 //==============================================================================
 
-
 #ifndef GNSSTK_BCIONOCORRECTOR_HPP
 #define GNSSTK_BCIONOCORRECTOR_HPP
 
@@ -45,36 +44,34 @@
 
 namespace gnsstk
 {
-      /// @ingroup GNSSsolutions
-      //@{
+/// @ingroup GNSSsolutions
+//@{
 
-      /** Compute ionospheric delay on the satellite signal, using
-       * information available from the broadcast navigation message.
-       *
-       * @attention The #navLib variable must be set to a valid
-       * object for the getCorr() methods to return successfully. */
-   class BCIonoCorrector : public GroupPathCorrector
-   {
-   public:
-         /** Set the #corrType to Iono for GroupPathCorr.
-          * @param[in] nl The NavLibrary to use to obtain Iono data. */
-      BCIonoCorrector(NavLibrary& nl);
-         /// @copydoc GroupPathCorrector::getCorr(const Position&, const Position&, const SatID&, const ObsID&, const CommonTime&, NavType, double&)
-      bool getCorr(const Position& rxPos, const Position& svPos,
-                   const SatID& sat, const ObsID& obs,
-                   const CommonTime& when, NavType nav,
-                   double& corrOut) override;
-         /// @copydoc GroupPathCorrector::getCorr(const Position&, const Position&, const SatID&, const ObsID&, const CommonTime&, NavType, double&)
-      bool getCorr(const Position& rxPos, const Xvt& svPos,
-                   const SatID& sat, const ObsID& obs,
-                   const CommonTime& when, NavType nav,
-                   double& corrOut) override;
+/** Compute ionospheric delay on the satellite signal, using
+ * information available from the broadcast navigation message.
+ *
+ * @attention The #navLib variable must be set to a valid
+ * object for the getCorr() methods to return successfully. */
+class BCIonoCorrector : public GroupPathCorrector
+{
+  public:
+    /** Set the #corrType to Iono for GroupPathCorr.
+     * @param[in] nl The NavLibrary to use to obtain Iono data. */
+    BCIonoCorrector(NavLibrary &nl);
+    /// @copydoc GroupPathCorrector::getCorr(const Position&, const Position&, const SatID&, const ObsID&, const
+    /// CommonTime&, NavType, double&)
+    bool getCorr(const Position &rxPos, const Position &svPos, const SatID &sat, const ObsID &obs,
+                 const CommonTime &when, NavType nav, double &corrOut) override;
+    /// @copydoc GroupPathCorrector::getCorr(const Position&, const Position&, const SatID&, const ObsID&, const
+    /// CommonTime&, NavType, double&)
+    bool getCorr(const Position &rxPos, const Xvt &svPos, const SatID &sat, const ObsID &obs, const CommonTime &when,
+                 NavType nav, double &corrOut) override;
 
-         /// Reference to the nav library from which we will get iono data.
-      NavLibrary& navLib;
-   }; // class BCIonoCorrector
+    /// Reference to the nav library from which we will get iono data.
+    NavLibrary &navLib;
+}; // class BCIonoCorrector
 
-      //@}
+//@}
 
 } // namespace gnsstk
 

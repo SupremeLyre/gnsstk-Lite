@@ -40,32 +40,36 @@
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(XmitAnt e) noexcept
-      {
-         switch (e)
-         {
-            case XmitAnt::Unknown:   return "Unknown";
-            case XmitAnt::Any:       return "Any";
-            case XmitAnt::Standard:  return "Standard";
-            case XmitAnt::Regional:  return "Regional";
-            default:                 return "???";
-         } // switch (e)
-      } // asString(XmitAnt)
+namespace StringUtils
+{
+std::string asString(XmitAnt e) noexcept
+{
+    switch (e)
+    {
+    case XmitAnt::Unknown:
+        return "Unknown";
+    case XmitAnt::Any:
+        return "Any";
+    case XmitAnt::Standard:
+        return "Standard";
+    case XmitAnt::Regional:
+        return "Regional";
+    default:
+        return "???";
+    } // switch (e)
+} // asString(XmitAnt)
 
-
-      XmitAnt asXmitAnt(const std::string& s) noexcept
-      {
-         if (s == "Unknown")
-            return XmitAnt::Unknown;
-         if (s == "Any")
-            return XmitAnt::Any;
-         if (s == "Standard")
-            return XmitAnt::Standard;
-         if (s == "Regional")
-            return XmitAnt::Regional;
-         return XmitAnt::Unknown;
-      } // asXmitAnt(string)
-   } // namespace StringUtils
+XmitAnt asXmitAnt(const std::string &s) noexcept
+{
+    if (s == "Unknown")
+        return XmitAnt::Unknown;
+    if (s == "Any")
+        return XmitAnt::Any;
+    if (s == "Standard")
+        return XmitAnt::Standard;
+    if (s == "Regional")
+        return XmitAnt::Regional;
+    return XmitAnt::Unknown;
+} // asXmitAnt(string)
+} // namespace StringUtils
 } // namespace gnsstk

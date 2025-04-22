@@ -45,10 +45,7 @@
 
 namespace gnsstk
 {
-   NMCTMeta ::
-   NMCTMeta()
-         : prn(0),
-           aodo(0xffffffff)
-   {
-   }
+NMCTMeta ::NMCTMeta() : prn(0), aodo(0xffffffff)
+{
 }
+} // namespace gnsstk

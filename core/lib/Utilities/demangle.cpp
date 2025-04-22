@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,33 +38,30 @@
 #ifdef __GNUG__
 #include <cxxabi.h>
 #endif
-#include <memory>
 #include "demangle.hpp"
+#include <memory>
 
 namespace gnsstk
 {
-   std::string demangle(const char* name)
-   {
-         // yanked from stackoverflow.com/questions/281818/unmangling-the-result-of-stdtype-infoname
+std::string demangle(const char *name)
+{
+    // yanked from stackoverflow.com/questions/281818/unmangling-the-result-of-stdtype-infoname
 #ifdef __GNUG__
-      int status = -4;
-      std::unique_ptr<char, void(*)(void*)> res {
-         abi::__cxa_demangle(name, NULL, NULL, &status),
-         std::free
-      };
-      return (status == 0) ? res.get() : name;
+    int status = -4;
+    std::unique_ptr<char, void (*)(void *)> res{abi::__cxa_demangle(name, NULL, NULL, &status), std::free};
+    return (status == 0) ? res.get() : name;
 #elif defined(WIN32)
-         // remove "class " from the start of the name in windows
-      std::string rv(name);
-      if (rv.find("class ") == 0)
-      {
-            // 6=strlen("class ")
-         rv.erase(0, 6);
-      }
-      return rv;
+    // remove "class " from the start of the name in windows
+    std::string rv(name);
+    if (rv.find("class ") == 0)
+    {
+        // 6=strlen("class ")
+        rv.erase(0, 6);
+    }
+    return rv;
 #else
-         // do nothing if not G++
-      return name;
+    // do nothing if not G++
+    return name;
 #endif
-   }
 }
+} // namespace gnsstk

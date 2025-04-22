@@ -43,354 +43,350 @@
 
 //------------------------------------------------------------------------------------
 #include "EOPStore.hpp"
-//#include "logstream.hpp"
+// #include "logstream.hpp"
 
 //------------------------------------------------------------------------------------
 using namespace std;
 
 namespace gnsstk
 {
-      // Add to the store directly
-   void EOPStore::addEOP(int mjd, EarthOrientation& eop)
-   {
-      mapMJD_EOP[mjd] = eop;
+// Add to the store directly
+void EOPStore::addEOP(int mjd, EarthOrientation &eop)
+{
+    mapMJD_EOP[mjd] = eop;
 
-      if (begMJD == -1 || endMJD == -1)
-      {
-         begMJD = endMJD = mjd;
-      }
-      else if (mjd < begMJD)
-      {
-         begMJD = mjd;
-      }
-      else if (mjd > endMJD)
-      {
-         endMJD = mjd;
-      }
-   }
+    if (begMJD == -1 || endMJD == -1)
+    {
+        begMJD = endMJD = mjd;
+    }
+    else if (mjd < begMJD)
+    {
+        begMJD = mjd;
+    }
+    else if (mjd > endMJD)
+    {
+        endMJD = mjd;
+    }
+}
 
-   //---------------------------------------------------------------------------------
-      /* Add to the store by computing using an EOPPrediction file.
-         @param MJD integer MJD(UTC) at which to add EOPs
-         @return non-0 if MJD is outside range */
-   int EOPStore::addEOP(int mjd, EOPPrediction& eopp)
-   {
-      EarthOrientation eo;
-      try
-      {
-         eo = eopp.computeEOP(mjd);
-      }
-      catch (Exception& e)
-      {
-         GNSSTK_RETHROW(e);
-      }
+//---------------------------------------------------------------------------------
+/* Add to the store by computing using an EOPPrediction file.
+   @param MJD integer MJD(UTC) at which to add EOPs
+   @return non-0 if MJD is outside range */
+int EOPStore::addEOP(int mjd, EOPPrediction &eopp)
+{
+    EarthOrientation eo;
+    try
+    {
+        eo = eopp.computeEOP(mjd);
+    }
+    catch (Exception &e)
+    {
+        GNSSTK_RETHROW(e);
+    }
 
-      addEOP(mjd, eo);
+    addEOP(mjd, eo);
 
-      return 0;
-   }
+    return 0;
+}
 
-      /* Add EOPs to the store via an inpu file: either an EOPP file
-         or a flat file produced by USNO (see http:  maia.usno.navy.mil/
-         and get either file 'finals.data' or finals2000A.data').
-         @param filename Name of file to read, including path.
-         @throw if the file is not found */
-   void EOPStore::addFile(const string& filename)
-   {
-      try
-      {
-         addEOPPFile(filename);
-      }
-      catch (FileMissingException& fme)
-      {
-         if (StringUtils::matches(fme.getText(), string("wrong format")).empty())
-         {
+/* Add EOPs to the store via an inpu file: either an EOPP file
+   or a flat file produced by USNO (see http:  maia.usno.navy.mil/
+   and get either file 'finals.data' or finals2000A.data').
+   @param filename Name of file to read, including path.
+   @throw if the file is not found */
+void EOPStore::addFile(const string &filename)
+{
+    try
+    {
+        addEOPPFile(filename);
+    }
+    catch (FileMissingException &fme)
+    {
+        if (StringUtils::matches(fme.getText(), string("wrong format")).empty())
+        {
             GNSSTK_RETHROW(fme);
-         }
+        }
 
-            // try other format
-         try
-         {
+        // try other format
+        try
+        {
             addIERSFile(filename);
-         }
-         catch (FileMissingException& fme)
-         {
+        }
+        catch (FileMissingException &fme)
+        {
             GNSSTK_RETHROW(fme);
-         }
-      }
-   }
+        }
+    }
+}
 
-   //---------------------------------------------------------------------------------
-      /* Add EOPs to the store via an EOPP file: read the EOPPrediction from the
-         file and then compute EOPs for all days within the valid range.
-         @param filename Name of file to read, including path.
-         @throw if the file is not found */
-   void EOPStore::addEOPPFile(const string& filename)
-   {
-         // read the file into an EOPPrediction
-      EOPPrediction eopp;
-      try
-      {
-         eopp.loadFile(filename);
-      }
-      catch (FileMissingException& fme)
-      {
-         GNSSTK_RETHROW(fme);
-      }
+//---------------------------------------------------------------------------------
+/* Add EOPs to the store via an EOPP file: read the EOPPrediction from the
+   file and then compute EOPs for all days within the valid range.
+   @param filename Name of file to read, including path.
+   @throw if the file is not found */
+void EOPStore::addEOPPFile(const string &filename)
+{
+    // read the file into an EOPPrediction
+    EOPPrediction eopp;
+    try
+    {
+        eopp.loadFile(filename);
+    }
+    catch (FileMissingException &fme)
+    {
+        GNSSTK_RETHROW(fme);
+    }
 
-         // pull out the beginning of the valid time range
-      int mjd;
-      mjd = eopp.getValidTime();
-         // add all 7 days
-      for (int i = 0; i < 7; i++)
-      {
-         EarthOrientation eo;
-         eo = eopp.computeEOP(mjd);
-         addEOP(mjd, eo);
-         mjd++;
-      }
-   }
+    // pull out the beginning of the valid time range
+    int mjd;
+    mjd = eopp.getValidTime();
+    // add all 7 days
+    for (int i = 0; i < 7; i++)
+    {
+        EarthOrientation eo;
+        eo = eopp.computeEOP(mjd);
+        addEOP(mjd, eo);
+        mjd++;
+    }
+}
 
-   //---------------------------------------------------------------------------------
-      // see http://maia.usno.navy.mil/readme.finals
-   void EOPStore::addIERSFile(const string& filename)
-   {
-      bool ok;
-      int n, mjd;
-      double fracmjd;
-      string line, word;
+//---------------------------------------------------------------------------------
+// see http://maia.usno.navy.mil/readme.finals
+void EOPStore::addIERSFile(const string &filename)
+{
+    bool ok;
+    int n, mjd;
+    double fracmjd;
+    string line, word;
 
-      ifstream inpf(filename.c_str());
-      if (!inpf)
-      {
-         FileMissingException fme("Could not open IERS file " + filename);
-         GNSSTK_THROW(fme);
-      }
+    ifstream inpf(filename.c_str());
+    if (!inpf)
+    {
+        FileMissingException fme("Could not open IERS file " + filename);
+        GNSSTK_THROW(fme);
+    }
 
-      ok = true;
-      while (!inpf.eof() && inpf.good())
-      {
-         getline(inpf, line);
-         StringUtils::stripTrailing(line, '\r');
-         if (inpf.eof())
-         {
+    ok = true;
+    while (!inpf.eof() && inpf.good())
+    {
+        getline(inpf, line);
+        StringUtils::stripTrailing(line, '\r');
+        if (inpf.eof())
+        {
             break;
-         }
-            // line length is actually 187
-         if (inpf.bad() || line.size() < 70)
-         {
+        }
+        // line length is actually 187
+        if (inpf.bad() || line.size() < 70)
+        {
             ok = false;
             break;
-         }
-         EarthOrientation eo;
-         mjd = StringUtils::asInt(line.substr(7, 5));
-            // Bulletin A
-         eo.xp      = StringUtils::asDouble(line.substr(18, 9));  // arcseconds
-         eo.yp      = StringUtils::asDouble(line.substr(37, 9));  // arcseconds
-         eo.UT1mUTC = StringUtils::asDouble(line.substr(58, 10)); // seconds
-            /* Bulletin B
-               eo.xp = StringUtils::asDouble(line.substr(134,10));
-               arcseconds eo.yp = StringUtils::asDouble(line.substr(144,10));
-               arcseconds eo.UT1mUTC = StringUtils::asDouble(line.substr(154,11));
-               // seconds */
+        }
+        EarthOrientation eo;
+        mjd = StringUtils::asInt(line.substr(7, 5));
+        // Bulletin A
+        eo.xp = StringUtils::asDouble(line.substr(18, 9));       // arcseconds
+        eo.yp = StringUtils::asDouble(line.substr(37, 9));       // arcseconds
+        eo.UT1mUTC = StringUtils::asDouble(line.substr(58, 10)); // seconds
+                                                                 /* Bulletin B
+                                                                    eo.xp = StringUtils::asDouble(line.substr(134,10));
+                                                                    arcseconds eo.yp = StringUtils::asDouble(line.substr(144,10));
+                                                                    arcseconds eo.UT1mUTC = StringUtils::asDouble(line.substr(154,11));
+                                                                    // seconds */
 
-         addEOP(mjd, eo);
-      };
-      inpf.close();
+        addEOP(mjd, eo);
+    };
+    inpf.close();
 
-      if (!ok)
-      {
-         FileMissingException fme("IERS File " + filename +
-                                  " is corrupted or wrong format");
-         GNSSTK_THROW(fme);
-      }
-   }
+    if (!ok)
+    {
+        FileMissingException fme("IERS File " + filename + " is corrupted or wrong format");
+        GNSSTK_THROW(fme);
+    }
+}
 
-   //---------------------------------------------------------------------------------
-      /* Edit the store by deleting all entries before(after) the given min(max)
-         MJDs. If mjdmin is later than mjdmax, the two times are switched.
-          @param mjdmin integer MJD desired earliest store time.
-          @param mjdmax integer MJD desired latest store time. */
-   void EOPStore::edit(int mjdmin, int mjdmax)
-   {
-      if (mjdmin > mjdmax)
-      {
-         int m  = mjdmin;
-         mjdmin = mjdmax;
-         mjdmax = m;
-      }
+//---------------------------------------------------------------------------------
+/* Edit the store by deleting all entries before(after) the given min(max)
+   MJDs. If mjdmin is later than mjdmax, the two times are switched.
+    @param mjdmin integer MJD desired earliest store time.
+    @param mjdmax integer MJD desired latest store time. */
+void EOPStore::edit(int mjdmin, int mjdmax)
+{
+    if (mjdmin > mjdmax)
+    {
+        int m = mjdmin;
+        mjdmin = mjdmax;
+        mjdmax = m;
+    }
 
-      if (mjdmin > endMJD)
-      {
-         return;
-      }
-      if (mjdmax < begMJD)
-      {
-         return;
-      }
+    if (mjdmin > endMJD)
+    {
+        return;
+    }
+    if (mjdmax < begMJD)
+    {
+        return;
+    }
 
-      map<int, EarthOrientation>::iterator it;
-      it = mapMJD_EOP.lower_bound(mjdmin);
-      if (it != mapMJD_EOP.begin())
-      {
-         mapMJD_EOP.erase(mapMJD_EOP.begin(), it);
-      }
+    map<int, EarthOrientation>::iterator it;
+    it = mapMJD_EOP.lower_bound(mjdmin);
+    if (it != mapMJD_EOP.begin())
+    {
+        mapMJD_EOP.erase(mapMJD_EOP.begin(), it);
+    }
 
-      it = mapMJD_EOP.upper_bound(mjdmax);
-      if (it != mapMJD_EOP.end())
-      {
-         mapMJD_EOP.erase(it, mapMJD_EOP.end());
-      }
+    it = mapMJD_EOP.upper_bound(mjdmax);
+    if (it != mapMJD_EOP.end())
+    {
+        mapMJD_EOP.erase(it, mapMJD_EOP.end());
+    }
 
-      it = mapMJD_EOP.begin();
-      if (it == mapMJD_EOP.end())
-      {
-         begMJD = -1;
-      }
-      else
-      {
-         begMJD = it->first;
-      }
+    it = mapMJD_EOP.begin();
+    if (it == mapMJD_EOP.end())
+    {
+        begMJD = -1;
+    }
+    else
+    {
+        begMJD = it->first;
+    }
 
-      it = mapMJD_EOP.end();
-      if (--it == mapMJD_EOP.end())
-      {
-         endMJD = -1;
-      }
-      else
-      {
-         endMJD = it->first;
-      }
-   }
+    it = mapMJD_EOP.end();
+    if (--it == mapMJD_EOP.end())
+    {
+        endMJD = -1;
+    }
+    else
+    {
+        endMJD = it->first;
+    }
+}
 
-   //---------------------------------------------------------------------------------
-      /* Dump the store to cout.
-         @param detail determines how much detail to include in the output
-           0 start and stop times (MJD), and number of EOPs.
-           1 list of all times and EOPs. */
-   void EOPStore::dump(short detail, ostream& os) const
-   {
-      os << "EOPStore dump (" << mapMJD_EOP.size() << " entries):\n";
-      os << " Time limits: [MJD " << begMJD << " - " << endMJD << "]";
+//---------------------------------------------------------------------------------
+/* Dump the store to cout.
+   @param detail determines how much detail to include in the output
+     0 start and stop times (MJD), and number of EOPs.
+     1 list of all times and EOPs. */
+void EOPStore::dump(short detail, ostream &os) const
+{
+    os << "EOPStore dump (" << mapMJD_EOP.size() << " entries):\n";
+    os << " Time limits: [MJD " << begMJD << " - " << endMJD << "]";
 
-      int yy, mm, dd;
-      convertJDtoCalendar(static_cast<long>(begMJD + MJD_TO_JD), yy, mm, dd);
-      os << " = [m/d/y " << mm << "/" << dd << "/" << yy;
-      convertJDtoCalendar(static_cast<long>(endMJD + MJD_TO_JD), yy, mm, dd);
-      os << " - " << mm << "/" << dd << "/" << yy << "]" << endl;
+    int yy, mm, dd;
+    convertJDtoCalendar(static_cast<long>(begMJD + MJD_TO_JD), yy, mm, dd);
+    os << " = [m/d/y " << mm << "/" << dd << "/" << yy;
+    convertJDtoCalendar(static_cast<long>(endMJD + MJD_TO_JD), yy, mm, dd);
+    os << " - " << mm << "/" << dd << "/" << yy << "]" << endl;
 
-      if (detail > 0)
-      {
-         os << "   MJD      xp         yp        UT1-UTC  IERS\n";
-         int lastmjd = -1;
-         map<int, EarthOrientation>::const_iterator it;
-         for (it = mapMJD_EOP.begin(); it != mapMJD_EOP.end(); it++)
-         {
+    if (detail > 0)
+    {
+        os << "   MJD      xp         yp        UT1-UTC  IERS\n";
+        int lastmjd = -1;
+        map<int, EarthOrientation>::const_iterator it;
+        for (it = mapMJD_EOP.begin(); it != mapMJD_EOP.end(); it++)
+        {
             if (lastmjd != -1 && it->first - lastmjd > 1)
             {
-               os << " ....." << endl;
+                os << " ....." << endl;
             }
-            os << " " << it->first << " " << it->second << "     ("
-               << setfill('0') << setw(3)
-               << EOPPrediction::getSerialNumber(it->first) << setfill(' ')
-               << ")" << endl;
+            os << " " << it->first << " " << it->second << "     (" << setfill('0') << setw(3)
+               << EOPPrediction::getSerialNumber(it->first) << setfill(' ') << ")" << endl;
             lastmjd = it->first;
-         }
-      }
-   }
+        }
+    }
+}
 
-   //---------------------------------------------------------------------------------
-      /* Get the EOP at the given epoch. This involves interpolation and
-         corrections as prescribed by the appropriate IERS convention, using code
-         in class EarthOrientation. This routine pulls data from the map for 4
-         entries surrounding the input time; this array of data is passed to class
-         EarthOrientation to perform the interpolation and corrections.
-         @param mjd MJD(UTC) time of interest
-         @param conv IERSConvention to be used.
-         @throw InvalidRequest if the integer MJD falls outside the store,
-           or if the store contains fewer than 4 entries
-         @return EarthOrientation EOPs at mjd. */
-   EarthOrientation EOPStore::getEOP(double mjd,
-                                     const IERSConvention& conv)
-   {
-      if (mapMJD_EOP.size() < 4)
-      {
-         InvalidRequest ir("Store is too small for interpolation");
+//---------------------------------------------------------------------------------
+/* Get the EOP at the given epoch. This involves interpolation and
+   corrections as prescribed by the appropriate IERS convention, using code
+   in class EarthOrientation. This routine pulls data from the map for 4
+   entries surrounding the input time; this array of data is passed to class
+   EarthOrientation to perform the interpolation and corrections.
+   @param mjd MJD(UTC) time of interest
+   @param conv IERSConvention to be used.
+   @throw InvalidRequest if the integer MJD falls outside the store,
+     or if the store contains fewer than 4 entries
+   @return EarthOrientation EOPs at mjd. */
+EarthOrientation EOPStore::getEOP(double mjd, const IERSConvention &conv)
+{
+    if (mapMJD_EOP.size() < 4)
+    {
+        InvalidRequest ir("Store is too small for interpolation");
+        GNSSTK_THROW(ir);
+    }
+
+    /* Stored data uses UTC times
+       if(t.getTimeSystem() == TimeSystem::Unknown) {
+         InvalidRequest ir("Time system is unknown");
          GNSSTK_THROW(ir);
-      }
+   } */
 
-         /* Stored data uses UTC times
-            if(t.getTimeSystem() == TimeSystem::Unknown) {
-              InvalidRequest ir("Time system is unknown");
-              GNSSTK_THROW(ir);
-        } */
+    // get MJD(UTC)
+    double mjdUTC(mjd);
 
-         // get MJD(UTC)
-      double mjdUTC(mjd);
+    // find 4 points surrounding the time of interest ----------------
+    map<int, EarthOrientation>::iterator lowit, hiit, it;
+    it = lowit = mapMJD_EOP.find(int(mjdUTC));
+    (hiit = it)++;
+    if (lowit == mapMJD_EOP.end() || hiit == mapMJD_EOP.end())
+    {
+        InvalidRequest ir("Requested time lies outside the store");
+        GNSSTK_THROW(ir);
+    }
+    if (mapMJD_EOP.size() < 4)
+    {
+        InvalidRequest ir("Store contains less than 4 entries");
+        GNSSTK_THROW(ir);
+    }
 
-         // find 4 points surrounding the time of interest ----------------
-      map<int, EarthOrientation>::iterator lowit, hiit, it;
-      it = lowit = mapMJD_EOP.find(int(mjdUTC));
-      (hiit = it)++;
-      if (lowit == mapMJD_EOP.end() || hiit == mapMJD_EOP.end())
-      {
-         InvalidRequest ir("Requested time lies outside the store");
-         GNSSTK_THROW(ir);
-      }
-      if (mapMJD_EOP.size() < 4)
-      {
-         InvalidRequest ir("Store contains less than 4 entries");
-         GNSSTK_THROW(ir);
-      }
-
-         // low and hi must span 4 entries and bracket t
-      (it = lowit)--;
-      if (it == mapMJD_EOP.end())
-      {
-         hiit++;
-         hiit++; // L t . . H
-      }
-      else
-      {
-         lowit = it;
-         (it = hiit)++;
-         if (it == mapMJD_EOP.end())
-         {
+    // low and hi must span 4 entries and bracket t
+    (it = lowit)--;
+    if (it == mapMJD_EOP.end())
+    {
+        hiit++;
+        hiit++; // L t . . H
+    }
+    else
+    {
+        lowit = it;
+        (it = hiit)++;
+        if (it == mapMJD_EOP.end())
+        {
             lowit--; // L . . t H
-         }
-         else
-         {
+        }
+        else
+        {
             hiit = it; // L . t . H
-         }
-      }
+        }
+    }
 
-         /* fill arrays for Lagrange interpolation -----------------------
-            LOG(INFO) << " LAGINT at " << fixed << setprecision(9) << mjdUTC <<
-            "(UTC)"; */
-      vector<double> vtime, vX, vY, vdT;
-      for (it = lowit; it != mapMJD_EOP.end(); ++it)
-      {
-         vtime.push_back(double(it->first));
-         vX.push_back(it->second.xp);
-         vY.push_back(it->second.yp);
-            /* LOG(INFO) << " xy " << fixed << setprecision(10) <<
-               double(it->first)
-                 << " " << it->second.xp << " " << it->second.yp; */
-         vdT.push_back(it->second.UT1mUTC);
-         if (it == hiit)
-         {
+    /* fill arrays for Lagrange interpolation -----------------------
+       LOG(INFO) << " LAGINT at " << fixed << setprecision(9) << mjdUTC <<
+       "(UTC)"; */
+    vector<double> vtime, vX, vY, vdT;
+    for (it = lowit; it != mapMJD_EOP.end(); ++it)
+    {
+        vtime.push_back(double(it->first));
+        vX.push_back(it->second.xp);
+        vY.push_back(it->second.yp);
+        /* LOG(INFO) << " xy " << fixed << setprecision(10) <<
+           double(it->first)
+             << " " << it->second.xp << " " << it->second.yp; */
+        vdT.push_back(it->second.UT1mUTC);
+        if (it == hiit)
+        {
             break;
-         }
-      }
+        }
+    }
 
-         // let EarthOrientation do the interpolation and correction -----
-      EarthOrientation eo;
-      EphTime ttag;
-      ttag.setMJD(mjdUTC);
-      ttag.setTimeSystem(TimeSystem::UTC);
-      eo.interpolateEOP(ttag, vtime, vX, vY, vdT, conv);
+    // let EarthOrientation do the interpolation and correction -----
+    EarthOrientation eo;
+    EphTime ttag;
+    ttag.setMJD(mjdUTC);
+    ttag.setTimeSystem(TimeSystem::UTC);
+    eo.interpolateEOP(ttag, vtime, vX, vY, vdT, conv);
 
-      return eo;
-   }
+    return eo;
+}
 
 } // end namespace gnsstk

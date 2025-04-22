@@ -39,38 +39,38 @@
 #ifndef GNSSTK_SATMETADATASORT_HPP
 #define GNSSTK_SATMETADATASORT_HPP
 
-#include <functional>
 #include "SatMetaData.hpp"
+#include <functional>
 
 namespace gnsstk
 {
-      /** Provide a sorting algorithm for SatMetaData to be used by
-       * SatMetaDataStore and derivatives to minimize the amount of
-       * time spent looking for data.
-       * @note This sort algorithm assumes that it is sorting
-       *   satellites of the same system, which is how they're stored
-       *   in SatMetaDataStore. */
-   struct SatMetaDataSort
-   {
-      bool operator()(const SatMetaData& lhs, const SatMetaData& rhs) const
-      {
-         if (lhs.prn < rhs.prn)
+/** Provide a sorting algorithm for SatMetaData to be used by
+ * SatMetaDataStore and derivatives to minimize the amount of
+ * time spent looking for data.
+ * @note This sort algorithm assumes that it is sorting
+ *   satellites of the same system, which is how they're stored
+ *   in SatMetaDataStore. */
+struct SatMetaDataSort
+{
+    bool operator()(const SatMetaData &lhs, const SatMetaData &rhs) const
+    {
+        if (lhs.prn < rhs.prn)
             return true;
-         if (lhs.prn > rhs.prn)
+        if (lhs.prn > rhs.prn)
             return false;
-         if (lhs.chl < rhs.chl)
+        if (lhs.chl < rhs.chl)
             return true;
-         if (lhs.chl > rhs.chl)
+        if (lhs.chl > rhs.chl)
             return false;
-         if (lhs.slotID < rhs.slotID)
+        if (lhs.slotID < rhs.slotID)
             return true;
-         if (lhs.slotID > rhs.slotID)
+        if (lhs.slotID > rhs.slotID)
             return false;
-         if (lhs.startTime < rhs.startTime)
+        if (lhs.startTime < rhs.startTime)
             return true;
-         return false;
-      }
-   };
+        return false;
+    }
+};
 
 } // namespace gnsstk
 

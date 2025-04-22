@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,34 +38,34 @@
 #ifndef GNSSTK_GLOCNAVDATA_HPP
 #define GNSSTK_GLOCNAVDATA_HPP
 
-#include "OrbitData.hpp"
-#include "NavFit.hpp"
 #include "GLOCNavHeader.hpp"
+#include "NavFit.hpp"
+#include "OrbitData.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Class containing data elements shared between GLONASS Civil
-       * C-Nav ephemerides and almanacs. */
-   class GLOCNavData : public OrbitData, public NavFit
-   {
-   public:
-         /// Sets the nav message type and all other data members to 0.
-      GLOCNavData();
+/** Class containing data elements shared between GLONASS Civil
+ * C-Nav ephemerides and almanacs. */
+class GLOCNavData : public OrbitData, public NavFit
+{
+  public:
+    /// Sets the nav message type and all other data members to 0.
+    GLOCNavData();
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-      GLOCNavHeader header; ///< Common data.
-   };
+    GLOCNavHeader header; ///< Common data.
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GLOCNAVDATA_HPP

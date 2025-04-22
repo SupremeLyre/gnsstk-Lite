@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -42,79 +41,70 @@ using namespace std;
 
 namespace gnsstk
 {
-   GLOCNavHealth ::
-   GLOCNavHealth()
-         : Hj(true), lj(true)
-   {
-         // Allow the data fields to default to invalid via ValidType.
-      msgLenSec = 3.0;
-   }
-
-
-   bool GLOCNavHealth ::
-   validate() const
-   {
-         // l^j indicates data validity of the string containing it,
-         // but validate() should return an indication of the validity
-         // of the data within this structure, i.e. Hj and lj
-         // themselves.  Which should always be true?
-      return true;
-   }
-
-
-   void GLOCNavHealth ::
-   dump(std::ostream& s, DumpDetail dl) const
-   {
-      const ios::fmtflags oldFlags = s.flags();
-      s.setf(ios::fixed, ios::floatfield);
-      s.setf(ios::right, ios::adjustfield);
-      s.setf(ios::uppercase);
-      s.precision(0);
-      s.fill(' ');
-      switch (dl)
-      {
-         case DumpDetail::OneLine:
-            NavData::dump(s,dl);
-            break;
-         case DumpDetail::Brief:
-            NavData::dump(s,dl);
-            s << "  lj = " << hex << (unsigned)lj
-              << "  Hj = " << hex << (unsigned)Hj
-              << endl;
-            break;
-         case DumpDetail::Full:
-               // "header"
-            s << "*************************************************************"
-              << "***************" << endl
-              << "Satellite Health" << endl << endl
-              << "PRN : " << setw(2) << signal.sat << " / "
-              << "SVN : " << setw(2);
-            std::string svn;
-            if (getSVN(signal.sat, timeStamp, svn))
-            {
-               s << svn;
-            }
-            s << endl << endl
-              << "           TIMES OF INTEREST"
-              << endl << endl
-              << "              " << getDumpTimeHdr(dl) << endl
-              << "Transmit:     " << getDumpTime(dl, timeStamp) << endl
-              << endl
-              << "           HEALTH DATA" << endl
-              << "Hj                 " << Hj << endl
-              << "lj                 " << lj << endl
-              << "Status             " << StringUtils::asString(getHealth())
-              << endl;
-            break;
-      }
-      s.flags(oldFlags);
-   }
-
-
-   SVHealth GLOCNavHealth ::
-   getHealth() const
-   {
-      return (Hj || lj) ? SVHealth::Unhealthy : SVHealth::Healthy;
-   }
-
+GLOCNavHealth ::GLOCNavHealth() : Hj(true), lj(true)
+{
+    // Allow the data fields to default to invalid via ValidType.
+    msgLenSec = 3.0;
 }
+
+bool GLOCNavHealth ::validate() const
+{
+    // l^j indicates data validity of the string containing it,
+    // but validate() should return an indication of the validity
+    // of the data within this structure, i.e. Hj and lj
+    // themselves.  Which should always be true?
+    return true;
+}
+
+void GLOCNavHealth ::dump(std::ostream &s, DumpDetail dl) const
+{
+    const ios::fmtflags oldFlags = s.flags();
+    s.setf(ios::fixed, ios::floatfield);
+    s.setf(ios::right, ios::adjustfield);
+    s.setf(ios::uppercase);
+    s.precision(0);
+    s.fill(' ');
+    switch (dl)
+    {
+    case DumpDetail::OneLine:
+        NavData::dump(s, dl);
+        break;
+    case DumpDetail::Brief:
+        NavData::dump(s, dl);
+        s << "  lj = " << hex << (unsigned)lj << "  Hj = " << hex << (unsigned)Hj << endl;
+        break;
+    case DumpDetail::Full:
+        // "header"
+        s << "*************************************************************"
+          << "***************" << endl
+          << "Satellite Health" << endl
+          << endl
+          << "PRN : " << setw(2) << signal.sat << " / "
+          << "SVN : " << setw(2);
+        std::string svn;
+        if (getSVN(signal.sat, timeStamp, svn))
+        {
+            s << svn;
+        }
+        s << endl
+          << endl
+          << "           TIMES OF INTEREST" << endl
+          << endl
+          << "              " << getDumpTimeHdr(dl) << endl
+          << "Transmit:     " << getDumpTime(dl, timeStamp) << endl
+          << endl
+          << "           HEALTH DATA" << endl
+          << "Hj                 " << Hj << endl
+          << "lj                 " << lj << endl
+          << "Status             " << StringUtils::asString(getHealth()) << endl;
+        break;
+    }
+    s.flags(oldFlags);
+}
+
+SVHealth GLOCNavHealth ::getHealth() const
+{
+    return (Hj || lj) ? SVHealth::Unhealthy : SVHealth::Healthy;
+}
+
+} // namespace gnsstk

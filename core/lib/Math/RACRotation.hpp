@@ -42,35 +42,33 @@
 #define GNSSTK_RACROTATION_HPP
 
 // gnsstk
-#include "Triple.hpp"
 #include "Matrix.hpp"
+#include "Triple.hpp"
 #include "Vector.hpp"
 #include "Xvt.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup MathGroup
-      //@{
+/// @ingroup MathGroup
+//@{
 
-   class RACRotation : public gnsstk::Matrix<double>
-   {
-      public:
-            // Constructors
-         RACRotation( const gnsstk::Triple& SVPositionVector,
-                      const gnsstk::Triple& SVVelocityVector);
-         RACRotation(const gnsstk::Xvt& xvt);
+class RACRotation : public gnsstk::Matrix<double>
+{
+  public:
+    // Constructors
+    RACRotation(const gnsstk::Triple &SVPositionVector, const gnsstk::Triple &SVVelocityVector);
+    RACRotation(const gnsstk::Xvt &xvt);
 
-            // Methods
-         gnsstk::Vector<double> convertToRAC( const gnsstk::Vector<double>& inV );
-         gnsstk::Triple         convertToRAC( const gnsstk::Triple& inVec );
-         gnsstk::Xvt            convertToRAC( const gnsstk::Xvt& in );
+    // Methods
+    gnsstk::Vector<double> convertToRAC(const gnsstk::Vector<double> &inV);
+    gnsstk::Triple convertToRAC(const gnsstk::Triple &inVec);
+    gnsstk::Xvt convertToRAC(const gnsstk::Xvt &in);
 
-            // Utilities
-      protected:
-         void compute( const gnsstk::Triple& SVPositionVector,
-                       const gnsstk::Triple& SVVelocityVector);
-   };
+    // Utilities
+  protected:
+    void compute(const gnsstk::Triple &SVPositionVector, const gnsstk::Triple &SVVelocityVector);
+};
 
-      //@}
-}
+//@}
+} // namespace gnsstk
 #endif

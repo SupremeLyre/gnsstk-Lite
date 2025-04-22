@@ -39,50 +39,55 @@
 #ifndef LNAVALMVALFILTER_HPP
 #define LNAVALMVALFILTER_HPP
 
-#include "NavFilter.hpp"
 #include "LNavFilterData.hpp"
+#include "NavFilter.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup NavFilter
-      //@{
+/// @ingroup NavFilter
+//@{
 
-      /** Filter GPS subframes 4 and 5 based on expected value ranges.
-       *
-       * @attention Processing depth = 1 epoch. */
-   class LNavAlmValFilter : public NavFilter
-   {
-   public:
-      LNavAlmValFilter();
+/** Filter GPS subframes 4 and 5 based on expected value ranges.
+ *
+ * @attention Processing depth = 1 epoch. */
+class LNavAlmValFilter : public NavFilter
+{
+  public:
+    LNavAlmValFilter();
 
-         /** For subframes 4 and 5, check the ranges of message data
-          * fields.  For anything else, feed it back into
-          * msgBitsOut.
-          * @pre LNavFilterData::sf is set
-          * @param[in,out] msgBitsIn A list of LNavFilterData* objects
-          *   containing GPS legacy navigation messages (id 2).
-          * @param[out] msgBitsOut The messages successfully passing
-          *   the filter. */
-      virtual void validate(NavMsgList& msgBitsIn, NavMsgList& msgBitsOut);
+    /** For subframes 4 and 5, check the ranges of message data
+     * fields.  For anything else, feed it back into
+     * msgBitsOut.
+     * @pre LNavFilterData::sf is set
+     * @param[in,out] msgBitsIn A list of LNavFilterData* objects
+     *   containing GPS legacy navigation messages (id 2).
+     * @param[out] msgBitsOut The messages successfully passing
+     *   the filter. */
+    virtual void validate(NavMsgList &msgBitsIn, NavMsgList &msgBitsOut);
 
-         /// Filter stores no data, therefore this does nothing.
-      virtual void finalize(NavMsgList& msgBitsOut)
-      {}
+    /// Filter stores no data, therefore this does nothing.
+    virtual void finalize(NavMsgList &msgBitsOut)
+    {
+    }
 
-         /// No internal storage of subframe data so return 0.
-      virtual unsigned processingDepth() const noexcept
-      { return 0; }
+    /// No internal storage of subframe data so return 0.
+    virtual unsigned processingDepth() const noexcept
+    {
+        return 0;
+    }
 
-         /// Return the filter name.
-      virtual std::string filterName() const noexcept
-      { return "AlmVal"; }
+    /// Return the filter name.
+    virtual std::string filterName() const noexcept
+    {
+        return "AlmVal";
+    }
 
-         /// Specific value range checks
-      static bool checkAlmValRange(LNavFilterData* fd);
-   };
+    /// Specific value range checks
+    static bool checkAlmValRange(LNavFilterData *fd);
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // LNAVALMVALFILTER_HPP

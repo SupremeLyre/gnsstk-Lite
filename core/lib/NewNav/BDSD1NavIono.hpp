@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,34 +42,36 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Class containing data elements unique to BeiDou D1NAV
-       * ionospheric data. */
-   class BDSD1NavIono : public KlobucharIonoNavData
-   {
-   public:
-         /// Sets the nav message type.
-      BDSD1NavIono();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<BDSD1NavIono>(*this); }
+/** Class containing data elements unique to BeiDou D1NAV
+ * ionospheric data. */
+class BDSD1NavIono : public KlobucharIonoNavData
+{
+  public:
+    /// Sets the nav message type.
+    BDSD1NavIono();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<BDSD1NavIono>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-      uint32_t pre;  ///< The preamble from word 1 of the subframe.
-      uint32_t rev;  ///< The rev field from word 1 of the subframe.
-      uint8_t fraID; ///< The subframe ID (FraID) from word 1 of the subframe.
-      uint32_t sow;  ///< Seconds of week from word 1-2 of the subframe.
-   };
+    uint32_t pre;  ///< The preamble from word 1 of the subframe.
+    uint32_t rev;  ///< The rev field from word 1 of the subframe.
+    uint8_t fraID; ///< The subframe ID (FraID) from word 1 of the subframe.
+    uint32_t sow;  ///< Seconds of week from word 1-2 of the subframe.
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_BDSD1NAVIONO_HPP

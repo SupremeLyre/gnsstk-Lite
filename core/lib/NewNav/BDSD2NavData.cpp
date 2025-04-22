@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -40,25 +39,17 @@
 
 namespace gnsstk
 {
-   BDSD2NavData ::
-   BDSD2NavData()
-         : pre(0),
-           rev(0),
-           fraID(0),
-           sow(0)
-   {
-      weekFmt = "%4D(%4e)";
-      frame = RefFrameSys::CGCS2000;
-   }
-
-
-   bool BDSD2NavData ::
-   validate() const
-   {
-         // Section 5.2.4.2 indicates a subframe ID of 0 is not
-         // valid. Values of 6 and 7 are reserved, but we don't have
-         // any reason to consider them valid in this context.
-      return (((pre == 0) || (pre == 0x712)) &&
-              (fraID >= 1) && (fraID <= 5));
-   }
+BDSD2NavData ::BDSD2NavData() : pre(0), rev(0), fraID(0), sow(0)
+{
+    weekFmt = "%4D(%4e)";
+    frame = RefFrameSys::CGCS2000;
 }
+
+bool BDSD2NavData ::validate() const
+{
+    // Section 5.2.4.2 indicates a subframe ID of 0 is not
+    // valid. Values of 6 and 7 are reserved, but we don't have
+    // any reason to consider them valid in this context.
+    return (((pre == 0) || (pre == 0x712)) && (fraID >= 1) && (fraID <= 5));
+}
+} // namespace gnsstk

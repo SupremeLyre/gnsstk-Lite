@@ -37,142 +37,137 @@
 //==============================================================================
 
 #include "CommandOptionNavEnumHelp.hpp"
-#include "StringUtils.hpp"
-#include "SatelliteSystem.hpp"
-#include "ObservationType.hpp"
 #include "CarrierBand.hpp"
+#include "DumpDetail.hpp"
+#include "NavMessageType.hpp"
+#include "NavSearchOrder.hpp"
+#include "NavType.hpp"
+#include "NavValidityType.hpp"
+#include "ObservationType.hpp"
+#include "SVHealth.hpp"
+#include "SatelliteSystem.hpp"
+#include "StringUtils.hpp"
 #include "TrackingCode.hpp"
 #include "XmitAnt.hpp"
-#include "NavType.hpp"
-#include "NavMessageType.hpp"
-#include "NavValidityType.hpp"
-#include "NavSearchOrder.hpp"
-#include "SVHealth.hpp"
-#include "DumpDetail.hpp"
 
 using namespace std;
 
 namespace gnsstk
 {
-   CommandOptionNavEnumHelp ::
-   CommandOptionNavEnumHelp(const char shOpt,
-                            const std::string& loOpt,
-                            const std::string& desc)
-         : CommandOptionHelp(CommandOption::hasArgument, shOpt, loOpt, desc)
-   {
-   }
+CommandOptionNavEnumHelp ::CommandOptionNavEnumHelp(const char shOpt, const std::string &loOpt, const std::string &desc)
+    : CommandOptionHelp(CommandOption::hasArgument, shOpt, loOpt, desc)
+{
+}
 
-
-   void CommandOptionNavEnumHelp ::
-   printHelp(std::ostream& out, bool pretty)
-   {
-      std::vector<std::string> enumStrs;
-      for (unsigned i = 0; i < value.size(); i++)
-      {
-         std::string lowered(value[i]);
-         gnsstk::StringUtils::lowerCase(lowered);
-         if (lowered == "system")
-         {
+void CommandOptionNavEnumHelp ::printHelp(std::ostream &out, bool pretty)
+{
+    std::vector<std::string> enumStrs;
+    for (unsigned i = 0; i < value.size(); i++)
+    {
+        std::string lowered(value[i]);
+        gnsstk::StringUtils::lowerCase(lowered);
+        if (lowered == "system")
+        {
             out << "Satellite systems:" << endl;
             for (SatelliteSystem i : SatelliteSystemIterator())
             {
-               enumStrs.push_back(StringUtils::asString(i));
+                enumStrs.push_back(StringUtils::asString(i));
             }
-         }
-         else if (lowered == "obstype")
-         {
+        }
+        else if (lowered == "obstype")
+        {
             out << "Observation types:" << endl;
             for (ObservationType i : ObservationTypeIterator())
             {
-               enumStrs.push_back(StringUtils::asString(i));
+                enumStrs.push_back(StringUtils::asString(i));
             }
-         }
-         else if (lowered == "carrier")
-         {
+        }
+        else if (lowered == "carrier")
+        {
             out << "Carrier bands:" << endl;
             for (CarrierBand i : CarrierBandIterator())
             {
-               enumStrs.push_back(StringUtils::asString(i));
+                enumStrs.push_back(StringUtils::asString(i));
             }
-         }
-         else if (lowered == "range")
-         {
+        }
+        else if (lowered == "range")
+        {
             out << "Tracking/ranging codes:" << endl;
             for (TrackingCode i : TrackingCodeIterator())
             {
-               enumStrs.push_back(StringUtils::asString(i));
+                enumStrs.push_back(StringUtils::asString(i));
             }
-         }
-         else if (lowered == "antenna")
-         {
+        }
+        else if (lowered == "antenna")
+        {
             out << "Antenna types:" << endl;
             for (XmitAnt i : XmitAntIterator())
             {
-               enumStrs.push_back(StringUtils::asString(i));
+                enumStrs.push_back(StringUtils::asString(i));
             }
-         }
-         else if (lowered == "navtype")
-         {
+        }
+        else if (lowered == "navtype")
+        {
             out << "Navigation message formats:" << endl;
             for (NavType i : NavTypeIterator())
             {
-               enumStrs.push_back(StringUtils::asString(i));
+                enumStrs.push_back(StringUtils::asString(i));
             }
-         }
-         else if (lowered == "navmsgtype")
-         {
+        }
+        else if (lowered == "navmsgtype")
+        {
             out << "Navigation message types:" << endl;
             for (NavMessageType i : NavMessageTypeIterator())
             {
-               enumStrs.push_back(StringUtils::asString(i));
+                enumStrs.push_back(StringUtils::asString(i));
             }
-         }
-         else if (lowered == "health")
-         {
+        }
+        else if (lowered == "health")
+        {
             out << "Satellite health:" << endl;
             for (SVHealth i : SVHealthIterator())
             {
-               enumStrs.push_back(StringUtils::asString(i));
+                enumStrs.push_back(StringUtils::asString(i));
             }
-         }
-         else if (lowered == "validity")
-         {
+        }
+        else if (lowered == "validity")
+        {
             out << "Nav message validity types:" << endl;
             for (NavValidityType i : NavValidityTypeIterator())
             {
-               enumStrs.push_back(StringUtils::asString(i));
+                enumStrs.push_back(StringUtils::asString(i));
             }
-         }
-         else if (lowered == "order")
-         {
+        }
+        else if (lowered == "order")
+        {
             out << "Nav message search orders:" << endl;
             for (NavSearchOrder i : NavSearchOrderIterator())
             {
-                  // Don't even pretend to support "Unknown" as a search order.
-               if (i != NavSearchOrder::Unknown)
-               {
-                  enumStrs.push_back(StringUtils::asString(i));
-               }
+                // Don't even pretend to support "Unknown" as a search order.
+                if (i != NavSearchOrder::Unknown)
+                {
+                    enumStrs.push_back(StringUtils::asString(i));
+                }
             }
-         }
-         else if (lowered == "detail")
-         {
+        }
+        else if (lowered == "detail")
+        {
             out << "Detail levels:" << endl;
             for (DumpDetail i : DumpDetailIterator())
             {
-                  // Don't even pretend to support "Unknown" as a detail level.
-               if (i != DumpDetail::Unknown)
-               {
-                  enumStrs.push_back(StringUtils::asString(i));
-               }
+                // Don't even pretend to support "Unknown" as a detail level.
+                if (i != DumpDetail::Unknown)
+                {
+                    enumStrs.push_back(StringUtils::asString(i));
+                }
             }
-         }
-         else
-         {
+        }
+        else
+        {
             cerr << "Invalid enum type \"" << value[i] << "\"" << endl;
             break;
-         }
-         out << StringUtils::tabularize(enumStrs);
-      } // for (unsigned i = 0; i < value.size(); i++)
-   } // printHelp(std::ostream& out, bool pretty)
+        }
+        out << StringUtils::tabularize(enumStrs);
+    } // for (unsigned i = 0; i < value.size(); i++)
+} // printHelp(std::ostream& out, bool pretty)
 } // namespace gnsstk

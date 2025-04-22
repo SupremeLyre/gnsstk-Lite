@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,43 +38,43 @@
 #ifndef GNSSTK_CORRECTORTYPE_HPP
 #define GNSSTK_CORRECTORTYPE_HPP
 
-#include <string>
-#include <set>
 #include "EnumIterator.hpp"
+#include <set>
+#include <string>
 
 namespace gnsstk
 {
-      /// @ingroup GNSSsolutions
-      //@{
+/// @ingroup GNSSsolutions
+//@{
 
-      /// Identify different sources of pseudorange bias.
-   enum class CorrectorType
-   {
-      Unknown,    ///< Corrector type is not known or is uninitialized.
-      Trop,       ///< Troposphere (weather) corrector.
-      Iono,       ///< Ionospheric corrector.
-      ISC,        ///< Inter-signal bias corrector.
-      Multipath,  ///< Multipath corrector.
-      RxChlBias,  ///< Receiver inter-channel bias corrector.
-      Last        ///< Used to create an iterator.
-   };
+/// Identify different sources of pseudorange bias.
+enum class CorrectorType
+{
+    Unknown,   ///< Corrector type is not known or is uninitialized.
+    Trop,      ///< Troposphere (weather) corrector.
+    Iono,      ///< Ionospheric corrector.
+    ISC,       ///< Inter-signal bias corrector.
+    Multipath, ///< Multipath corrector.
+    RxChlBias, ///< Receiver inter-channel bias corrector.
+    Last       ///< Used to create an iterator.
+};
 
-      /** Define an iterator so C++11 can do things like
-       * for (CorrectorType i : CorrectorTypeIterator()) */
-   typedef EnumIterator<CorrectorType, CorrectorType::Unknown, CorrectorType::Last> CorrectorTypeIterator;
-      /// Set of message types, used by NavLibrary and NavDataFactory.
-   typedef std::set<CorrectorType> CorrectorTypeSet;
+/** Define an iterator so C++11 can do things like
+ * for (CorrectorType i : CorrectorTypeIterator()) */
+typedef EnumIterator<CorrectorType, CorrectorType::Unknown, CorrectorType::Last> CorrectorTypeIterator;
+/// Set of message types, used by NavLibrary and NavDataFactory.
+typedef std::set<CorrectorType> CorrectorTypeSet;
 
-   namespace StringUtils
-   {
-         /// Convert a CorrectorType to a whitespace-free string name.
-      std::string asString(CorrectorType e) noexcept;
-         /// Convert a string name to an CorrectorType
-      CorrectorType asCorrectorType(const std::string& s) noexcept;
-   }
+namespace StringUtils
+{
+/// Convert a CorrectorType to a whitespace-free string name.
+std::string asString(CorrectorType e) noexcept;
+/// Convert a string name to an CorrectorType
+CorrectorType asCorrectorType(const std::string &s) noexcept;
+} // namespace StringUtils
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_CORRECTORTYPE_HPP

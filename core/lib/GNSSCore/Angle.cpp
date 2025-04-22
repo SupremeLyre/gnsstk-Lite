@@ -36,110 +36,96 @@
 //
 //==============================================================================
 
-#include <limits>
-#include <math.h>
 #include "Angle.hpp"
 #include "GNSSconstants.hpp"
+#include <limits>
+#include <math.h>
 
 namespace gnsstk
 {
-   Angle ::
-   Angle()
-         : radians(std::numeric_limits<double>::quiet_NaN()),
-           degrees(std::numeric_limits<double>::quiet_NaN()),
-           tangent(std::numeric_limits<double>::quiet_NaN()),
-           semicircles(std::numeric_limits<double>::quiet_NaN())
-   {
-   }
+Angle ::Angle()
+    : radians(std::numeric_limits<double>::quiet_NaN()), degrees(std::numeric_limits<double>::quiet_NaN()),
+      tangent(std::numeric_limits<double>::quiet_NaN()), semicircles(std::numeric_limits<double>::quiet_NaN())
+{
+}
 
+Angle ::Angle(double s, double c) : AngleReduced(s, c)
+{
+    radians = atan2(s, c);
+    degrees = radians * RAD2DEG;
+    semicircles = radians / PI;
+    tangent = ::tan(radians);
+}
 
-   Angle ::
-   Angle(double s, double c)
-         : AngleReduced(s,c)
-   {
-      radians = atan2(s,c);
-      degrees = radians * RAD2DEG;
-      semicircles = radians / PI;
-      tangent = ::tan(radians);
-   }
+void Angle ::setValue(double v, AngleType t)
+{
+    switch (t)
+    {
+    case AngleType::Rad:
+        radians = v;
+        degrees = v * RAD2DEG;
+        semicircles = v / PI;
+        sine = ::sin(radians);
+        cosine = ::cos(radians);
+        tangent = ::tan(radians);
+        break;
+    case AngleType::Deg:
+        radians = v * DEG2RAD;
+        degrees = v;
+        semicircles = v / 180.0;
+        sine = ::sin(radians);
+        cosine = ::cos(radians);
+        tangent = ::tan(radians);
+        break;
+    case AngleType::SemiCircle:
+        radians = v * PI;
+        degrees = v * 180.0;
+        semicircles = v;
+        sine = ::sin(radians);
+        cosine = ::cos(radians);
+        tangent = ::tan(radians);
+        break;
+    case AngleType::Sin:
+        radians = asin(v);
+        degrees = radians * RAD2DEG;
+        semicircles = radians / PI;
+        sine = v;
+        cosine = ::sqrt(1 - v * v);
+        tangent = ::tan(radians);
+        break;
+    case AngleType::Cos:
+        radians = acos(v);
+        degrees = radians * RAD2DEG;
+        semicircles = radians / PI;
+        sine = ::sqrt(1 - v * v);
+        cosine = v;
+        tangent = ::tan(radians);
+        break;
+    default:
+        GNSSTK_THROW(Exception("Invalid type in setValue"));
+        break;
+    }
+} // setValue
 
+Angle Angle ::operator-(const Angle &right) const
+{
+    double newrad = radians - right.radians;
+    Angle rv(newrad, AngleType::Rad);
+    return rv;
+}
 
-   void Angle ::
-   setValue(double v, AngleType t)
-   {
-      switch (t)
-      {
-         case AngleType::Rad:
-            radians = v;
-            degrees = v * RAD2DEG;
-            semicircles = v / PI;
-            sine = ::sin(radians);
-            cosine = ::cos(radians);
-            tangent = ::tan(radians);
-            break;
-         case AngleType::Deg:
-            radians = v * DEG2RAD;
-            degrees = v;
-            semicircles = v / 180.0;
-            sine = ::sin(radians);
-            cosine = ::cos(radians);
-            tangent = ::tan(radians);
-            break;
-         case AngleType::SemiCircle:
-            radians = v * PI;
-            degrees = v * 180.0;
-            semicircles = v;
-            sine = ::sin(radians);
-            cosine = ::cos(radians);
-            tangent = ::tan(radians);
-            break;
-         case AngleType::Sin:
-            radians = asin(v);
-            degrees = radians * RAD2DEG;
-            semicircles = radians / PI;
-            sine = v;
-            cosine = ::sqrt(1-v*v);
-            tangent = ::tan(radians);
-            break;
-         case AngleType::Cos:
-            radians = acos(v);
-            degrees = radians * RAD2DEG;
-            semicircles = radians / PI;
-            sine = ::sqrt(1-v*v);
-            cosine = v;
-            tangent = ::tan(radians);
-            break;
-         default:
-            GNSSTK_THROW(Exception("Invalid type in setValue"));
-            break;
-      }
-   } // setValue
+Angle Angle ::operator+(const Angle &right) const
+{
+    double newrad = radians + right.radians;
+    Angle rv(newrad, AngleType::Rad);
+    return rv;
+}
 
-
-   Angle Angle ::
-   operator-(const Angle& right) const
-   {
-      double newrad = radians - right.radians;
-      Angle rv(newrad, AngleType::Rad);
-      return rv;
-   }
-
-
-   Angle Angle ::
-   operator+(const Angle& right) const
-   {
-      double newrad = radians + right.radians;
-      Angle rv(newrad, AngleType::Rad);
-      return rv;
-   }
-
-
-   std::string Angle ::
-   asString() const
-   {
-      std::ostringstream s;
-      s << *this;
-      return s.str();
-   }
+std::string Angle ::asString() const
+{
+    std::ostringstream s;
+    s << *this;
+    return s.str();
+}
 
 } // namespace gnsstk

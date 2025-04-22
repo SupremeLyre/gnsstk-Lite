@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -42,60 +41,50 @@ using namespace std;
 
 namespace gnsstk
 {
-   GPSCNav2Health ::
-   GPSCNav2Health()
-         : health(true)
-   {
-      msgLenSec = 5.48;
-   }
-
-
-   void GPSCNav2Health ::
-   dump(std::ostream& s, DumpDetail dl) const
-   {
-      const ios::fmtflags oldFlags = s.flags();
-      s.setf(ios::fixed, ios::floatfield);
-      s.setf(ios::right, ios::adjustfield);
-      s.setf(ios::uppercase);
-      s.precision(0);
-      s.fill(' ');
-      switch (dl)
-      {
-         case DumpDetail::OneLine:
-            NavData::dump(s,dl);
-            break;
-         case DumpDetail::Brief:
-            NavData::dump(s,dl);
-            s << "health = " << hex << (unsigned)health << dec << "  "
-              << StringUtils::asString(getHealth()) << endl;
-            break;
-         case DumpDetail::Full:
-               // "header"
-            s << "*************************************************************"
-              << "***************" << endl
-              << "Satellite Health"
-              << endl
-              << endl
-              << getSignalString() << endl
-              << "           TIMES OF INTEREST"
-              << endl << endl
-              << "              " << getDumpTimeHdr(dl) << endl
-              << "Transmit:     " << getDumpTime(dl, timeStamp) << endl
-              << endl
-              << "           HEALTH DATA" << endl
-              << "Bits               0x" << hex << setw(1) << setfill('0')
-              << (unsigned)health << endl
-              << "Status             " << StringUtils::asString(getHealth())
-              << endl;
-            break;
-      }
-      s.flags(oldFlags);
-   }
-
-
-   void GPSCNav2Health ::
-   setEph(bool e)
-   {
-      msgLenSec = e ? 12.0 : 5.48;
-   }
+GPSCNav2Health ::GPSCNav2Health() : health(true)
+{
+    msgLenSec = 5.48;
 }
+
+void GPSCNav2Health ::dump(std::ostream &s, DumpDetail dl) const
+{
+    const ios::fmtflags oldFlags = s.flags();
+    s.setf(ios::fixed, ios::floatfield);
+    s.setf(ios::right, ios::adjustfield);
+    s.setf(ios::uppercase);
+    s.precision(0);
+    s.fill(' ');
+    switch (dl)
+    {
+    case DumpDetail::OneLine:
+        NavData::dump(s, dl);
+        break;
+    case DumpDetail::Brief:
+        NavData::dump(s, dl);
+        s << "health = " << hex << (unsigned)health << dec << "  " << StringUtils::asString(getHealth()) << endl;
+        break;
+    case DumpDetail::Full:
+        // "header"
+        s << "*************************************************************"
+          << "***************" << endl
+          << "Satellite Health" << endl
+          << endl
+          << getSignalString() << endl
+          << "           TIMES OF INTEREST" << endl
+          << endl
+          << "              " << getDumpTimeHdr(dl) << endl
+          << "Transmit:     " << getDumpTime(dl, timeStamp) << endl
+          << endl
+          << "           HEALTH DATA" << endl
+          << "Bits               0x" << hex << setw(1) << setfill('0') << (unsigned)health << endl
+          << "Status             " << StringUtils::asString(getHealth()) << endl;
+        break;
+    }
+    s.flags(oldFlags);
+}
+
+void GPSCNav2Health ::setEph(bool e)
+{
+    msgLenSec = e ? 12.0 : 5.48;
+}
+} // namespace gnsstk

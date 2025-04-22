@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,34 +42,36 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Class containing data elements unique to GPS LNav ionospheric data.
-   class GPSLNavIono : public KlobucharIonoNavData
-   {
-   public:
-         /// Sets the nav message type.
-      GPSLNavIono();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GPSLNavIono>(*this); }
+/// Class containing data elements unique to GPS LNav ionospheric data.
+class GPSLNavIono : public KlobucharIonoNavData
+{
+  public:
+    /// Sets the nav message type.
+    GPSLNavIono();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GPSLNavIono>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-      uint32_t pre;    ///< The TLM preamble from word 1 of the subframe.
-      uint32_t tlm;    ///< The TLM message from word 1 of the subframe.
-      bool isf;        ///< Integrity status flag.
-      bool alert;      ///< Alert flag from HOW.
-      bool asFlag;     ///< Anti-spoof flag from HOW.
-   };
+    uint32_t pre; ///< The TLM preamble from word 1 of the subframe.
+    uint32_t tlm; ///< The TLM message from word 1 of the subframe.
+    bool isf;     ///< Integrity status flag.
+    bool alert;   ///< Alert flag from HOW.
+    bool asFlag;  ///< Anti-spoof flag from HOW.
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GPSLNAVIONO_HPP

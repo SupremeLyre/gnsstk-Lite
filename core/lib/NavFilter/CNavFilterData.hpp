@@ -39,43 +39,39 @@
 #ifndef CNAVFILTERDATA_HPP
 #define CNAVFILTERDATA_HPP
 
-#include <stdint.h>
 #include "NavFilterKey.hpp"
 #include "PackedNavBits.hpp"
+#include <stdint.h>
 
 namespace gnsstk
 {
-   class CNavFilterData : public NavFilterKey
-   {
-   public:
-      CNavFilterData();
-      CNavFilterData(PackedNavBits* pnb);
+class CNavFilterData : public NavFilterKey
+{
+  public:
+    CNavFilterData();
+    CNavFilterData(PackedNavBits *pnb);
 
-      void loadData(PackedNavBits* pnb);
+    void loadData(PackedNavBits *pnb);
 
-         // The actual message data is stored in a PackedNavBits object
-      PackedNavBits* pnb;
+    // The actual message data is stored in a PackedNavBits object
+    PackedNavBits *pnb;
 
-      virtual void dump(std::ostream& s) const;
-   };
+    virtual void dump(std::ostream &s) const;
+};
 
-      // Sort CNavFilterData objects by navigation message bits
-   struct CNavMsgSort
-      : std::binary_function<CNavFilterData, CNavFilterData, bool>
-   {
-      inline bool operator() (const CNavFilterData* l,
-                              const CNavFilterData* r) const;
-   };
+// Sort CNavFilterData objects by navigation message bits
+struct CNavMsgSort : std::binary_function<CNavFilterData, CNavFilterData, bool>
+{
+    inline bool operator()(const CNavFilterData *l, const CNavFilterData *r) const;
+};
 
-   bool CNavMsgSort::
-   operator() (const CNavFilterData* l,
-               const CNavFilterData* r) const
-   {
-      return *(l->pnb) < *(r->pnb);
-   }
-
-      // Write to output stream
-   std::ostream& operator<<(std::ostream& s, const CNavFilterData& nfd);
+bool CNavMsgSort::operator()(const CNavFilterData *l, const CNavFilterData *r) const
+{
+    return *(l->pnb) < *(r->pnb);
 }
+
+// Write to output stream
+std::ostream &operator<<(std::ostream &s, const CNavFilterData &nfd);
+} // namespace gnsstk
 
 #endif

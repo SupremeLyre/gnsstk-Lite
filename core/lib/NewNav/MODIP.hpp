@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -44,30 +43,30 @@
 
 namespace gnsstk
 {
-      /** Wrap the MODIP (Modified Dip Latitude) data used by the
-       * NeQuick G ionospheric model.  MODIP is a translated latitude
-       * that defines regions used by the NeQuick G ionosphere model
-       * that are based on a "pseudo-latitude" that is computed using
-       * the geodetic latitude and longitude, and a grid that maps
-       * from geodetic position to a modeled latitude.  See Galileo
-       * Ionospheric Model, Figure 2. */
-   class MODIP
-   {
-   public:
-      MODIP();
+/** Wrap the MODIP (Modified Dip Latitude) data used by the
+ * NeQuick G ionospheric model.  MODIP is a translated latitude
+ * that defines regions used by the NeQuick G ionosphere model
+ * that are based on a "pseudo-latitude" that is computed using
+ * the geodetic latitude and longitude, and a grid that maps
+ * from geodetic position to a modeled latitude.  See Galileo
+ * Ionospheric Model, Figure 2. */
+class MODIP
+{
+  public:
+    MODIP();
 
-         /** Get the MODIP value at a lat and lon in degrees.
-          * @param[in] pos The observer geodetic position.
-          * @return The modeled latitude. */
-      double stModip(const Position& pos) const;
+    /** Get the MODIP value at a lat and lon in degrees.
+     * @param[in] pos The observer geodetic position.
+     * @return The modeled latitude. */
+    double stModip(const Position &pos) const;
 
-         /** Perform third-order interpolation across a set of data points.
-          * @param[in] z An array of 4 points to perform interpolation over.
-          * @param[in] x A fractional offset relative to z[1] that is
-          *   the target for interpolation.
-          * @return The interpolated value. */
-      double interpolate(double z[4], double x) const;
-   };
-}
+    /** Perform third-order interpolation across a set of data points.
+     * @param[in] z An array of 4 points to perform interpolation over.
+     * @param[in] x A fractional offset relative to z[1] that is
+     *   the target for interpolation.
+     * @return The interpolated value. */
+    double interpolate(double z[4], double x) const;
+};
+} // namespace gnsstk
 
 #endif // GNSSTK_MODIP_HPP

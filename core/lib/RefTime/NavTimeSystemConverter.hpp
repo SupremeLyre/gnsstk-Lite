@@ -39,70 +39,69 @@
 #ifndef GNSSTK_NAVTIMESYSTEMCONVERTER_HPP
 #define GNSSTK_NAVTIMESYSTEMCONVERTER_HPP
 
-#include "TimeSystemConverter.hpp"
 #include "NavLibrary.hpp"
+#include "TimeSystemConverter.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup TimeHandling
-      //@{
+/// @ingroup TimeHandling
+//@{
 
-      /** Define a class for doing time system conversions using
-       * navigation messages provided by a NavLibrary object.
-       *
-       * Example use:
-       *
-       * \code
-       *    // Some time to convert
-       * gnsstk::CommonTime ct(gnsstk::GPSWeekSecond(2020,2021));
-       *    // Construct the time system converter
-       * gnsstk::CommonTime::tsConv =
-       *    make_shared<gnsstk::NavTimeSystemConverter>();
-       *    // Get a pointer to the NavTimeSystemConverter
-       * NavTimeSystemConverter *ntsc = dynamic_cast<NavTimeSystemConverter*>(
-       *    CommonTime::tsConv.get());
-       *    // Construct a NavLibrary object.
-       * ntsc->navLib = make_shared<gnsstk::NavLibrary>();
-       *    // Construct a NavDataFactory object
-       * gnsstk::NavDataFactoryPtr ndfp(
-       *    std::make_shared<gnsstk::MultiFormatNavDataFactory>());
-       *    // Add the NavDataFactory to the NavLibrary
-       * ntsc->navLib->addFactory(ndfp);
-       *    // Add input data (files) to the NavDataFactory
-       * if (!ndfp->addDataSource(inputFileName))
-       * {
-       *    cerr << "Unable to load \"" << inputFileName << "\"" << endl;
-       *    return false;
-       * }
-       *   // Convert the time to UTC
-       * if (!ct.changeTimeSystem(gnsstk::TimeSystem::UTC))
-       * {
-       *    cerr << "Unable to change time system to UTC" << endl;
-       *    return false;
-       * }
-       * cout << "Time is "
-       *      << gnsstk::printTime("%Y/%02m/%02d %02H:%02M:%02S %P") << endl;
-       * \endcode
-       */
-   class NavTimeSystemConverter : public TimeSystemConverter
-   {
-   public:
-         /** Get the offset in seconds between fromSys and toSys.
-          * @pre navLib must be set.
-          * @param[in] fromSys The time system to convert from.
-          * @param[in] toSys The time system to convert to.
-          * @param[in] t The time at which the offset is being
-          *   requested (i.e. the time being converted).
-          * @param[out] offs The resulting offset in seconds, 
-          *   if available, where when(toSys)=when(fromSys)-offset.
-          * @return true if successful, false if unavailable. */
-      bool getOffset(TimeSystem fromSys, TimeSystem toSys,
-                     const CommonTime& t, double& offs) override;
+/** Define a class for doing time system conversions using
+ * navigation messages provided by a NavLibrary object.
+ *
+ * Example use:
+ *
+ * \code
+ *    // Some time to convert
+ * gnsstk::CommonTime ct(gnsstk::GPSWeekSecond(2020,2021));
+ *    // Construct the time system converter
+ * gnsstk::CommonTime::tsConv =
+ *    make_shared<gnsstk::NavTimeSystemConverter>();
+ *    // Get a pointer to the NavTimeSystemConverter
+ * NavTimeSystemConverter *ntsc = dynamic_cast<NavTimeSystemConverter*>(
+ *    CommonTime::tsConv.get());
+ *    // Construct a NavLibrary object.
+ * ntsc->navLib = make_shared<gnsstk::NavLibrary>();
+ *    // Construct a NavDataFactory object
+ * gnsstk::NavDataFactoryPtr ndfp(
+ *    std::make_shared<gnsstk::MultiFormatNavDataFactory>());
+ *    // Add the NavDataFactory to the NavLibrary
+ * ntsc->navLib->addFactory(ndfp);
+ *    // Add input data (files) to the NavDataFactory
+ * if (!ndfp->addDataSource(inputFileName))
+ * {
+ *    cerr << "Unable to load \"" << inputFileName << "\"" << endl;
+ *    return false;
+ * }
+ *   // Convert the time to UTC
+ * if (!ct.changeTimeSystem(gnsstk::TimeSystem::UTC))
+ * {
+ *    cerr << "Unable to change time system to UTC" << endl;
+ *    return false;
+ * }
+ * cout << "Time is "
+ *      << gnsstk::printTime("%Y/%02m/%02d %02H:%02M:%02S %P") << endl;
+ * \endcode
+ */
+class NavTimeSystemConverter : public TimeSystemConverter
+{
+  public:
+    /** Get the offset in seconds between fromSys and toSys.
+     * @pre navLib must be set.
+     * @param[in] fromSys The time system to convert from.
+     * @param[in] toSys The time system to convert to.
+     * @param[in] t The time at which the offset is being
+     *   requested (i.e. the time being converted).
+     * @param[out] offs The resulting offset in seconds,
+     *   if available, where when(toSys)=when(fromSys)-offset.
+     * @return true if successful, false if unavailable. */
+    bool getOffset(TimeSystem fromSys, TimeSystem toSys, const CommonTime &t, double &offs) override;
 
-         /// Pointer to the nav library from which we will get time offset data.
-      std::shared_ptr<NavLibrary> navLib;
-   };
-}
-      //@}
+    /// Pointer to the nav library from which we will get time offset data.
+    std::shared_ptr<NavLibrary> navLib;
+};
+} // namespace gnsstk
+  //@}
 
 #endif // GNSSTK_NAVTIMESYSTEMCONVERTER_HPP

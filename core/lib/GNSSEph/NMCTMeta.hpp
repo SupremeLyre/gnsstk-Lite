@@ -44,23 +44,23 @@
 #ifndef NMCTMETA_HPP
 #define NMCTMETA_HPP
 
-#include <stdint.h>
 #include "CommonTime.hpp"
+#include <stdint.h>
 
 namespace gnsstk
 {
-      /** Encapsulate the time data related to the NMCT (subframe 4 pg 13). */
-   class NMCTMeta
-   {
-   public:
-         /// Initialize data members.
-      NMCTMeta();
-      unsigned short prn; ///< Transmitting satellite of subframe 2.
-      CommonTime tot;     ///< Time of transmission of subframe 2.
-      uint32_t aodo;      ///< Age-of-data offset (in seconds).
-      CommonTime tnmct;   ///< NMCT validity time.
-      CommonTime toe;     ///< Ephemeris validity time.
-   };
-}
+/** Encapsulate the time data related to the NMCT (subframe 4 pg 13). */
+class NMCTMeta
+{
+  public:
+    /// Initialize data members.
+    NMCTMeta();
+    unsigned short prn; ///< Transmitting satellite of subframe 2.
+    CommonTime tot;     ///< Time of transmission of subframe 2.
+    uint32_t aodo;      ///< Age-of-data offset (in seconds).
+    CommonTime tnmct;   ///< NMCT validity time.
+    CommonTime toe;     ///< Ephemeris validity time.
+};
+} // namespace gnsstk
 
 #endif // NMCTMETA_HPP

@@ -39,25 +39,25 @@
 #ifndef GNSSTK_FREQCONV_HPP
 #define GNSSTK_FREQCONV_HPP
 
-#include "FreqConsts.hpp"
 #include "CarrierBand.hpp"
+#include "FreqConsts.hpp"
 
 namespace gnsstk
 {
-      /** Get the carrier frequency in Hz for a given carrier band enumeration.
-       * @param[in] band The carrier band whose carrier frequency is needed.
-       * @return The carrier frequency, or 0 if not known. */
-   double getFrequency(CarrierBand band);
+/** Get the carrier frequency in Hz for a given carrier band enumeration.
+ * @param[in] band The carrier band whose carrier frequency is needed.
+ * @return The carrier frequency, or 0 if not known. */
+double getFrequency(CarrierBand band);
 
-      /** Get the gamma value relative to two carrier bands, which is
-       * (f1/f2)^2.
-       * @param[in] band1 The primary carrier band in a dual-frequency
-       *   observation.
-       * @param[in] band2 The secondary carrier band in a dual-frequency
-       *   observation.
-       * @return The nominal center frequency, gamma, between band1 and band2.
-       */
-   double getGamma(CarrierBand band1, CarrierBand band2);
+/** Get the gamma value relative to two carrier bands, which is
+ * (f1/f2)^2.
+ * @param[in] band1 The primary carrier band in a dual-frequency
+ *   observation.
+ * @param[in] band2 The secondary carrier band in a dual-frequency
+ *   observation.
+ * @return The nominal center frequency, gamma, between band1 and band2.
+ */
+double getGamma(CarrierBand band1, CarrierBand band2);
 } // namespace gnsstk
 
 #endif // GNSSTK_FREQCONV_HPP

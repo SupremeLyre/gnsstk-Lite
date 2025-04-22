@@ -38,7 +38,7 @@
 
 //
 //
-//#include <stdio.h>
+// #include <stdio.h>
 
 // gnsstk
 #include "RACRotation.hpp"
@@ -46,19 +46,17 @@
 namespace gnsstk
 {
 
-//using namespace std;
+// using namespace std;
 
-RACRotation::RACRotation( const gnsstk::Triple& SVPositionVector,
-                          const gnsstk::Triple& SVVelocityVector)
-                          : gnsstk::Matrix<double>(3,3)
+RACRotation::RACRotation(const gnsstk::Triple &SVPositionVector, const gnsstk::Triple &SVVelocityVector)
+    : gnsstk::Matrix<double>(3, 3)
 {
-   compute( SVPositionVector, SVVelocityVector );
+    compute(SVPositionVector, SVVelocityVector);
 }
 
-RACRotation::RACRotation(const gnsstk::Xvt& xvt)
-                         : gnsstk::Matrix<double>(3,3)
+RACRotation::RACRotation(const gnsstk::Xvt &xvt) : gnsstk::Matrix<double>(3, 3)
 {
-   compute( xvt.x, xvt.v );
+    compute(xvt.x, xvt.v);
 }
 
 //
@@ -76,76 +74,75 @@ RACRotation::RACRotation(const gnsstk::Xvt& xvt)
 //      XYZ and RAC is the matrix where R^, C^, and A^ are each a row of the
 //      matrix.
 //
-void RACRotation::compute( const gnsstk::Triple& SVPositionVector,
-                           const gnsstk::Triple& SVVelocityVector)
+void RACRotation::compute(const gnsstk::Triple &SVPositionVector, const gnsstk::Triple &SVVelocityVector)
 {
 
-   gnsstk::Triple unitR = SVPositionVector.unitVector();
-   gnsstk::Triple C = unitR.cross(SVVelocityVector);
-   gnsstk::Triple unitC = C.unitVector();
-   gnsstk::Triple unitA = unitC.cross(unitR);
+    gnsstk::Triple unitR = SVPositionVector.unitVector();
+    gnsstk::Triple C = unitR.cross(SVVelocityVector);
+    gnsstk::Triple unitC = C.unitVector();
+    gnsstk::Triple unitA = unitC.cross(unitR);
 
-   (*this) (0,0) = unitR[0];
-   (*this) (0,1) = unitR[1];
-   (*this) (0,2) = unitR[2];
-   (*this) (1,0) = unitA[0];
-   (*this) (1,1) = unitA[1];
-   (*this) (1,2) = unitA[2];
-   (*this) (2,0) = unitC[0];
-   (*this) (2,1) = unitC[1];
-   (*this) (2,2) = unitC[2];
+    (*this)(0, 0) = unitR[0];
+    (*this)(0, 1) = unitR[1];
+    (*this)(0, 2) = unitR[2];
+    (*this)(1, 0) = unitA[0];
+    (*this)(1, 1) = unitA[1];
+    (*this)(1, 2) = unitA[2];
+    (*this)(2, 0) = unitC[0];
+    (*this)(2, 1) = unitC[1];
+    (*this)(2, 2) = unitC[2];
 }
 
-gnsstk::Vector<double> RACRotation::convertToRAC( const gnsstk::Vector<double>& inV )
+gnsstk::Vector<double> RACRotation::convertToRAC(const gnsstk::Vector<double> &inV)
 {
-   gnsstk::Vector<double> outV(3);
+    gnsstk::Vector<double> outV(3);
 
-   /*
-      My goal was to use the following statement.
-   outV =  this * inV;
-      However, for some reason, gcc refuses to recognize RACRotation as a
-      Matrix subclass.  Therefore, I've incorporated the matrix multiply
-      as a temporary kludge.
-   */
-   if (inV.size()!=3)
-   {
-      gnsstk::Exception e("Incompatible dimensions for Vector");
-      GNSSTK_THROW(e);
-   }
-   size_t i, j;
-   for (i = 0; i < 3; i++)
-   {
-      outV[i] = 0;
-      for (j = 0; j < 3; j++)
-      {
-         double temp =  (*this)(i,j) * inV[j];
-         outV[i] += temp;
-      }
-   }
-   /* end kludge */
-   return(outV);
+    /*
+       My goal was to use the following statement.
+    outV =  this * inV;
+       However, for some reason, gcc refuses to recognize RACRotation as a
+       Matrix subclass.  Therefore, I've incorporated the matrix multiply
+       as a temporary kludge.
+    */
+    if (inV.size() != 3)
+    {
+        gnsstk::Exception e("Incompatible dimensions for Vector");
+        GNSSTK_THROW(e);
+    }
+    size_t i, j;
+    for (i = 0; i < 3; i++)
+    {
+        outV[i] = 0;
+        for (j = 0; j < 3; j++)
+        {
+            double temp = (*this)(i, j) * inV[j];
+            outV[i] += temp;
+        }
+    }
+    /* end kludge */
+    return (outV);
 }
 
-gnsstk::Triple RACRotation::convertToRAC( const gnsstk::Triple& inVec )
+gnsstk::Triple RACRotation::convertToRAC(const gnsstk::Triple &inVec)
 {
-   gnsstk::Vector<double> v(3);
-   v[0] = inVec[0];
-   v[1] = inVec[1];
-   v[2] = inVec[2];
+    gnsstk::Vector<double> v(3);
+    v[0] = inVec[0];
+    v[1] = inVec[1];
+    v[2] = inVec[2];
 
-   gnsstk::Vector<double> vOut = convertToRAC( v );
-   gnsstk::Triple outVec( vOut[0], vOut[1], vOut[2] );
-   return(outVec);
+    gnsstk::Vector<double> vOut = convertToRAC(v);
+    gnsstk::Triple outVec(vOut[0], vOut[1], vOut[2]);
+    return (outVec);
 }
 
-gnsstk::Xvt RACRotation::convertToRAC( const gnsstk::Xvt& in )
+gnsstk::Xvt RACRotation::convertToRAC(const gnsstk::Xvt &in)
 {
-   gnsstk::Xvt out;
-   out.clkbias = in.clkbias;
-   out.relcorr = in.relcorr;
-   out.clkdrift = in.clkdrift;
-   out.x = convertToRAC( in.x );
-   out.v = convertToRAC( in.v );
-   return(out);
+    gnsstk::Xvt out;
+    out.clkbias = in.clkbias;
+    out.relcorr = in.relcorr;
+    out.clkdrift = in.clkdrift;
+    out.x = convertToRAC(in.x);
+    out.v = convertToRAC(in.v);
+    return (out);
 }
-}     // end namespace gnsstk
+} // end namespace gnsstk

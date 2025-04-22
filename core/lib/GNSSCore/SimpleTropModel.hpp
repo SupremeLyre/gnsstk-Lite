@@ -36,7 +36,6 @@
 //
 //==============================================================================
 
-
 #ifndef SIMPLE_TROP_MODEL_HPP
 #define SIMPLE_TROP_MODEL_HPP
 
@@ -44,58 +43,56 @@
 
 namespace gnsstk
 {
-      /// A simple Black model of the troposphere. temp is in Kelvin.
-   class SimpleTropModel : public TropModel
-   {
-   public:
-         /// Empty constructor
-      SimpleTropModel();
+/// A simple Black model of the troposphere. temp is in Kelvin.
+class SimpleTropModel : public TropModel
+{
+  public:
+    /// Empty constructor
+    SimpleTropModel();
 
-         /** Creates a trop model, with weather observation input
-          * @param wx the weather to use for this correction.
-          * @throw InvalidParameter
-          */
-      SimpleTropModel(const WxObservation& wx);
+    /** Creates a trop model, with weather observation input
+     * @param wx the weather to use for this correction.
+     * @throw InvalidParameter
+     */
+    SimpleTropModel(const WxObservation &wx);
 
-         /** Create a tropospheric model from explicit weather data
-          * @param T temperature in degrees Celsius
-          * @param P atmospheric pressure in millibars
-          * @param H relative humidity in percent
-          * @throw InvalidParameter
-          */
-      SimpleTropModel(const double& T,
-                      const double& P,
-                      const double& H);
+    /** Create a tropospheric model from explicit weather data
+     * @param T temperature in degrees Celsius
+     * @param P atmospheric pressure in millibars
+     * @param H relative humidity in percent
+     * @throw InvalidParameter
+     */
+    SimpleTropModel(const double &T, const double &P, const double &H);
 
-         /// @copydoc TropModel::name()
-      virtual std::string name()
-      { return std::string("Simple"); }
+    /// @copydoc TropModel::name()
+    virtual std::string name()
+    {
+        return std::string("Simple");
+    }
 
-         /// @copydoc TropModel::dry_zenith_delay() const
-      virtual double dry_zenith_delay() const;
+    /// @copydoc TropModel::dry_zenith_delay() const
+    virtual double dry_zenith_delay() const;
 
-         /// @copydoc TropModel::wet_zenith_delay() const
-      virtual double wet_zenith_delay() const;
+    /// @copydoc TropModel::wet_zenith_delay() const
+    virtual double wet_zenith_delay() const;
 
-         /// @copydoc TropModel::dry_mapping_function(double) const
-      virtual double dry_mapping_function(double elevation) const;
+    /// @copydoc TropModel::dry_mapping_function(double) const
+    virtual double dry_mapping_function(double elevation) const;
 
-         /// @copydoc TropModel::wet_mapping_function(double) const
-      virtual double wet_mapping_function(double elevation) const;
+    /// @copydoc TropModel::wet_mapping_function(double) const
+    virtual double wet_mapping_function(double elevation) const;
 
-         /// @copydoc TropModel::setWeather(const double&,const double&,const double&)
-      virtual void setWeather(const double& T,
-                              const double& P,
-                              const double& H);
+    /// @copydoc TropModel::setWeather(const double&,const double&,const double&)
+    virtual void setWeather(const double &T, const double &P, const double &H);
 
-         /// @copydoc TropModel::setWeather(const WxObservation&)
-      virtual void setWeather(const WxObservation& wx);
+    /// @copydoc TropModel::setWeather(const WxObservation&)
+    virtual void setWeather(const WxObservation &wx);
 
-   private:
-      double Cdrydelay; ///< computed dry delay
-      double Cwetdelay; ///< computed wet delay
-      double Cdrymap;   ///< computed dry map function
-      double Cwetmap;   ///< computed wet map function
-   };
-}
+  private:
+    double Cdrydelay; ///< computed dry delay
+    double Cwetdelay; ///< computed wet delay
+    double Cdrymap;   ///< computed dry map function
+    double Cwetmap;   ///< computed wet map function
+};
+} // namespace gnsstk
 #endif

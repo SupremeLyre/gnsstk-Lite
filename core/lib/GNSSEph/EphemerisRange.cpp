@@ -46,184 +46,159 @@
 
 #include "EllipsoidModel.hpp"
 #include "EphemerisRange.hpp"
-#include "MiscMath.hpp"
 #include "GNSSconstants.hpp"
 #include "GPSLNavEph.hpp"
-#include "TimeString.hpp"
+#include "MiscMath.hpp"
 #include "RawRange.hpp"
+#include "TimeString.hpp"
 
 using namespace std;
 using namespace gnsstk;
 
 namespace gnsstk
 {
-   // Compute the corrected range at RECEIVE time, from receiver at position Rx,
-   // to the GPS satellite given by SatID sat, as well as all the CER quantities,
-   // given the nominal receive time trNom and an EphemerisStore. Note that this
-   // routine does not intrinsicly account for the receiver clock error
-   // like the ComputeAtTransmitTime routine does.
-   double CorrectedEphemerisRange::ComputeAtReceiveTime(
-      const CommonTime& trNom,
-      const Position& Rx,
-      const SatID sat,
-      NavLibrary& navLib,
-      NavSearchOrder order,
-      SVHealth xmitHealth,
-      NavValidityType valid,
-      const EllipsoidModel& ellipsoid)
-   {
-      try {
-         int nit;
-         double tof,tof_old;
-         bool success;
-         std::tie(success, rawrange, svPosVel) =
-            RawRange::fromReceive(Rx, trNom, navLib,
-                                  NavSatelliteID(sat), ellipsoid);
+// Compute the corrected range at RECEIVE time, from receiver at position Rx,
+// to the GPS satellite given by SatID sat, as well as all the CER quantities,
+// given the nominal receive time trNom and an EphemerisStore. Note that this
+// routine does not intrinsicly account for the receiver clock error
+// like the ComputeAtTransmitTime routine does.
+double CorrectedEphemerisRange::ComputeAtReceiveTime(const CommonTime &trNom, const Position &Rx, const SatID sat,
+                                                     NavLibrary &navLib, NavSearchOrder order, SVHealth xmitHealth,
+                                                     NavValidityType valid, const EllipsoidModel &ellipsoid)
+{
+    try
+    {
+        int nit;
+        double tof, tof_old;
+        bool success;
+        std::tie(success, rawrange, svPosVel) =
+            RawRange::fromReceive(Rx, trNom, navLib, NavSatelliteID(sat), ellipsoid);
 
-         if(!success)
-         {
+        if (!success)
+        {
             InvalidRequest ir("getXvt failed");
             GNSSTK_THROW(ir);
-         }
+        }
 
-         updateCER(Rx);
-         return (rawrange-svclkbias-relativity);
-      }
-      catch(gnsstk::Exception& e) {
-         GNSSTK_RETHROW(e);
-      }
-   }
+        updateCER(Rx);
+        return (rawrange - svclkbias - relativity);
+    }
+    catch (gnsstk::Exception &e)
+    {
+        GNSSTK_RETHROW(e);
+    }
+}
 
-
-      // Compute the corrected range at TRANSMIT time, from receiver at position Rx,
-      // to the GPS satellite given by SatID sat, as well as all the CER quantities,
-      // given the nominal receive time trNom and an EphemerisStore, as well as
-      // the raw measured pseudorange.
-   double CorrectedEphemerisRange::ComputeAtTransmitTime(
-      const CommonTime& trNom,
-      const double& pr,
-      const Position& Rx,
-      const SatID sat,
-      NavLibrary& navLib,
-      NavSearchOrder order,
-      SVHealth xmitHealth,
-      NavValidityType valid,
-      const EllipsoidModel& ellipsoid)
-   {
-      try {
-         bool success;
-         std::tie(success, rawrange, svPosVel) =
-            RawRange::fromNominalReceiveWithObs(Rx, trNom, pr, navLib,
-                                                NavSatelliteID(sat), ellipsoid);
-         if(!success)
-         {
+// Compute the corrected range at TRANSMIT time, from receiver at position Rx,
+// to the GPS satellite given by SatID sat, as well as all the CER quantities,
+// given the nominal receive time trNom and an EphemerisStore, as well as
+// the raw measured pseudorange.
+double CorrectedEphemerisRange::ComputeAtTransmitTime(const CommonTime &trNom, const double &pr, const Position &Rx,
+                                                      const SatID sat, NavLibrary &navLib, NavSearchOrder order,
+                                                      SVHealth xmitHealth, NavValidityType valid,
+                                                      const EllipsoidModel &ellipsoid)
+{
+    try
+    {
+        bool success;
+        std::tie(success, rawrange, svPosVel) =
+            RawRange::fromNominalReceiveWithObs(Rx, trNom, pr, navLib, NavSatelliteID(sat), ellipsoid);
+        if (!success)
+        {
             InvalidRequest ir("getXvt failed");
             GNSSTK_THROW(ir);
-         }
+        }
 
-         updateCER(Rx);
-         return (rawrange-svclkbias-relativity);
-      }
-      catch(gnsstk::Exception& e) {
-         GNSSTK_RETHROW(e);
-      }
-   }
+        updateCER(Rx);
+        return (rawrange - svclkbias - relativity);
+    }
+    catch (gnsstk::Exception &e)
+    {
+        GNSSTK_RETHROW(e);
+    }
+}
 
+double CorrectedEphemerisRange::ComputeAtTransmitTime(const CommonTime &trNom, const Position &Rx, const SatID sat,
+                                                      NavLibrary &navLib, NavSearchOrder order, SVHealth xmitHealth,
+                                                      NavValidityType valid, const EllipsoidModel &ellipsoid)
+{
+    try
+    {
+        bool success;
+        std::tie(success, rawrange, svPosVel) =
+            RawRange::fromNominalReceive(Rx, trNom, navLib, NavSatelliteID(sat), ellipsoid);
 
-   double CorrectedEphemerisRange::ComputeAtTransmitTime(
-      const CommonTime& trNom,
-      const Position& Rx,
-      const SatID sat,
-      NavLibrary& navLib,
-      NavSearchOrder order,
-      SVHealth xmitHealth,
-      NavValidityType valid,
-      const EllipsoidModel& ellipsoid)
-   {
-      try {
-         bool success;
-         std::tie(success, rawrange, svPosVel) =
-            RawRange::fromNominalReceive(Rx, trNom, navLib,
-                                         NavSatelliteID(sat), ellipsoid);
-
-         if(!success)
-         {
+        if (!success)
+        {
             InvalidRequest ir("getXvt failed");
             GNSSTK_THROW(ir);
-         }
+        }
 
-         updateCER(Rx);
+        updateCER(Rx);
 
-         return (rawrange - svclkbias - relativity);
-      }
-      catch(gnsstk::Exception& e) {
-         GNSSTK_RETHROW(e);
-      }
-   }
+        return (rawrange - svclkbias - relativity);
+    }
+    catch (gnsstk::Exception &e)
+    {
+        GNSSTK_RETHROW(e);
+    }
+}
 
+double CorrectedEphemerisRange::ComputeAtTransmitSvTime(const CommonTime &ttNom, const double &pr, const Position &rx,
+                                                        const SatID sat, NavLibrary &navLib, NavSearchOrder order,
+                                                        SVHealth xmitHealth, NavValidityType valid,
+                                                        const EllipsoidModel &ellipsoid)
+{
+    try
+    {
+        bool success;
+        std::tie(success, rawrange, svPosVel) =
+            RawRange::fromSvTransmitWithObs(rx, pr, navLib, NavSatelliteID(sat), ttNom, ellipsoid, true);
 
-   double CorrectedEphemerisRange::ComputeAtTransmitSvTime(
-      const CommonTime& ttNom,
-      const double& pr,
-      const Position& rx,
-      const SatID sat,
-      NavLibrary& navLib,
-      NavSearchOrder order,
-      SVHealth xmitHealth,
-      NavValidityType valid,
-      const EllipsoidModel& ellipsoid)
-   {
-      try
-      {
-         bool success;
-         std::tie(success, rawrange, svPosVel)
-            = RawRange::fromSvTransmitWithObs(rx, pr, navLib,
-                                              NavSatelliteID(sat), ttNom,
-                                              ellipsoid, true);
-
-         if(!success)
-         {
+        if (!success)
+        {
             InvalidRequest ir("getXvt failed");
             GNSSTK_THROW(ir);
-         }
+        }
 
-         updateCER(rx);
+        updateCER(rx);
 
-         return rawrange - svclkbias - relativity;
-      }
-      catch (Exception& e) {
-         GNSSTK_RETHROW(e);
-      }
-   }
+        return rawrange - svclkbias - relativity;
+    }
+    catch (Exception &e)
+    {
+        GNSSTK_RETHROW(e);
+    }
+}
 
+void CorrectedEphemerisRange::updateCER(const Position &Rx)
+{
+    relativity = svPosVel.computeRelativityCorrection() * C_MPS;
 
-   void CorrectedEphemerisRange::updateCER(const Position& Rx)
-   {
-      relativity = svPosVel.computeRelativityCorrection() * C_MPS;
+    svclkbias = svPosVel.clkbias * C_MPS;
+    svclkdrift = svPosVel.clkdrift * C_MPS;
 
-      svclkbias = svPosVel.clkbias * C_MPS;
-      svclkdrift = svPosVel.clkdrift * C_MPS;
+    cosines[0] = (Rx.X() - svPosVel.x[0]) / rawrange;
+    cosines[1] = (Rx.Y() - svPosVel.x[1]) / rawrange;
+    cosines[2] = (Rx.Z() - svPosVel.x[2]) / rawrange;
 
-      cosines[0] = (Rx.X()-svPosVel.x[0])/rawrange;
-      cosines[1] = (Rx.Y()-svPosVel.x[1])/rawrange;
-      cosines[2] = (Rx.Z()-svPosVel.x[2])/rawrange;
+    Position SV(svPosVel);
+    elevation = Rx.elevation(SV);
+    azimuth = Rx.azimuth(SV);
+    elevationGeodetic = Rx.elevationGeodetic(SV);
+    azimuthGeodetic = Rx.azimuthGeodetic(SV);
+}
 
-      Position SV(svPosVel);
-      elevation = Rx.elevation(SV);
-      azimuth = Rx.azimuth(SV);
-      elevationGeodetic = Rx.elevationGeodetic(SV);
-      azimuthGeodetic = Rx.azimuthGeodetic(SV);
-   }
+double RelativityCorrection(const Xvt &svPosVel)
+{
+    // relativity correction
+    // dtr = -2*dot(R,V)/(c*c) = -4.4428e-10(s/sqrt(m)) * ecc * sqrt(A(m)) * sinE
+    // compute it separately here, in units seconds.
+    double dtr =
+        (-2.0 * (svPosVel.x[0] * svPosVel.v[0] + svPosVel.x[1] * svPosVel.v[1] + svPosVel.x[2] * svPosVel.v[2]) /
+         C_MPS) /
+        C_MPS;
+    return dtr;
+}
 
-   double RelativityCorrection(const Xvt& svPosVel)
-   {
-      // relativity correction
-      // dtr = -2*dot(R,V)/(c*c) = -4.4428e-10(s/sqrt(m)) * ecc * sqrt(A(m)) * sinE
-      // compute it separately here, in units seconds.
-      double dtr = ( -2.0 *( svPosVel.x[0] * svPosVel.v[0]
-                             + svPosVel.x[1] * svPosVel.v[1]
-                             + svPosVel.x[2] * svPosVel.v[2] ) / C_MPS ) / C_MPS;
-      return dtr;
-   }
-
-}  // namespace gnsstk
+} // namespace gnsstk

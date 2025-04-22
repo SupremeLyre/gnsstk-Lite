@@ -46,9 +46,9 @@
 #ifndef CLOCKMODEL_HPP
 #define CLOCKMODEL_HPP
 
-#include <map>
-#include "Exception.hpp"
 #include "CommonTime.hpp"
+#include "Exception.hpp"
+#include <map>
 
 /**
  * This is a abstract base class for a clock model
@@ -56,21 +56,20 @@
 
 namespace gnsstk
 {
-      /// @ingroup ClockModel
-      //@{
+/// @ingroup ClockModel
+//@{
 
-   class ClockModel
-   {
-   public:
-      ClockModel() noexcept {};
+class ClockModel
+{
+  public:
+    ClockModel() noexcept {};
 
-      virtual double getOffset(const gnsstk::CommonTime& t) const = 0;
+    virtual double getOffset(const gnsstk::CommonTime &t) const = 0;
 
-      virtual bool isOffsetValid(const gnsstk::CommonTime& t) const = 0;
+    virtual bool isOffsetValid(const gnsstk::CommonTime &t) const = 0;
+};
 
-   };
+//@}
 
-      //@}
-
-}
+} // namespace gnsstk
 #endif

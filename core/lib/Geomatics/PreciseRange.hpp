@@ -46,13 +46,13 @@
 
 //------------------------------------------------------------------------------------
 // GNSSTk
+#include "CommonTime.hpp"
 #include "EllipsoidModel.hpp"
 #include "GPSEllipsoid.hpp"
-#include "CommonTime.hpp"
 #include "Matrix.hpp"
+#include "NavLibrary.hpp"
 #include "Position.hpp"
 #include "SatID.hpp"
-#include "NavLibrary.hpp"
 
 // geomatics
 #include "AntexData.hpp"
@@ -61,137 +61,127 @@
 //------------------------------------------------------------------------------------
 namespace gnsstk
 {
-   /// @ingroup ephemcalc
-   //@{
+/// @ingroup ephemcalc
+//@{
 
-      /**
-       class PreciseRange. Compute the corrected range from receiver
-       at position Rx, to the GPS satellite given by SatID sat, as well as
-       azimuth, elevation, etc., given a nominal timetag (either received or
-       transmitted time) and a NavLibrary.
-      */
-   class PreciseRange
-   {
-   public:
-         /// Default constructor.
-      PreciseRange() {}
+/**
+ class PreciseRange. Compute the corrected range from receiver
+ at position Rx, to the GPS satellite given by SatID sat, as well as
+ azimuth, elevation, etc., given a nominal timetag (either received or
+ transmitted time) and a NavLibrary.
+*/
+class PreciseRange
+{
+  public:
+    /// Default constructor.
+    PreciseRange()
+    {
+    }
 
-         /**
-          Compute the corrected range at transmit time from ephemeris is the
-          given NavLibrary, from receiver at position Rx with measured pseudorange
-          pr and time tag nomRecTime, to the GPS satellite given by SatID sat,
-          as well as all the CER quantities.
-          @param nomRecTime  nominal receive time
-          @param pr          measured pseudorange at this time
-          @param rxPos          receiver position
-          @param sat         satellite
-          @param antenna     satellite antenna data;
-          @param freq1,freq2 ANTEX frequencies to evaluate PCO/Vs eg 'G01'
-                 if freq2 is zero e.g. 'G00', compute single freq (freq1) PCO/Vs
-          @param solSys      SolarSystem object, to get SatelliteAttitude()
-                 if any of above 4 not valid, PCO/V correction is NOT done (silently)
-          @param eph        Ephemeris store
-          @param isCOM          if true, Eph is Center-of-mass,
-                                        else antenna-phase-center, default
-                                        false.
-          @param ellipsoid Ellipsoid model to provide an ECEF rotation rate.
-          @return corrected raw range
-          @throw Exception if ephemeris is not found
-         */
-      double ComputeAtTransmitTime(const CommonTime& nomRecTime,
-                                   const double pr,
-                                   const Position& rxPos,
-                                   const SatID sat,
-                                   const AntexData& antenna,
-                                   const std::string& freq1,
-                                   const std::string& freq2,
-                                   SolarSystem& solSys,
-                                   NavLibrary& eph,
-                                   bool isCOM = false,
-                                   const EllipsoidModel& ellipsoid = GPSEllipsoid());
+    /**
+     Compute the corrected range at transmit time from ephemeris is the
+     given NavLibrary, from receiver at position Rx with measured pseudorange
+     pr and time tag nomRecTime, to the GPS satellite given by SatID sat,
+     as well as all the CER quantities.
+     @param nomRecTime  nominal receive time
+     @param pr          measured pseudorange at this time
+     @param rxPos          receiver position
+     @param sat         satellite
+     @param antenna     satellite antenna data;
+     @param freq1,freq2 ANTEX frequencies to evaluate PCO/Vs eg 'G01'
+            if freq2 is zero e.g. 'G00', compute single freq (freq1) PCO/Vs
+     @param solSys      SolarSystem object, to get SatelliteAttitude()
+            if any of above 4 not valid, PCO/V correction is NOT done (silently)
+     @param eph        Ephemeris store
+     @param isCOM          if true, Eph is Center-of-mass,
+                                   else antenna-phase-center, default
+                                   false.
+     @param ellipsoid Ellipsoid model to provide an ECEF rotation rate.
+     @return corrected raw range
+     @throw Exception if ephemeris is not found
+    */
+    double ComputeAtTransmitTime(const CommonTime &nomRecTime, const double pr, const Position &rxPos, const SatID sat,
+                                 const AntexData &antenna, const std::string &freq1, const std::string &freq2,
+                                 SolarSystem &solSys, NavLibrary &eph, bool isCOM = false,
+                                 const EllipsoidModel &ellipsoid = GPSEllipsoid());
 
-         /**
-          Version with no antenna, and therefore no Attitude and no SolarSystem;
-          cf. doc for other version for details.
-          @throw Exception
-         */
-      double ComputeAtTransmitTime(const CommonTime& nomRecTime,
-                                   const double pr,
-                                   const Position& rxPos,
-                                   const SatID sat,
-                                   NavLibrary& eph,
-                                   const EllipsoidModel& ellipsoid = GPSEllipsoid())
-      {
-         // ant will be invalid, so antenna computations will be skipped;
-         // thus satellite attitude will not be needed.
-         AntexData ant;
-         SolarSystem ss;
-         std::string s;
-         return ComputeAtTransmitTime(nomRecTime, pr, rxPos, sat, ant, s, s, ss,
-                                      eph, false, ellipsoid);
-      }
+    /**
+     Version with no antenna, and therefore no Attitude and no SolarSystem;
+     cf. doc for other version for details.
+     @throw Exception
+    */
+    double ComputeAtTransmitTime(const CommonTime &nomRecTime, const double pr, const Position &rxPos, const SatID sat,
+                                 NavLibrary &eph, const EllipsoidModel &ellipsoid = GPSEllipsoid())
+    {
+        // ant will be invalid, so antenna computations will be skipped;
+        // thus satellite attitude will not be needed.
+        AntexData ant;
+        SolarSystem ss;
+        std::string s;
+        return ComputeAtTransmitTime(nomRecTime, pr, rxPos, sat, ant, s, s, ss, eph, false, ellipsoid);
+    }
 
-         /**
-          The computed raw (geometric) range in meters, with NO corrections
-          applied; to correct it, use rawrange -=
-          satclkbias+relativity+relativity2-satLOSPCO-satLOSPCV.
-         */
-      double rawrange;
+    /**
+     The computed raw (geometric) range in meters, with NO corrections
+     applied; to correct it, use rawrange -=
+     satclkbias+relativity+relativity2-satLOSPCO-satLOSPCV.
+    */
+    double rawrange;
 
-         /// The relativity correction in meters, and high precision correction
-      double relativity, relativity2;
+    /// The relativity correction in meters, and high precision correction
+    double relativity, relativity2;
 
-         /// The satellite position (m) and velocity (m/s) in ECEF coordinates
-      Position SatR, SatV;
+    /// The satellite position (m) and velocity (m/s) in ECEF coordinates
+    Position SatR, SatV;
 
-         /**
-          The satellite clock bias (m) and drift (m/s) at transmit time, from
-          NavLibrary
-         */
-      double satclkbias, satclkdrift;
+    /**
+     The satellite clock bias (m) and drift (m/s) at transmit time, from
+     NavLibrary
+    */
+    double satclkbias, satclkdrift;
 
-         /**
-          The satellite elevation (spheroidal), as seen at the receiver, in
-          degrees.
-         */
-      double elevation;
+    /**
+     The satellite elevation (spheroidal), as seen at the receiver, in
+     degrees.
+    */
+    double elevation;
 
-         /**
-          The satellite azimuth (spheroidal), as seen at the receiver, in
-          degrees.
-         */
-      double azimuth;
+    /**
+     The satellite azimuth (spheroidal), as seen at the receiver, in
+     degrees.
+    */
+    double azimuth;
 
-         /**
-          The satellite elevation (geodetic), as seen at the receiver, in
-          degrees.
-         */
-      double elevationGeodetic;
+    /**
+     The satellite elevation (geodetic), as seen at the receiver, in
+     degrees.
+    */
+    double elevationGeodetic;
 
-         /// The satellite azimuth (geodetic), as seen at the receiver, in degrees.
-      double azimuthGeodetic;
+    /// The satellite azimuth (geodetic), as seen at the receiver, in degrees.
+    double azimuthGeodetic;
 
-         /// The computed transmit time of the signal.
-      CommonTime transmit;
+    /// The computed transmit time of the signal.
+    CommonTime transmit;
 
-         /// The direction cosines of the satellite, as seen at the receiver (XYZ).
-      Triple cosines;
+    /// The direction cosines of the satellite, as seen at the receiver (XYZ).
+    Triple cosines;
 
-         /**
-          The net line-of-sight offset, in the direction from sat to rx,
-          of the antenna PCO and PCVs, meters
-         */
-      double satLOSPCO, satLOSPCV;
+    /**
+     The net line-of-sight offset, in the direction from sat to rx,
+     of the antenna PCO and PCVs, meters
+    */
+    double satLOSPCO, satLOSPCV;
 
-         /// The Satellite PCO vector, in ECEF XYZ, meters (from COM to PC)
-      Vector<double> SatPCOXYZ;
+    /// The Satellite PCO vector, in ECEF XYZ, meters (from COM to PC)
+    Vector<double> SatPCOXYZ;
 
-         /// Net time delay due to Sagnac effect in seconds
-      double Sagnac;
+    /// Net time delay due to Sagnac effect in seconds
+    double Sagnac;
 
-   }; // end class PreciseRange
+}; // end class PreciseRange
 
-   //@}
+//@}
 
 } // namespace gnsstk
 

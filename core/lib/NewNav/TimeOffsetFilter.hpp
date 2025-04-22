@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,39 +38,39 @@
 #ifndef GNSSTK_TIMEOFFSETFILTER_HPP
 #define GNSSTK_TIMEOFFSETFILTER_HPP
 
-#include <string>
 #include "EnumIterator.hpp"
+#include <string>
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Specify how NavDataFactoryWithStore::addNavData() should
-       * process TimeOffsetData objects. */
-   enum class TimeOffsetFilter
-   {
-      Unknown,  ///< Uninitialized or unknown value.
-      NoFilt,   ///< No filtering is performed on TimeOffsetData.
-      BySV,     ///< TimeOffsetData is unique filtered on a per-SV basis.
-      BySignal, ///< TimeOffsetData is unique filtered across a signal.
-      Last      ///< Used to create an iterator.
-   };
+/** Specify how NavDataFactoryWithStore::addNavData() should
+ * process TimeOffsetData objects. */
+enum class TimeOffsetFilter
+{
+    Unknown,  ///< Uninitialized or unknown value.
+    NoFilt,   ///< No filtering is performed on TimeOffsetData.
+    BySV,     ///< TimeOffsetData is unique filtered on a per-SV basis.
+    BySignal, ///< TimeOffsetData is unique filtered across a signal.
+    Last      ///< Used to create an iterator.
+};
 
-      /** Define an iterator so C++11 can do things like
-       * for (TimeOffsetFilter i : TimeOffsetFilterIterator()) */
-   typedef EnumIterator<TimeOffsetFilter, TimeOffsetFilter::Unknown, TimeOffsetFilter::Last> TimeOffsetFilterIterator;
+/** Define an iterator so C++11 can do things like
+ * for (TimeOffsetFilter i : TimeOffsetFilterIterator()) */
+typedef EnumIterator<TimeOffsetFilter, TimeOffsetFilter::Unknown, TimeOffsetFilter::Last> TimeOffsetFilterIterator;
 
-   namespace StringUtils
-   {
-         /// Convert a TimeOffsetFilter to a whitespace-free string name.
-      std::string asString(TimeOffsetFilter e) noexcept;
-         /// Convert a string name to a TimeOffsetFilter
-      TimeOffsetFilter asTimeOffsetFilter(const std::string& s) noexcept;
-   }
+namespace StringUtils
+{
+/// Convert a TimeOffsetFilter to a whitespace-free string name.
+std::string asString(TimeOffsetFilter e) noexcept;
+/// Convert a string name to a TimeOffsetFilter
+TimeOffsetFilter asTimeOffsetFilter(const std::string &s) noexcept;
+} // namespace StringUtils
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_TIMEOFFSETFILTER_HPP

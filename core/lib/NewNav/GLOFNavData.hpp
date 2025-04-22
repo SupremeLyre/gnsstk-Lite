@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,40 +38,40 @@
 #ifndef GNSSTK_GLOFNAVDATA_HPP
 #define GNSSTK_GLOFNAVDATA_HPP
 
-#include "OrbitData.hpp"
-#include "NavFit.hpp"
-#include "SVHealth.hpp"
 #include "GLOFNavPCode.hpp"
 #include "GLOFNavSatType.hpp"
+#include "NavFit.hpp"
+#include "OrbitData.hpp"
+#include "SVHealth.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Class containing data elements shared between GLONASS Civil F-Nav
-       * ephemerides and almanacs. */
-   class GLOFNavData : public OrbitData, public NavFit
-   {
-   public:
-         /// Sets the nav message type and all other data members to 0.
-      GLOFNavData();
+/** Class containing data elements shared between GLONASS Civil F-Nav
+ * ephemerides and almanacs. */
+class GLOFNavData : public OrbitData, public NavFit
+{
+  public:
+    /// Sets the nav message type and all other data members to 0.
+    GLOFNavData();
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-      CommonTime xmit2;   ///< Transmit time for string 2 (eph) or odd string.
-      GLOFNavSatType satType; ///< Satellite type (M_n: GLONASS or GLONASS-M).
-      unsigned slot;      ///< Slot number (n).
-      bool lhealth;       ///< Health flag? Different from B_n and C_n?
-      SVHealth health;    ///< SV health status.
-   };
+    CommonTime xmit2;       ///< Transmit time for string 2 (eph) or odd string.
+    GLOFNavSatType satType; ///< Satellite type (M_n: GLONASS or GLONASS-M).
+    unsigned slot;          ///< Slot number (n).
+    bool lhealth;           ///< Health flag? Different from B_n and C_n?
+    SVHealth health;        ///< SV health status.
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GLOFNAVDATA_HPP

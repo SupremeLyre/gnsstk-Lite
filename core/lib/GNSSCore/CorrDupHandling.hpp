@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,49 +38,49 @@
 #ifndef GNSSTK_CORRDUPHANDLING_HPP
 #define GNSSTK_CORRDUPHANDLING_HPP
 
-#include <string>
-#include <set>
 #include "EnumIterator.hpp"
+#include <set>
+#include <string>
 
 namespace gnsstk
 {
-      /// @ingroup GNSSsolutions
-      //@{
+/// @ingroup GNSSsolutions
+//@{
 
-      /** Enumeration for defining how duplicat GroupPathCorrector
-       * types are handled by GroupPathCorr and CorrectionResults.
-       * The final sum will only ever use one correction of a given
-       * CorrectorType, and it will depend on the order that the
-       * corrector objects are added to GroupPathCorr::calcs.  This
-       * enum also will tell GroupPathCorr whether to compute the
-       * biases of all of the correctors in calcs, or stop computing,
-       * for example, ISCs once the first ISC-type corrector yields a
-       * valid correction. */
-   enum class CorrDupHandling
-   {
-      Unknown,      ///< Duplicate handling is uninitialized.
-      ComputeFirst, ///< Sum includes first valid correction, no duplication.
-      ComputeLast,  ///< Sum includes last valid correction of a type.
-      UseFirst,     ///< Sum includes first valid correction of type, all computed.
-      Last          ///< Used to create an iterator.
-   };
+/** Enumeration for defining how duplicat GroupPathCorrector
+ * types are handled by GroupPathCorr and CorrectionResults.
+ * The final sum will only ever use one correction of a given
+ * CorrectorType, and it will depend on the order that the
+ * corrector objects are added to GroupPathCorr::calcs.  This
+ * enum also will tell GroupPathCorr whether to compute the
+ * biases of all of the correctors in calcs, or stop computing,
+ * for example, ISCs once the first ISC-type corrector yields a
+ * valid correction. */
+enum class CorrDupHandling
+{
+    Unknown,      ///< Duplicate handling is uninitialized.
+    ComputeFirst, ///< Sum includes first valid correction, no duplication.
+    ComputeLast,  ///< Sum includes last valid correction of a type.
+    UseFirst,     ///< Sum includes first valid correction of type, all computed.
+    Last          ///< Used to create an iterator.
+};
 
-      /** Define an iterator so C++11 can do things like
-       * for (CorrDupHandling i : CorrDupHandlingIterator()) */
-   typedef EnumIterator<CorrDupHandling, CorrDupHandling::Unknown, CorrDupHandling::Last> CorrDupHandlingIterator;
-      /// Set of message types, used by NavLibrary and NavDataFactory.
-   typedef std::set<CorrDupHandling> CorrDupHandlingSet;
+/** Define an iterator so C++11 can do things like
+ * for (CorrDupHandling i : CorrDupHandlingIterator()) */
+typedef EnumIterator<CorrDupHandling, CorrDupHandling::Unknown, CorrDupHandling::Last> CorrDupHandlingIterator;
+/// Set of message types, used by NavLibrary and NavDataFactory.
+typedef std::set<CorrDupHandling> CorrDupHandlingSet;
 
-   namespace StringUtils
-   {
-         /// Convert a CorrDupHandling to a whitespace-free string name.
-      std::string asString(CorrDupHandling e) noexcept;
-         /// Convert a string name to an CorrDupHandling
-      CorrDupHandling asCorrDupHandling(const std::string& s) noexcept;
-   }
+namespace StringUtils
+{
+/// Convert a CorrDupHandling to a whitespace-free string name.
+std::string asString(CorrDupHandling e) noexcept;
+/// Convert a string name to an CorrDupHandling
+CorrDupHandling asCorrDupHandling(const std::string &s) noexcept;
+} // namespace StringUtils
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_CORRDUPHANDLING_HPP

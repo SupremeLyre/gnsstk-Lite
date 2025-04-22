@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -46,104 +45,77 @@
 
 namespace gnsstk
 {
-   inline void GLOCNavAlm::Deltas ::
-   setData(double B, double Lk, const Uncorrected& uncor)
-   {
-      setdeltaa_a(B, Lk, uncor);
-      setdeltah(B, Lk, uncor);
-      setdeltal(B, Lk, uncor);
-      setdeltalambda(B, Lk, uncor);
-      setdeltai(B, Lk, uncor);
-      setdeltaLk(B, Lk, uncor);
-   }
+inline void GLOCNavAlm::Deltas ::setData(double B, double Lk, const Uncorrected &uncor)
+{
+    setdeltaa_a(B, Lk, uncor);
+    setdeltah(B, Lk, uncor);
+    setdeltal(B, Lk, uncor);
+    setdeltalambda(B, Lk, uncor);
+    setdeltai(B, Lk, uncor);
+    setdeltaLk(B, Lk, uncor);
+}
 
+inline void GLOCNavAlm::Deltas ::setdeltaa_a(double B, double Lk, const Uncorrected &uncor)
+{
+    Perturbations::a = 2.0 * B * (1.0 - ((3.0 / 2.0) * sin(uncor.geti()) * sin(uncor.geti()))) *
+                           (uncor.getl() * cos(Lk) + uncor.geth() * sin(Lk)) +
+                       (B * sin(uncor.geti()) * sin(uncor.geti()) *
+                        ((1.0 / 2.0) * uncor.geth() * sin(Lk) - ((1.0 / 2.0) * uncor.getl() * cos(Lk)) + cos(2.0 * Lk) +
+                         ((7.0 / 2.0) * uncor.getl() * cos(3.0 * Lk)) + ((7.0 / 2.0) * uncor.geth() * sin(3.0 * Lk))));
+}
 
-   inline void GLOCNavAlm::Deltas ::
-   setdeltaa_a(double B, double Lk, const Uncorrected& uncor)
-   {
-      Perturbations::a =
-         2.0 * B * (1.0 - ((3.0/2.0)*sin(uncor.geti())*sin(uncor.geti())))*(uncor.getl()*cos(Lk)+uncor.geth()*sin(Lk))
-         + (B * sin(uncor.geti())*sin(uncor.geti())
-            * ((1.0/2.0)*uncor.geth()*sin(Lk)-((1.0/2.0)*uncor.getl()*cos(Lk))+cos(2.0*Lk)+
-               ((7.0/2.0)*uncor.getl()*cos(3.0*Lk))+((7.0/2.0)*uncor.geth()*sin(3.0*Lk))));
-   }
+inline void GLOCNavAlm::Deltas ::setdeltah(double B, double Lk, const Uncorrected &uncor)
+{
+    Perturbations::h =
+        B * (1.0 - ((3.0 / 2.0) * sin(uncor.geti()) * sin(uncor.geti()))) *
+            (sin(Lk) + ((3.0 / 2.0) * uncor.getl() * sin(2.0 * Lk)) - ((3.0 / 2.0) * uncor.geth() * cos(2.0 * Lk))) -
+        ((1.0 / 4.0) * B * sin(uncor.geti()) * sin(uncor.geti()) *
+         (sin(Lk) - ((7.0 / 3.0) * sin(3.0 * Lk)) + (5.0 * uncor.getl() * sin(2.0 * Lk)) -
+          ((17.0 / 2.0) * uncor.getl() * sin(4.0 * Lk)) + ((17.0 / 2.0) * uncor.geth() * cos(4.0 * Lk)) +
+          uncor.geth() * cos(2.0 * Lk))) -
+        ((1.0 / 2.0) * B * cos(uncor.geti()) * cos(uncor.geti()) * uncor.getl() * sin(2.0 * Lk));
+}
 
+inline void GLOCNavAlm::Deltas ::setdeltal(double B, double Lk, const Uncorrected &uncor)
+{
+    Perturbations::l =
+        B * (1.0 - ((3.0 / 2.0) * sin(uncor.geti()) * sin(uncor.geti()))) *
+            (cos(Lk) + ((3.0 / 2.0) * uncor.getl() * cos(2.0 * Lk)) + ((3.0 / 2.0) * uncor.geth() * sin(2.0 * Lk))) -
+        ((1.0 / 4.0) * B * sin(uncor.geti()) * sin(uncor.geti()) *
+         (-cos(Lk) - ((7.0 / 3.0) * cos(3.0 * Lk)) - (5.0 * uncor.geth() * sin(2.0 * Lk)) -
+          ((17.0 / 2.0) * uncor.getl() * cos(4.0 * Lk)) - ((17.0 / 2.0) * uncor.geth() * sin(4.0 * Lk)) +
+          (uncor.getl() * cos(2.0 * Lk)))) +
+        ((1.0 / 2.0) * B * cos(uncor.geti()) * cos(uncor.geti()) * uncor.geth() * sin(2.0 * Lk));
+}
 
-   inline void GLOCNavAlm::Deltas ::
-   setdeltah(double B, double Lk, const Uncorrected& uncor)
-   {
-      Perturbations::h = B * (1.0 - ((3.0/2.0)*sin(uncor.geti())*sin(uncor.geti()))) *
-         (sin(Lk) + ((3.0/2.0)*uncor.getl()*sin(2.0*Lk)) - ((3.0/2.0)*uncor.geth()*cos(2.0*Lk)))
-         - ((1.0/4.0)*B*sin(uncor.geti())*sin(uncor.geti()) *
-            (sin(Lk)
-             -((7.0/3.0)*sin(3.0*Lk))
-             +(5.0*uncor.getl()*sin(2.0*Lk))
-             - ((17.0/2.0)*uncor.getl()*sin(4.0*Lk))
-             + ((17.0/2.0)*uncor.geth()*cos(4.0*Lk))
-             + uncor.geth()*cos(2.0*Lk)))
-         - ((1.0/2.0)*B*cos(uncor.geti())*cos(uncor.geti())*uncor.getl()*sin(2.0*Lk));
-   }
+inline void GLOCNavAlm::Deltas ::setdeltalambda(double B, double Lk, const Uncorrected &uncor)
+{
+    Perturbations::lambda = -B * cos(uncor.geti()) *
+                            (((7.0 / 2.0) * uncor.getl() * sin(Lk)) - ((5.0 / 2.0) * uncor.geth() * cos(Lk)) -
+                             ((1.0 / 2.0) * sin(2.0 * Lk)) - ((7.0 / 6.0) * uncor.getl() * sin(3.0 * Lk)) +
+                             ((7.0 / 6.0) * uncor.geth() * cos(3.0 * Lk)));
+}
 
+inline void GLOCNavAlm::Deltas ::setdeltai(double B, double Lk, const Uncorrected &uncor)
+{
+    Perturbations::i = (1.0 / 2.0) * B * sin(uncor.geti()) * cos(uncor.geti()) *
+                       ((-uncor.getl() * cos(Lk)) + (uncor.geth() * sin(Lk)) + (cos(2.0 * Lk)) +
+                        ((7.0 / 3.0) * uncor.getl() * cos(3.0 * Lk)) + ((7.0 / 3.0) * uncor.geth() * sin(3.0 * Lk)));
+}
 
-   inline void GLOCNavAlm::Deltas ::
-   setdeltal(double B, double Lk, const Uncorrected& uncor)
-   {
-      Perturbations::l = B * (1.0 - ((3.0/2.0)*sin(uncor.geti())*sin(uncor.geti()))) *
-         (cos(Lk) + ((3.0/2.0)*uncor.getl()*cos(2.0*Lk)) + ((3.0/2.0)*uncor.geth()*sin(2.0*Lk)))
-         - ((1.0/4.0)*B*sin(uncor.geti())*sin(uncor.geti()) *
-            (-cos(Lk)
-             -((7.0/3.0)*cos(3.0*Lk))
-             -(5.0*uncor.geth()*sin(2.0*Lk))
-             -((17.0/2.0)*uncor.getl()*cos(4.0*Lk))
-             -((17.0/2.0)*uncor.geth()*sin(4.0*Lk))
-             +(uncor.getl()*cos(2.0*Lk))))
-         + ((1.0/2.0)*B*cos(uncor.geti())*cos(uncor.geti())*uncor.geth()*sin(2.0*Lk));
-   }
-
-
-   inline void GLOCNavAlm::Deltas ::
-   setdeltalambda(double B, double Lk, const Uncorrected& uncor)
-   {
-      Perturbations::lambda = -B * cos(uncor.geti()) *
-         (((7.0/2.0)*uncor.getl()*sin(Lk))
-          -((5.0/2.0)*uncor.geth()*cos(Lk))
-          -((1.0/2.0)*sin(2.0*Lk))
-          -((7.0/6.0)*uncor.getl()*sin(3.0*Lk))
-          +((7.0/6.0)*uncor.geth()*cos(3.0*Lk)));
-   }
-
-
-   inline void GLOCNavAlm::Deltas ::
-   setdeltai(double B, double Lk, const Uncorrected& uncor)
-   {
-      Perturbations::i = (1.0/2.0) * B * sin(uncor.geti()) * cos(uncor.geti()) *
-         ((-uncor.getl()*cos(Lk))
-          +(uncor.geth()*sin(Lk))
-          +(cos(2.0*Lk))
-          +((7.0/3.0)*uncor.getl()*cos(3.0*Lk))
-          +((7.0/3.0)*uncor.geth()*sin(3.0*Lk)));
-   }
-
-
-   inline void GLOCNavAlm::Deltas ::
-   setdeltaLk(double B, double Lk, const Uncorrected& uncor)
-   {
-      Perturbations::Lk = (2.0 * B * (1.0 - ((3.0/2.0)*sin(uncor.geti())*sin(uncor.geti()))) *
-                 (((7.0/4.0)*uncor.getl()*sin(Lk)) - ((7.0/4.0)*uncor.geth()*cos(Lk))))
-         +((3.0*B*sin(uncor.geti())*sin(uncor.geti())) *
-           ((-(7.0/24.0)*uncor.geth()*cos(Lk))
-            -((7.0/24.0)*uncor.getl()*sin(Lk))
-            -((49.0/72.0)*uncor.geth()*cos(3.0*Lk))
-            +((49.0/72.0)*uncor.getl()*sin(3.0*Lk))
-            +((1.0/4.0)*sin(2.0*Lk))))
-         +((B*cos(uncor.geti())*cos(uncor.geti())) *
-           (((7.0/2.0)*uncor.getl()*sin(Lk))
-            -((5.0/2.0)*uncor.geth()*cos(Lk))
-            -((1.0/2.0)*sin(2.0*Lk))
-            -((7.0/6.0)*uncor.getl()*sin(3.0*Lk))
-            +((7.0/6.0)*uncor.geth()*cos(3.0*Lk))));
-   }
+inline void GLOCNavAlm::Deltas ::setdeltaLk(double B, double Lk, const Uncorrected &uncor)
+{
+    Perturbations::Lk = (2.0 * B * (1.0 - ((3.0 / 2.0) * sin(uncor.geti()) * sin(uncor.geti()))) *
+                         (((7.0 / 4.0) * uncor.getl() * sin(Lk)) - ((7.0 / 4.0) * uncor.geth() * cos(Lk)))) +
+                        ((3.0 * B * sin(uncor.geti()) * sin(uncor.geti())) *
+                         ((-(7.0 / 24.0) * uncor.geth() * cos(Lk)) - ((7.0 / 24.0) * uncor.getl() * sin(Lk)) -
+                          ((49.0 / 72.0) * uncor.geth() * cos(3.0 * Lk)) +
+                          ((49.0 / 72.0) * uncor.getl() * sin(3.0 * Lk)) + ((1.0 / 4.0) * sin(2.0 * Lk)))) +
+                        ((B * cos(uncor.geti()) * cos(uncor.geti())) *
+                         (((7.0 / 2.0) * uncor.getl() * sin(Lk)) - ((5.0 / 2.0) * uncor.geth() * cos(Lk)) -
+                          ((1.0 / 2.0) * sin(2.0 * Lk)) - ((7.0 / 6.0) * uncor.getl() * sin(3.0 * Lk)) +
+                          ((7.0 / 6.0) * uncor.geth() * cos(3.0 * Lk))));
+}
 } // namespace gnsstk
 
-#endif //GNSSTK_GLOCNAVALMDELTAS_CPP
-
+#endif // GNSSTK_GLOCNAVALMDELTAS_CPP

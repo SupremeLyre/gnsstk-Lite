@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -44,26 +43,28 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Class containing data elements unique to GPS CNav ionospheric data.
-       * Nothing beyond the basic Klobuchar model, i.e. no extra metadata. */
-   class GPSCNav2Iono : public KlobucharIonoNavData
-   {
-   public:
-         /// Initialize all data (which is in parent classes).
-      GPSCNav2Iono()
-      {
-         msgLenSec = 5.48;
-      }
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GPSCNav2Iono>(*this); }
-   };
+/** Class containing data elements unique to GPS CNav ionospheric data.
+ * Nothing beyond the basic Klobuchar model, i.e. no extra metadata. */
+class GPSCNav2Iono : public KlobucharIonoNavData
+{
+  public:
+    /// Initialize all data (which is in parent classes).
+    GPSCNav2Iono()
+    {
+        msgLenSec = 5.48;
+    }
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GPSCNav2Iono>(*this);
+    }
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GPSCNAV2UTCIONO_HPP

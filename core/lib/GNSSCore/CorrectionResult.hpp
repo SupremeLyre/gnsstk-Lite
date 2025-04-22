@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,40 +38,40 @@
 #ifndef GNSSTK_CORRECTIONRESULT_HPP
 #define GNSSTK_CORRECTIONRESULT_HPP
 
-#include <list>
-#include <limits>
 #include "GroupPathCorrector.hpp"
+#include <limits>
+#include <list>
 
 namespace gnsstk
 {
-      /// @ingroup GNSSsolutions
-      //@{
+/// @ingroup GNSSsolutions
+//@{
 
-      /** Class for containing a single computed bias from one of the
-       * GroupPathCorrector classes.  This pairs the actual bias with
-       * the corrector for the purpose of tracking bias
-       * contributions. */
-   class CorrectionResult
-   {
-   public:
-         /// Initialize #result to NaN and source to null.
-      CorrectionResult()
-            : result(std::numeric_limits<double>::quiet_NaN())
-      {}
-         /** Fully initialize the object with real values.
-          * @param[in] r The computed correction value.
-          * @param[in] s The GroupPathCorrector that computed this result. */
-      CorrectionResult(double r, const GroupPathCorrectorPtr& s)
-            : result(r), source(s)
-      {}
-      double result;                ///< Computed bias in meters.
-      GroupPathCorrectorPtr source; ///< Corrector that computed this bias.
-   };
+/** Class for containing a single computed bias from one of the
+ * GroupPathCorrector classes.  This pairs the actual bias with
+ * the corrector for the purpose of tracking bias
+ * contributions. */
+class CorrectionResult
+{
+  public:
+    /// Initialize #result to NaN and source to null.
+    CorrectionResult() : result(std::numeric_limits<double>::quiet_NaN())
+    {
+    }
+    /** Fully initialize the object with real values.
+     * @param[in] r The computed correction value.
+     * @param[in] s The GroupPathCorrector that computed this result. */
+    CorrectionResult(double r, const GroupPathCorrectorPtr &s) : result(r), source(s)
+    {
+    }
+    double result;                ///< Computed bias in meters.
+    GroupPathCorrectorPtr source; ///< Corrector that computed this bias.
+};
 
-      /// Just an ordered list of group path correction results.
-   typedef std::list<CorrectionResult> CorrectionResultList;
+/// Just an ordered list of group path correction results.
+typedef std::list<CorrectionResult> CorrectionResultList;
 
-      //@}
+//@}
 
 } // namespace gnsstk
 

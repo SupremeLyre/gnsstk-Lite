@@ -46,68 +46,72 @@
 #ifndef GNSSTK_NAVTYPE_HPP
 #define GNSSTK_NAVTYPE_HPP
 
-#include <string>
 #include "EnumIterator.hpp"
+#include <string>
 
 namespace gnsstk
 {
-      /// @ingroup GNSSEph
-      //@{
+/// @ingroup GNSSEph
+//@{
 
-      /// Supported navigation types
-   enum class NavType
-   {
-      Unknown,   ///< Uninitialized value
-      Any,       ///< Used to match any nav code
-      GPSLNAV,
-      GPSCNAVL2,
-      GPSCNAVL5,
-      GPSCNAV2,
-      GPSMNAV,
-      BeiDou_D1,
-      BeiDou_D2,
-      GloCivilF,
-      GloCivilC,
-      GalFNAV,
-      GalINAV,
-      IRNSS_SPS,
-      Last,      ///< Used to verify that all items are described at compile time
-   }; // enum class NavType
+/// Supported navigation types
+enum class NavType
+{
+    Unknown, ///< Uninitialized value
+    Any,     ///< Used to match any nav code
+    GPSLNAV,
+    GPSCNAVL2,
+    GPSCNAVL5,
+    GPSCNAV2,
+    GPSMNAV,
+    BeiDou_D1,
+    BeiDou_D2,
+    GloCivilF,
+    GloCivilC,
+    GalFNAV,
+    GalINAV,
+    IRNSS_SPS,
+    Last, ///< Used to verify that all items are described at compile time
+}; // enum class NavType
 
-      /** Define an iterator so C++11 can do things like
-       * for (NavType i : NavTypeIterator()) */
-   typedef EnumIterator<NavType, NavType::Unknown, NavType::Last> NavTypeIterator;
+/** Define an iterator so C++11 can do things like
+ * for (NavType i : NavTypeIterator()) */
+typedef EnumIterator<NavType, NavType::Unknown, NavType::Last> NavTypeIterator;
 
-   namespace StringUtils
-   {
-         /// Convert a NavType to a whitespace-free string name.
-      std::string asString(NavType e) noexcept;
-         /// Convert a string name to an NavType
-      NavType asNavType(const std::string& s) noexcept;
-   }
-      /** Translate nav type enumeration to its string representation.
-       * @note The string representation is being used in file
-       *   formats, e.g. RawNavCSVHeader.  The string values should
-       *   not be changed if at all possible, as that would break
-       *   the ability to read older files.
-       * @note Any new nav codes should not contain spaces in the
-       *   string values.
-       * @param[in] s The nav type to get the string name of.
-       * @return A space-free string containing the name of the nav code.
-       */
-   inline std::string convertNavTypeToString(NavType e)
-   { return StringUtils::asString(e); }
+namespace StringUtils
+{
+/// Convert a NavType to a whitespace-free string name.
+std::string asString(NavType e) noexcept;
+/// Convert a string name to an NavType
+NavType asNavType(const std::string &s) noexcept;
+} // namespace StringUtils
+/** Translate nav type enumeration to its string representation.
+ * @note The string representation is being used in file
+ *   formats, e.g. RawNavCSVHeader.  The string values should
+ *   not be changed if at all possible, as that would break
+ *   the ability to read older files.
+ * @note Any new nav codes should not contain spaces in the
+ *   string values.
+ * @param[in] s The nav type to get the string name of.
+ * @return A space-free string containing the name of the nav code.
+ */
+inline std::string convertNavTypeToString(NavType e)
+{
+    return StringUtils::asString(e);
+}
 
-      /** Translate nav type names as strings into enumeration
-       * equivalents.
-       * @see convertNavTypeToString
-       * @param[in] s The nav type name to convert to enumeration.
-       * @return An enumeration equivalent of the given string.
-       *   Unknown is returned for any names that do not
-       *   exactly match known values.
-       */
-   inline NavType convertStringToNavType(const std::string& s)
-   { return StringUtils::asNavType(s); }
+/** Translate nav type names as strings into enumeration
+ * equivalents.
+ * @see convertNavTypeToString
+ * @param[in] s The nav type name to convert to enumeration.
+ * @return An enumeration equivalent of the given string.
+ *   Unknown is returned for any names that do not
+ *   exactly match known values.
+ */
+inline NavType convertStringToNavType(const std::string &s)
+{
+    return StringUtils::asNavType(s);
+}
 
 } // namespace gnsstk
 

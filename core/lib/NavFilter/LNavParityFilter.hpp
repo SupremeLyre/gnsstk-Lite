@@ -43,41 +43,46 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFilter
-      //@{
+/// @ingroup NavFilter
+//@{
 
-      /** Filter GPS legacy nav messages that fail parity checks.
-       * Nav message bits are assumed to be upright.
-       *
-       * @attention Processing depth = 1 epoch. */
-   class LNavParityFilter : public NavFilter
-   {
-   public:
-      LNavParityFilter();
+/** Filter GPS legacy nav messages that fail parity checks.
+ * Nav message bits are assumed to be upright.
+ *
+ * @attention Processing depth = 1 epoch. */
+class LNavParityFilter : public NavFilter
+{
+  public:
+    LNavParityFilter();
 
-         /** Check the parity of the nav subframes (per IS-GPS-200).
-          * @pre LNavFilterData::sf is set
-          * @param[in,out] msgBitsIn A list of LNavFilterData* objects
-          *   containing GPS legacy navigation messages (id 2).
-          * @param[out] msgBitsOut The messages successfully passing
-          *   the filter. */
-      virtual void validate(NavMsgList& msgBitsIn, NavMsgList& msgBitsOut);
+    /** Check the parity of the nav subframes (per IS-GPS-200).
+     * @pre LNavFilterData::sf is set
+     * @param[in,out] msgBitsIn A list of LNavFilterData* objects
+     *   containing GPS legacy navigation messages (id 2).
+     * @param[out] msgBitsOut The messages successfully passing
+     *   the filter. */
+    virtual void validate(NavMsgList &msgBitsIn, NavMsgList &msgBitsOut);
 
-         /// Filter stores no data, therefore this does nothing.
-      virtual void finalize(NavMsgList& msgBitsOut)
-      {}
+    /// Filter stores no data, therefore this does nothing.
+    virtual void finalize(NavMsgList &msgBitsOut)
+    {
+    }
 
-         /// No internal storage of subframe data so return 0.
-      virtual unsigned processingDepth() const noexcept
-      { return 0; }
+    /// No internal storage of subframe data so return 0.
+    virtual unsigned processingDepth() const noexcept
+    {
+        return 0;
+    }
 
-         /// Return the filter name.
-      virtual std::string filterName() const noexcept
-      { return "Parity"; }
-   };
+    /// Return the filter name.
+    virtual std::string filterName() const noexcept
+    {
+        return "Parity";
+    }
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // LNAVPARITYFILTER_HPP

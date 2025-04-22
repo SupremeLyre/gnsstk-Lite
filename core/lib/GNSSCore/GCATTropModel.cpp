@@ -36,97 +36,88 @@
 //
 //==============================================================================
 
-
 #include "GCATTropModel.hpp"
 
 namespace gnsstk
 {
-   GCATTropModel::GCATTropModel(const double& ht)
-   {
-      setReceiverHeight(ht);
-      valid = true;
-   }
-
-
-   double GCATTropModel::correction(double elevation) const
-   {
-      THROW_IF_INVALID();
-
-      if(elevation < 5.0) return 0.0;
-
-      return ( (dry_zenith_delay() + wet_zenith_delay()) *
-               mapping_function(elevation));
-   }
-
-
-   double GCATTropModel::correction( const Position& RX,
-                                     const Position& SV )
-   {
-
-      try
-      {
-         setReceiverHeight( RX.getAltitude() );
-      }
-      catch(GeometryException& e)
-      {
-         valid = false;
-      }
-
-      if(!valid) throw InvalidTropModel("Invalid model");
-
-      double c;
-      try
-      {
-         c = correction(RX.elevationGeodetic(SV));
-      }
-      catch(InvalidTropModel& e)
-      {
-         GNSSTK_RETHROW(e);
-      }
-
-      return c;
-
-   }
-
-
-   double GCATTropModel::correction( const Xvt& RX,
-                                     const Xvt& SV,
-                                     const CommonTime& tt )
-   {
-
-      Position R(RX),S(SV);
-
-      return GCATTropModel::correction(R,S);
-   }
-
-
-   double GCATTropModel::dry_zenith_delay() const
-   {
-      THROW_IF_INVALID();
-
-      double ddry(2.29951*std::exp((-0.000116 * gcatHeight) ));
-
-      return ddry;
-   }
-
-
-   double GCATTropModel::mapping_function(double elevation) const
-   {
-      THROW_IF_INVALID();
-
-      if(elevation < 5.0) return 0.0;
-
-      double d = std::sin(elevation*DEG_TO_RAD);
-      d = SQRT(0.002001+(d*d));
-
-      return (1.001/d);
-   }
-
-
-   void GCATTropModel::setReceiverHeight(const double& ht)
-   {
-      gcatHeight = ht;
-      valid = true;
-   }
-
+GCATTropModel::GCATTropModel(const double &ht)
+{
+    setReceiverHeight(ht);
+    valid = true;
 }
+
+double GCATTropModel::correction(double elevation) const
+{
+    THROW_IF_INVALID();
+
+    if (elevation < 5.0)
+        return 0.0;
+
+    return ((dry_zenith_delay() + wet_zenith_delay()) * mapping_function(elevation));
+}
+
+double GCATTropModel::correction(const Position &RX, const Position &SV)
+{
+
+    try
+    {
+        setReceiverHeight(RX.getAltitude());
+    }
+    catch (GeometryException &e)
+    {
+        valid = false;
+    }
+
+    if (!valid)
+        throw InvalidTropModel("Invalid model");
+
+    double c;
+    try
+    {
+        c = correction(RX.elevationGeodetic(SV));
+    }
+    catch (InvalidTropModel &e)
+    {
+        GNSSTK_RETHROW(e);
+    }
+
+    return c;
+}
+
+double GCATTropModel::correction(const Xvt &RX, const Xvt &SV, const CommonTime &tt)
+{
+
+    Position R(RX), S(SV);
+
+    return GCATTropModel::correction(R, S);
+}
+
+double GCATTropModel::dry_zenith_delay() const
+{
+    THROW_IF_INVALID();
+
+    double ddry(2.29951 * std::exp((-0.000116 * gcatHeight)));
+
+    return ddry;
+}
+
+double GCATTropModel::mapping_function(double elevation) const
+{
+    THROW_IF_INVALID();
+
+    if (elevation < 5.0)
+        return 0.0;
+
+    double d = std::sin(elevation * DEG_TO_RAD);
+    d = SQRT(0.002001 + (d * d));
+
+    return (1.001 / d);
+}
+
+void GCATTropModel::setReceiverHeight(const double &ht)
+{
+    gcatHeight = ht;
+    valid = true;
+}
+
+} // namespace gnsstk

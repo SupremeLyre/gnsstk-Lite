@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,21 +42,16 @@ using namespace std;
 
 namespace gnsstk
 {
-   GalINavTimeOffset ::
-   GalINavTimeOffset()
-         : tow(0.0)
-   {
-      weekFmt = "%4L(%4l)";
-      msgLenSec = 2.0;
-      src = TimeSystem::GAL;
-   }
-
-
-   bool GalINavTimeOffset ::
-   validate() const
-   {
-         /// @todo determine what ranges are valid for Galileo.
-      return true;
-   }
+GalINavTimeOffset ::GalINavTimeOffset() : tow(0.0)
+{
+    weekFmt = "%4L(%4l)";
+    msgLenSec = 2.0;
+    src = TimeSystem::GAL;
 }
 
+bool GalINavTimeOffset ::validate() const
+{
+    /// @todo determine what ranges are valid for Galileo.
+    return true;
+}
+} // namespace gnsstk

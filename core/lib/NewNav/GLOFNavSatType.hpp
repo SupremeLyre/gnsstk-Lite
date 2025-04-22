@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,35 +38,35 @@
 #ifndef GNSSTK_GLOFNAVSATTYPE_HPP
 #define GNSSTK_GLOFNAVSATTYPE_HPP
 
-#include <string>
 #include "EnumIterator.hpp"
+#include <string>
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Values for GLONASS FDMA nav message, Word M.
-   enum class GLOFNavSatType
-   {
-      Unknown = -1,  ///< Unknown/Uninitialized value.
-      GLONASS = 0,   ///< Legacy GLONASS satellite.
-      GLONASS_M = 1, ///< GLONASS-M satellite.
-      Last,          ///< Used to verify that all items are described at compile time
-   };
+/// Values for GLONASS FDMA nav message, Word M.
+enum class GLOFNavSatType
+{
+    Unknown = -1,  ///< Unknown/Uninitialized value.
+    GLONASS = 0,   ///< Legacy GLONASS satellite.
+    GLONASS_M = 1, ///< GLONASS-M satellite.
+    Last,          ///< Used to verify that all items are described at compile time
+};
 
-      /** Define an iterator so C++11 can do things like
-       * for (GLOFNavSatType i : GLOFNavSatTypeIterator()) */
-   typedef EnumIterator<GLOFNavSatType, GLOFNavSatType::Unknown, GLOFNavSatType::Last> GLOFNavSatTypeIterator;
+/** Define an iterator so C++11 can do things like
+ * for (GLOFNavSatType i : GLOFNavSatTypeIterator()) */
+typedef EnumIterator<GLOFNavSatType, GLOFNavSatType::Unknown, GLOFNavSatType::Last> GLOFNavSatTypeIterator;
 
-   namespace StringUtils
-   {
-         /// Convert SatType to a printable string for dump().
-      std::string asString(GLOFNavSatType e);
-   }
+namespace StringUtils
+{
+/// Convert SatType to a printable string for dump().
+std::string asString(GLOFNavSatType e);
+} // namespace StringUtils
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GLOFNAVSATTYPE_HPP

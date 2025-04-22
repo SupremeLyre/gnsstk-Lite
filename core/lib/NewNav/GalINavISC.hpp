@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,65 +42,67 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Class containing data elements unique to Galileo I/NAV ISC
-       * (BGD - broadcast group delay). */
-   class GalINavISC : public InterSigCorr
-   {
-   public:
-         /// Initialize data members.
-      GalINavISC();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GalINavISC>(*this); }
+/** Class containing data elements unique to Galileo I/NAV ISC
+ * (BGD - broadcast group delay). */
+class GalINavISC : public InterSigCorr
+{
+  public:
+    /// Initialize data members.
+    GalINavISC();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GalINavISC>(*this);
+    }
 
-         /** Print the actual corrections provided by this object in a
-          * human-readable format.  Typically called by dump().
-          * @param[in,out] s The stream to write the data to. */
-      void dumpCorrections(std::ostream& s) const override;
+    /** Print the actual corrections provided by this object in a
+     * human-readable format.  Typically called by dump().
+     * @param[in,out] s The stream to write the data to. */
+    void dumpCorrections(std::ostream &s) const override;
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @todo implement some checks.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @todo implement some checks.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-         /** Get inter-signal corrections for the single-frequency user.
-          * @param[in] oid The carrier band and tracking code of the
-          *   signal to get the correction for.
-          * @param[out] corrOut The correction in seconds for the
-          *   given band/code.
-          * @return true If band/code are valid for this object and
-          *   corrOut was set according to available data. */
-      bool getISC(const ObsID& oid, double& corrOut)
-         const override;
+    /** Get inter-signal corrections for the single-frequency user.
+     * @param[in] oid The carrier band and tracking code of the
+     *   signal to get the correction for.
+     * @param[out] corrOut The correction in seconds for the
+     *   given band/code.
+     * @return true If band/code are valid for this object and
+     *   corrOut was set according to available data. */
+    bool getISC(const ObsID &oid, double &corrOut) const override;
 
-         /** Get inter-signal corrections for the dual-frequency user.
-          * @note Galileo has no ISCs for the dual frequency user (per
-          *   section 5.1.5 of the SIS-ICD), so this just returns true
-          *   with corrOut set to 0.
-          * @param[in] oid1 The carrier band/tracking code of the
-          *   primary signal that was used to create a dual-frequency,
-          *   iono-free combined pseudorange.
-          * @param[in] oid2 The carrier band/tracking code of the
-          *   secondary signal to get the correction for.
-          * @param[out] corrOut The correction in seconds for the given
-          *   band/code pair.
-          * @return true If bands/codes are valid for this object and
-          *   corrOut was set according to available data. */
-      bool getISC(const ObsID& oid1, const ObsID& oid2, double& corrOut)
-         const override
-      { return InterSigCorr::getISC(oid1, oid2, corrOut); }
+    /** Get inter-signal corrections for the dual-frequency user.
+     * @note Galileo has no ISCs for the dual frequency user (per
+     *   section 5.1.5 of the SIS-ICD), so this just returns true
+     *   with corrOut set to 0.
+     * @param[in] oid1 The carrier band/tracking code of the
+     *   primary signal that was used to create a dual-frequency,
+     *   iono-free combined pseudorange.
+     * @param[in] oid2 The carrier band/tracking code of the
+     *   secondary signal to get the correction for.
+     * @param[out] corrOut The correction in seconds for the given
+     *   band/code pair.
+     * @return true If bands/codes are valid for this object and
+     *   corrOut was set according to available data. */
+    bool getISC(const ObsID &oid1, const ObsID &oid2, double &corrOut) const override
+    {
+        return InterSigCorr::getISC(oid1, oid2, corrOut);
+    }
 
-      double bgdE1E5a; ///< Broadcast group delay for the E1,E5a pair.
-      double bgdE1E5b; ///< Broadcast group delay for the E1,E5b pair.
-   };
+    double bgdE1E5a; ///< Broadcast group delay for the E1,E5a pair.
+    double bgdE1E5b; ///< Broadcast group delay for the E1,E5b pair.
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GALINAVISC_HPP

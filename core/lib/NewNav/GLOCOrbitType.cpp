@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -41,19 +40,19 @@
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(GLOCOrbitType e)
-      {
-         switch (e)
-         {
-            case GLOCOrbitType::Circ19100:
-               return "Circular orbit of 19,100 km";
-               break;
-            default:
-               return "?????";
-               break;
-         }
-      }
-   }
+namespace StringUtils
+{
+std::string asString(GLOCOrbitType e)
+{
+    switch (e)
+    {
+    case GLOCOrbitType::Circ19100:
+        return "Circular orbit of 19,100 km";
+        break;
+    default:
+        return "?????";
+        break;
+    }
 }
+} // namespace StringUtils
+} // namespace gnsstk

@@ -39,11 +39,11 @@
 #ifndef GNSSTK_SATID_HPP
 #define GNSSTK_SATID_HPP
 
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include "gps_constants.hpp"
 #include "SatelliteSystem.hpp"
+#include "gps_constants.hpp"
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 
 /**
  * @file SatID.hpp
@@ -52,151 +52,158 @@
 
 namespace gnsstk
 {
-      // forward declarations
-   class SatID;
+// forward declarations
+class SatID;
 //   std::istream& operator<<(std::istream& s, SatID& p);
 
-      /// @ingroup GNSSEph
-      //@{
+/// @ingroup GNSSEph
+//@{
 
-      /** Class used to uniquely identify the transmitter of a signal
-       * being broadcast, either by satellite or by ground station
-       * (sometimes referred to as a "pseudolite").  The meaning of
-       * the identifier \a id depends on the context of the system.
-       * The meanings are as follows:
-       *
-       * system  | id
-       * ------- | ------------
-       * GPS     | PRN ID
-       * Galileo | ?
-       * Glonass | Slot Number
-       * Geosync | PRN ID - 100
-       * LEO     | ?
-       * Transit | ?
-       * BeiDou  | ?
-       * QZSS    | PRN ID
-       * IRNSS   | ?
-       *
-       * For equality and ordering, any of the fields may be
-       * treated as a wildcard, which means that a wildcard value for
-       * a given field will match any other field value.  The system
-       * and id fields use boolean flags (wildSys and wildId,
-       * respectively).
-       *
-       * @todo Update the above table for the proper nomenclature for
-       * identification.
-       */
-   class SatID
-   {
-   public:
-         /// Initialize with invalid data with no wildcards.
-      SatID();
+/** Class used to uniquely identify the transmitter of a signal
+ * being broadcast, either by satellite or by ground station
+ * (sometimes referred to as a "pseudolite").  The meaning of
+ * the identifier \a id depends on the context of the system.
+ * The meanings are as follows:
+ *
+ * system  | id
+ * ------- | ------------
+ * GPS     | PRN ID
+ * Galileo | ?
+ * Glonass | Slot Number
+ * Geosync | PRN ID - 100
+ * LEO     | ?
+ * Transit | ?
+ * BeiDou  | ?
+ * QZSS    | PRN ID
+ * IRNSS   | ?
+ *
+ * For equality and ordering, any of the fields may be
+ * treated as a wildcard, which means that a wildcard value for
+ * a given field will match any other field value.  The system
+ * and id fields use boolean flags (wildSys and wildId,
+ * respectively).
+ *
+ * @todo Update the above table for the proper nomenclature for
+ * identification.
+ */
+class SatID
+{
+  public:
+    /// Initialize with invalid data with no wildcards.
+    SatID();
 
-         /// explicit constructor, no defaults
-         /// @note if s is given a default value here,
-         /// some compilers will silently cast int to SatID.
-      SatID(int p, SatelliteSystem s);
-         /** Initialize with a set id number and a wild system (weird).
-          * @note explicit keyword to prevent assignment with
-          *   unexpected results.
-          * @param[in] p The satellite number to specifically match.
-          */
-      explicit SatID(int p);
-         /** Initialize with a set system and a wild satellite number.
-          * @note explicit keyword to prevent assignment with
-          *   unexpected results.
-          * @param[in] s The satellite system to specifically match.
-          */
-      explicit SatID(SatelliteSystem s);
+    /// explicit constructor, no defaults
+    /// @note if s is given a default value here,
+    /// some compilers will silently cast int to SatID.
+    SatID(int p, SatelliteSystem s);
+    /** Initialize with a set id number and a wild system (weird).
+     * @note explicit keyword to prevent assignment with
+     *   unexpected results.
+     * @param[in] p The satellite number to specifically match.
+     */
+    explicit SatID(int p);
+    /** Initialize with a set system and a wild satellite number.
+     * @note explicit keyword to prevent assignment with
+     *   unexpected results.
+     * @param[in] s The satellite system to specifically match.
+     */
+    explicit SatID(SatelliteSystem s);
 
-         /** Set all values to wildcard values, meaning that this
-          * SatID will equal any other SatID object.  This method
-          * attempts to obviate knowledge about the details of
-          * wildcard implementation. */
-      void makeWild();
-         /// return true if any of the fields are set to match wildcards.
-      bool isWild() const;
+    /** Set all values to wildcard values, meaning that this
+     * SatID will equal any other SatID object.  This method
+     * attempts to obviate knowledge about the details of
+     * wildcard implementation. */
+    void makeWild();
+    /// return true if any of the fields are set to match wildcards.
+    bool isWild() const;
 
-         // operator=, copy constructor and destructor built by compiler
+    // operator=, copy constructor and destructor built by compiler
 
+    /// Convenience output method.
+    void dump(std::ostream &s) const;
 
-         /// Convenience output method.
-      void dump(std::ostream& s) const;
+    /// operator == for SatID
+    bool operator==(const SatID &right) const;
 
-         /// operator == for SatID
-      bool operator==(const SatID& right) const;
+    /// operator != for SatID
+    bool operator!=(const SatID &right) const
+    {
+        return !(operator==(right));
+    }
 
-         /// operator != for SatID
-      bool operator!=(const SatID& right) const
-      { return !(operator==(right)); }
+    /// operator < for SatID : order by system, id
+    bool operator<(const SatID &right) const;
 
-         /// operator < for SatID : order by system, id
-      bool operator<(const SatID& right) const;
+    /// operator > for SatID
+    bool operator>(const SatID &right) const
+    {
+        return (!operator<(right) && !operator==(right));
+    }
 
-         /// operator > for SatID
-      bool operator>(const SatID& right) const
-      {  return (!operator<(right) && !operator==(right)); }
+    /// operator <= for SatID
+    bool operator<=(const SatID &right) const
+    {
+        return (operator<(right) || operator==(right));
+    }
 
-         /// operator <= for SatID
-      bool operator<=(const SatID& right) const
-      { return (operator<(right) || operator==(right)); }
+    /// operator >= for SatID
+    bool operator>=(const SatID &right) const
+    {
+        return !(operator<(right));
+    }
 
-         /// operator >= for SatID
-      bool operator>=(const SatID& right) const
-      { return !(operator<(right)); }
+    /** return true if this is a valid SatID
+     * @note assumes all id's are positive and less than 100;
+     *     plus GPS id's are less than or equal to MAX_PRN (32).
+     * @note this is not used internally in the gnsstk library */
+    bool isValid() const;
 
-         /** return true if this is a valid SatID
-          * @note assumes all id's are positive and less than 100;
-          *     plus GPS id's are less than or equal to MAX_PRN (32).
-          * @note this is not used internally in the gnsstk library */
-      bool isValid() const;
+    /** Assign a NORAD identifier for this satellite.
+     * A convienence method for setting the norad ID and #hasNorad field.
+     * See #norad for more info. */
+    void setNorad(unsigned long n);
 
-         /** Assign a NORAD identifier for this satellite.
-          * A convienence method for setting the norad ID and #hasNorad field.
-          * See #norad for more info. */
-      void setNorad(unsigned long n);
+    int id;                 ///< Satellite identifier, e.g. PRN
+    bool wildId;            ///< If true, any satellite matches.
+    SatelliteSystem system; ///< System for this satellite
+    bool wildSys;           ///< If true, any system matches.
 
-      int id;                   ///< Satellite identifier, e.g. PRN
-      bool wildId;              ///< If true, any satellite matches.
-      SatelliteSystem system;   ///< System for this satellite
-      bool wildSys;             ///< If true, any system matches.
+    /** NORAD assigned identifier for this satellite.
+     * @note This value is only used as additional metadata.  It
+     *   is intentionally not taken into account for sorting or
+     *   comparing to avoid breaking code that doesn't actively
+     *   support it.
+     * @todo replace norad/hasNorad with `std::optional` when
+     *   C++ 17 is used.*/
+    unsigned long norad;
+    /// Set to True if #norad is set.
+    /// It is the user's responsibility to keep this variable valid.
+    bool hasNorad = false;
 
-         /** NORAD assigned identifier for this satellite.
-          * @note This value is only used as additional metadata.  It
-          *   is intentionally not taken into account for sorting or
-          *   comparing to avoid breaking code that doesn't actively
-          *   support it. 
-          * @todo replace norad/hasNorad with `std::optional` when 
-          *   C++ 17 is used.*/
-      unsigned long norad;
-         /// Set to True if #norad is set.
-         /// It is the user's responsibility to keep this variable valid.
-      bool hasNorad = false;
+}; // class SatID
 
-   }; // class SatID
+/// stream output for SatID
+inline std::ostream &operator<<(std::ostream &s, const SatID &p)
+{
+    p.dump(s);
+    return s;
+}
 
-      /// stream output for SatID
-   inline std::ostream& operator<<(std::ostream& s, const SatID& p)
-   {
-      p.dump(s);
-      return s;
-   }
+//@}
 
-      //@}
+namespace StringUtils
+{
+/// @ingroup StringUtils
+//@{
 
-   namespace StringUtils
-   {
-         /// @ingroup StringUtils
-         //@{
-
-         /// SatID as a string
-      inline std::string asString(const SatID& p)
-      {
-         std::ostringstream oss;
-         p.dump(oss);
-         return oss.str();
-      }
-   }
+/// SatID as a string
+inline std::string asString(const SatID &p)
+{
+    std::ostringstream oss;
+    p.dump(oss);
+    return oss.str();
+}
+} // namespace StringUtils
 
 } // namespace gnsstk
 

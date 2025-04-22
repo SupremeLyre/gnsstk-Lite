@@ -48,58 +48,59 @@
 
 namespace gnsstk
 {
-      /// @ingroup AppFrame
-      //@{
+/// @ingroup AppFrame
+//@{
 
-      /**
-       * This is a basic framework for programs processing in loops in
-       * the GNSSTK.
-       *
-       * The end user should define subclasses of this class,
-       * implementing those methods described as being meant to be
-       * overridden; initialize(), additionalSetup(), spinUp(), process(), and
-       * shutDown().
-       * In the process() method, simply set variable timeToDie true prior to
-       * returning for the program to call shutDown() and then terminate.
-       *
-       * In use, the user will construct an object of the class
-       * derived from this, then call the initialize() and run()
-       * methods in that order.
-       */
-   class LoopedFramework : public BasicFramework
-   {
-   public:
-         /**
-          * Constructor for LoopedFramework.
-          * @param[in] applName name of the program (argv[0]).
-          * @param[in] applDesc text description of program's function
-          *   (used by CommandOption help).
-          */
-      LoopedFramework(const std::string& applName,
-                      const std::string& applDesc)
-            noexcept
-            : BasicFramework(applName, applDesc), timeToDie(false)
-      { }
+/**
+ * This is a basic framework for programs processing in loops in
+ * the GNSSTK.
+ *
+ * The end user should define subclasses of this class,
+ * implementing those methods described as being meant to be
+ * overridden; initialize(), additionalSetup(), spinUp(), process(), and
+ * shutDown().
+ * In the process() method, simply set variable timeToDie true prior to
+ * returning for the program to call shutDown() and then terminate.
+ *
+ * In use, the user will construct an object of the class
+ * derived from this, then call the initialize() and run()
+ * methods in that order.
+ */
+class LoopedFramework : public BasicFramework
+{
+  public:
+    /**
+     * Constructor for LoopedFramework.
+     * @param[in] applName name of the program (argv[0]).
+     * @param[in] applDesc text description of program's function
+     *   (used by CommandOption help).
+     */
+    LoopedFramework(const std::string &applName, const std::string &applDesc) noexcept
+        : BasicFramework(applName, applDesc), timeToDie(false)
+    {
+    }
 
-         /// Destructor.
-      virtual ~LoopedFramework() {}
+    /// Destructor.
+    virtual ~LoopedFramework()
+    {
+    }
 
-   protected:
-      bool timeToDie;   ///< if set to true, the loop will terminate
+  protected:
+    bool timeToDie; ///< if set to true, the loop will terminate
 
-         /**
-          * Called by the run() method, calls additionalSetup(),
-          * spinUp(), and process(), in that order. Generally should not be
-          * overridden.
-          */
-      virtual void completeProcessing();
+    /**
+     * Called by the run() method, calls additionalSetup(),
+     * spinUp(), and process(), in that order. Generally should not be
+     * overridden.
+     */
+    virtual void completeProcessing();
 
-   private:
-         // Do not allow the use of the default constructor.
-      LoopedFramework();
-   }; // class LoopedFramework
+  private:
+    // Do not allow the use of the default constructor.
+    LoopedFramework();
+}; // class LoopedFramework
 
-      //@}
+//@}
 
 } // namespace gnsstk
 

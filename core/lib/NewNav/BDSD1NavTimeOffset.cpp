@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -45,20 +44,16 @@ static const unsigned maxDN = 6;
 
 namespace gnsstk
 {
-   BDSD1NavTimeOffset ::
-   BDSD1NavTimeOffset()
-   {
-      src = TimeSystem::BDT;
-      msgLenSec = 6.0;
-      weekFmt = "%4D(%4e)";
-      dnSun = 0;
-   }
-
-
-   bool BDSD1NavTimeOffset ::
-   validate() const
-   {
-      return ((dn <= maxDN) && ((a0 != 0.0) || (a1 != 0.0)));
-   }
+BDSD1NavTimeOffset ::BDSD1NavTimeOffset()
+{
+    src = TimeSystem::BDT;
+    msgLenSec = 6.0;
+    weekFmt = "%4D(%4e)";
+    dnSun = 0;
 }
 
+bool BDSD1NavTimeOffset ::validate() const
+{
+    return ((dn <= maxDN) && ((a0 != 0.0) || (a1 != 0.0)));
+}
+} // namespace gnsstk

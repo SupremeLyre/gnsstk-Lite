@@ -45,19 +45,19 @@ using namespace std;
 
 namespace gnsstk
 {
-   ostream& operator<<(ostream& os, const format& f)
-   {
-      if (f.form)
-      {
-         os << (f.form == 1 ? fixed : scientific);
-      }
-      if (f.wide > 0)
-      {
-         os << setw(f.wide);
-      }
-      os << setprecision(f.prec);
-      return os;
-   }
+ostream &operator<<(ostream &os, const format &f)
+{
+    if (f.form)
+    {
+        os << (f.form == 1 ? fixed : scientific);
+    }
+    if (f.wide > 0)
+    {
+        os << setw(f.wide);
+    }
+    os << setprecision(f.prec);
+    return os;
+}
 } // namespace gnsstk
 
 //-----------------------------------------------------------------------------

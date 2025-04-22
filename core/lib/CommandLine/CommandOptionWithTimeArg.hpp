@@ -49,104 +49,114 @@
 
 namespace gnsstk
 {
-      /// @ingroup CommandLine
-      //@{
+/// @ingroup CommandLine
+//@{
 
-      /** Command-line option class for processing time strings.
-       * This class is allows the programmer to add command-line
-       * options to an application that can parse strings containing
-       * representations of time. The programmer must specify the
-       * format to be accepted.  Refer to CommonTime::printf() for
-       * details on the formatting specifications. */
-   class CommandOptionWithTimeArg : public gnsstk::CommandOptionWithAnyArg
-   {
-   public:
-         /** Constructor
-          * @param shOpt The one character command line option.  Set to 0
-          *    if unused.
-          * @param loOpt The long command option.  Set to std::string()
-          *    if unused.
-          * @param timeFormat format for scanning argument into a CommonTime
-          *    (\see CommonTime::setToString() for details).
-          * @param desc A string describing what this option does.
-          * @param required Set to true if this is a required option.
-          */
-      CommandOptionWithTimeArg(const char shOpt,
-                               const std::string& loOpt,
-                               const std::string& timeFormat,
-                               const std::string& desc,
-                               const bool required = false)
-            : gnsstk::CommandOptionWithAnyArg(shOpt, loOpt, desc, required),
-              timeSpec(timeFormat)
-      {}
+/** Command-line option class for processing time strings.
+ * This class is allows the programmer to add command-line
+ * options to an application that can parse strings containing
+ * representations of time. The programmer must specify the
+ * format to be accepted.  Refer to CommonTime::printf() for
+ * details on the formatting specifications. */
+class CommandOptionWithTimeArg : public gnsstk::CommandOptionWithAnyArg
+{
+  public:
+    /** Constructor
+     * @param shOpt The one character command line option.  Set to 0
+     *    if unused.
+     * @param loOpt The long command option.  Set to std::string()
+     *    if unused.
+     * @param timeFormat format for scanning argument into a CommonTime
+     *    (\see CommonTime::setToString() for details).
+     * @param desc A string describing what this option does.
+     * @param required Set to true if this is a required option.
+     */
+    CommandOptionWithTimeArg(const char shOpt, const std::string &loOpt, const std::string &timeFormat,
+                             const std::string &desc, const bool required = false)
+        : gnsstk::CommandOptionWithAnyArg(shOpt, loOpt, desc, required), timeSpec(timeFormat)
+    {
+    }
 
-         /// Destructor
-      virtual ~CommandOptionWithTimeArg() {}
+    /// Destructor
+    virtual ~CommandOptionWithTimeArg()
+    {
+    }
 
-         /** Returns a string with the argument format (just "TIME",
-          * not scanning format). */
-      virtual std::string getArgString() const
-      { return "TIME"; }
+    /** Returns a string with the argument format (just "TIME",
+     * not scanning format). */
+    virtual std::string getArgString() const
+    {
+        return "TIME";
+    }
 
-         /// Validate arguments passed using this option (and store them).
-      virtual std::string checkArguments();
+    /// Validate arguments passed using this option (and store them).
+    virtual std::string checkArguments();
 
-         /// Return the times scanned in from the command line.
-      std::vector<CommonTime> getTime() const { return times; }
+    /// Return the times scanned in from the command line.
+    std::vector<CommonTime> getTime() const
+    {
+        return times;
+    }
 
-   protected:
-         /// Collection of times scanned in from the command line.
-      std::vector<CommonTime> times;
-         /// Format used to scan times in.
-      std::string timeSpec;
+  protected:
+    /// Collection of times scanned in from the command line.
+    std::vector<CommonTime> times;
+    /// Format used to scan times in.
+    std::string timeSpec;
 
-         /// Default Constructor
-      CommandOptionWithTimeArg() {}
+    /// Default Constructor
+    CommandOptionWithTimeArg()
+    {
+    }
 
-         /// Return the appropriate time scanning format for value[index].
-      virtual std::string getTimeSpec(std::vector<std::string>::size_type index) const
-      { return timeSpec; }
-   }; // class CommandOptionWithTimeArg
+    /// Return the appropriate time scanning format for value[index].
+    virtual std::string getTimeSpec(std::vector<std::string>::size_type index) const
+    {
+        return timeSpec;
+    }
+}; // class CommandOptionWithTimeArg
 
+/** This class is similar to CommandOptionWithTimeArg, but
+ * accepts several different time formats simultaneously.
+ * The user can use any of the following time formats with this
+ * option:
+ * - month/day/year
+ * - year day-of-year
+ * - year day-of-year seconds-of-day
+ */
+class CommandOptionWithSimpleTimeArg : public CommandOptionWithTimeArg
+{
+  public:
+    /** Constructor
+     * @param shOpt The one character command line option.  Set to 0
+     *    if unused.
+     * @param loOpt The long command option.  Set to std::string()
+     *    if unused.
+     * @param desc A string describing what this option does.
+     * @param required Set to true if this is a required option.
+     */
+    CommandOptionWithSimpleTimeArg(const char shOpt, const std::string &loOpt, const std::string &desc,
+                                   const bool required = false)
+        : CommandOptionWithTimeArg(shOpt, loOpt, "", desc, required)
+    {
+    }
 
-      /** This class is similar to CommandOptionWithTimeArg, but
-       * accepts several different time formats simultaneously.
-       * The user can use any of the following time formats with this
-       * option:
-       * - month/day/year
-       * - year day-of-year
-       * - year day-of-year seconds-of-day
-       */
-   class CommandOptionWithSimpleTimeArg : public CommandOptionWithTimeArg
-   {
-   public:
-         /** Constructor
-          * @param shOpt The one character command line option.  Set to 0
-          *    if unused.
-          * @param loOpt The long command option.  Set to std::string()
-          *    if unused.
-          * @param desc A string describing what this option does.
-          * @param required Set to true if this is a required option.
-          */
-      CommandOptionWithSimpleTimeArg(const char shOpt,
-                               const std::string& loOpt,
-                               const std::string& desc,
-                               const bool required = false)
-            : CommandOptionWithTimeArg(shOpt, loOpt, "", desc, required)
-      {}
+    /// Destructor
+    virtual ~CommandOptionWithSimpleTimeArg()
+    {
+    }
 
-         /// Destructor
-      virtual ~CommandOptionWithSimpleTimeArg() {}
+  protected:
+    /// Default Constructor
+    CommandOptionWithSimpleTimeArg()
+    {
+    }
 
-   protected:
-         /// Default Constructor
-      CommandOptionWithSimpleTimeArg() {}
+    /// Return the appropriate time scanning format for value[index].
+    virtual std::string getTimeSpec(std::vector<std::string>::size_type index) const;
+}; // class CommandOptionWithSimpleTimeArg
 
-         /// Return the appropriate time scanning format for value[index].
-      virtual std::string getTimeSpec(std::vector<std::string>::size_type index) const;
-   }; // class CommandOptionWithSimpleTimeArg
-
-      //@}
+//@}
 
 } // namespace gnsstk
 

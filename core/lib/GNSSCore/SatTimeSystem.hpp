@@ -39,8 +39,8 @@
 #ifndef GNSSTK_SATTIMESYSTEM_HPP
 #define GNSSTK_SATTIMESYSTEM_HPP
 
-#include "TimeSystem.hpp"
 #include "SatelliteSystem.hpp"
+#include "TimeSystem.hpp"
 
 // Hand-rolled code that would probably belong in
 // SatelliteSystem.hpp/cpp if that file wasn't auto-generated.
@@ -50,10 +50,10 @@
 namespace gnsstk
 {
 
-      /** Get the time system used by a satellite system.
-       * @param[in] sys The satellite system to get the time system for.
-       * @return The time system used by the GNSS. */
-   gnsstk::TimeSystem satTimeSystem(gnsstk::SatelliteSystem sys);
+/** Get the time system used by a satellite system.
+ * @param[in] sys The satellite system to get the time system for.
+ * @return The time system used by the GNSS. */
+gnsstk::TimeSystem satTimeSystem(gnsstk::SatelliteSystem sys);
 
 } // namespace gnsstk
 

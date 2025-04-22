@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,60 +42,66 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Wrapper for the 1-bit health status in GPS CNav message 10.
-       * @note this contains only the health information for a single
-       *   signal, though message 10 contains information on three
-       *   separate carriers.  Thus a single message 10 results in
-       *   three GPSCNavHealth messages. */
-   class GPSCNavHealth : public NavHealthData
-   {
-   public:
-         /// Initialize to unhealthy using a value typically not seen in health.
-      GPSCNavHealth()
-            : health(true)
-      {}
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GPSCNavHealth>(*this); }
+/** Wrapper for the 1-bit health status in GPS CNav message 10.
+ * @note this contains only the health information for a single
+ *   signal, though message 10 contains information on three
+ *   separate carriers.  Thus a single message 10 results in
+ *   three GPSCNavHealth messages. */
+class GPSCNavHealth : public NavHealthData
+{
+  public:
+    /// Initialize to unhealthy using a value typically not seen in health.
+    GPSCNavHealth() : health(true)
+    {
+    }
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GPSCNavHealth>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true always as there is nothing to check in this class.
-          */
-      bool validate() const override
-      { return true; }
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true always as there is nothing to check in this class.
+     */
+    bool validate() const override
+    {
+        return true;
+    }
 
-         /** Returns the time when the navigation message would have
-          * first been available to the user equipment, i.e. the time
-          * at which the final bit of a given broadcast navigation
-          * message is received.  This is used by
-          * NavDataFactoryWithStore::find() in User mode.
-          * @return transmit time + 12s or 6s, depending on whether
-          *   this is CNAV on L5 or on L2.
-          */
-      CommonTime getUserTime() const override;
+    /** Returns the time when the navigation message would have
+     * first been available to the user equipment, i.e. the time
+     * at which the final bit of a given broadcast navigation
+     * message is received.  This is used by
+     * NavDataFactoryWithStore::find() in User mode.
+     * @return transmit time + 12s or 6s, depending on whether
+     *   this is CNAV on L5 or on L2.
+     */
+    CommonTime getUserTime() const override;
 
-         /** Print the contents of this object in a human-readable
-          * format.
-          * @param[in,out] s The stream to write the data to.
-          * @param[in] dl The level of detail the output should contain. */
-      void dump(std::ostream& s, DumpDetail dl) const override;
+    /** Print the contents of this object in a human-readable
+     * format.
+     * @param[in,out] s The stream to write the data to.
+     * @param[in] dl The level of detail the output should contain. */
+    void dump(std::ostream &s, DumpDetail dl) const override;
 
-         /** Defines the status of NavData::signal, specifically sat
-          * (not xmitSat).
-          * @return Healthy if no health bits are set. */
-      SVHealth getHealth() const override
-      { return (health ? SVHealth::Unhealthy : SVHealth::Healthy); }
+    /** Defines the status of NavData::signal, specifically sat
+     * (not xmitSat).
+     * @return Healthy if no health bits are set. */
+    SVHealth getHealth() const override
+    {
+        return (health ? SVHealth::Unhealthy : SVHealth::Healthy);
+    }
 
-         /// 1-bit health.
-      bool health;
-   };
+    /// 1-bit health.
+    bool health;
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GPSCNAVHEALTH_HPP

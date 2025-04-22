@@ -45,34 +45,33 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Identify GPS SV configuration states.
-   enum class GPSSVConfig : uint8_t
-   {
-      noInfo = 0,
-      blockIIR = 1,
-      blockIIRM = 2,
-      blockIIF = 3,
-      blockIII = 4,
-      blockIIIF = 5,
-      last
-   };
+/// Identify GPS SV configuration states.
+enum class GPSSVConfig : uint8_t
+{
+    noInfo = 0,
+    blockIIR = 1,
+    blockIIRM = 2,
+    blockIIF = 3,
+    blockIII = 4,
+    blockIIIF = 5,
+    last
+};
 
-      /// Define an iterator so C++11 can do range-for loops.
-   using GPSSVConfigIterator =
-      gnsstk::EnumIterator<GPSSVConfig, GPSSVConfig::noInfo, GPSSVConfig::last>;
+/// Define an iterator so C++11 can do range-for loops.
+using GPSSVConfigIterator = gnsstk::EnumIterator<GPSSVConfig, GPSSVConfig::noInfo, GPSSVConfig::last>;
 
-   namespace StringUtils
-   {
-         /// Convert a GPSSVConfig to a whitespace-free string name.
-      std::string asString(GPSSVConfig g) noexcept;
-         /// Convert a string name to a GPSSVConfig.
-      GPSSVConfig asGPSSVConfig(const std::string& s) noexcept;
-   }
+namespace StringUtils
+{
+/// Convert a GPSSVConfig to a whitespace-free string name.
+std::string asString(GPSSVConfig g) noexcept;
+/// Convert a string name to a GPSSVConfig.
+GPSSVConfig asGPSSVConfig(const std::string &s) noexcept;
+} // namespace StringUtils
 
-      //@}
+//@}
 
 } // namespace gnsstk
 

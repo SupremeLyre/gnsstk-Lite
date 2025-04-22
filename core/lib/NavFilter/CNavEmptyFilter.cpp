@@ -36,68 +36,55 @@
 //
 //==============================================================================
 
-#include "CNavFilterData.hpp"
 #include "CNavEmptyFilter.hpp"
+#include "CNavFilterData.hpp"
 
 namespace gnsstk
 {
-   CNavEmptyFilter ::
-   CNavEmptyFilter()
-   {
-   }
-
-      // Bits 39-276 are a total of 238 bits.   That's 7 * 32 with
-      // a remainder of 14.
-   void CNavEmptyFilter ::
-   validate(NavMsgList& msgBitsIn, NavMsgList& msgBitsOut)
-   {
-      unsigned long word[8];
-
-      NavMsgList::const_iterator i;
-      for (i = msgBitsIn.begin(); i != msgBitsIn.end(); i++)
-      {
-         CNavFilterData *fd = dynamic_cast<CNavFilterData*>(*i);
-
-         int startBit = 38;
-         for (int n=0;n<7;n++)
-         {
-            word[n] = fd->pnb->asUnsignedLong(startBit,32,1);
-            startBit += 32;
-         }
-         word[7] = fd->pnb->asUnsignedLong(startBit,14,1);
-
-         bool blank =
-            ( (word[0]==0) &&
-              (word[1]==0) &&
-              (word[2]==0) &&
-              (word[3]==0) &&
-              (word[4]==0) &&
-              (word[5]==0) &&
-              (word[6]==0) &&
-              (word[7]==0) ) ||
-
-            ( (word[0]==0x55555555) &&
-              (word[1]==0x55555555) &&
-              (word[2]==0x55555555) &&
-              (word[3]==0x55555555) &&
-              (word[4]==0x55555555) &&
-              (word[5]==0x55555555) &&
-              (word[6]==0x55555555) &&
-              (word[7]==0x00001555) ) /*||
-
-            ( (word[0]==0xAAAAAAAA) &&         This is valid for default nav
-              (word[1]==0xAAAAAAAA) &&
-              (word[2]==0xAAAAAAAA) &&
-              (word[3]==0xAAAAAAAA) &&
-              (word[4]==0xAAAAAAAA) &&
-              (word[5]==0xAAAAAAAA) &&
-              (word[6]==0xAAAAAAAA) &&
-              (word[7]==0x00002AAA) ) */;
-
-         if (blank)
-            reject(fd);
-         else
-            accept(fd, msgBitsOut);
-      }
-   }
+CNavEmptyFilter ::CNavEmptyFilter()
+{
 }
+
+// Bits 39-276 are a total of 238 bits.   That's 7 * 32 with
+// a remainder of 14.
+void CNavEmptyFilter ::validate(NavMsgList &msgBitsIn, NavMsgList &msgBitsOut)
+{
+    unsigned long word[8];
+
+    NavMsgList::const_iterator i;
+    for (i = msgBitsIn.begin(); i != msgBitsIn.end(); i++)
+    {
+        CNavFilterData *fd = dynamic_cast<CNavFilterData *>(*i);
+
+        int startBit = 38;
+        for (int n = 0; n < 7; n++)
+        {
+            word[n] = fd->pnb->asUnsignedLong(startBit, 32, 1);
+            startBit += 32;
+        }
+        word[7] = fd->pnb->asUnsignedLong(startBit, 14, 1);
+
+        bool blank = ((word[0] == 0) && (word[1] == 0) && (word[2] == 0) && (word[3] == 0) && (word[4] == 0) &&
+                      (word[5] == 0) && (word[6] == 0) && (word[7] == 0)) ||
+
+                     ((word[0] == 0x55555555) && (word[1] == 0x55555555) && (word[2] == 0x55555555) &&
+                      (word[3] == 0x55555555) && (word[4] == 0x55555555) && (word[5] == 0x55555555) &&
+                      (word[6] == 0x55555555) && (word[7] == 0x00001555)) /*||
+
+                                                ( (word[0]==0xAAAAAAAA) &&         This is valid for default nav
+                                                  (word[1]==0xAAAAAAAA) &&
+                                                  (word[2]==0xAAAAAAAA) &&
+                                                  (word[3]==0xAAAAAAAA) &&
+                                                  (word[4]==0xAAAAAAAA) &&
+                                                  (word[5]==0xAAAAAAAA) &&
+                                                  (word[6]==0xAAAAAAAA) &&
+                                                  (word[7]==0x00002AAA) ) */
+            ;
+
+        if (blank)
+            reject(fd);
+        else
+            accept(fd, msgBitsOut);
+    }
+}
+} // namespace gnsstk

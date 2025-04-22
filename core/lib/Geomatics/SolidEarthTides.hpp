@@ -62,55 +62,51 @@
 namespace gnsstk
 {
 
-   //---------------------------------------------------------------------------------
-      /**
-       Compute the site displacement due to solid Earth tides for the given
-       Position (assumed to be fixed to the solid Earth) at the given time,
-       given the position of the site of interest, positions and mass ratios of
-       the sun and moon. Return a Triple containing the site displacement in
-       ECEF XYZ coordinates with units meters. Reference IERS Conventions (1996)
-       found in IERS Technical Note 21
-             and IERS Conventions (2003) found in IERS Technical Note 32
-             and IERS Conventions (2010) found in IERS Technical Note 36.
-       NB. Currently only the largest terms are implemented, yielding a result
-       accurate to the millimeter level. Specifically, TN21 pg 61 eq 8 and
-       TN21 pg 65 eq 17.
-       @param site  Nominal position of the site of interest.
-       @param ttag   Time of interest.
-       @param Sun   Position of the Sun at time
-       @param Moon  Position of the Moon at time
-       @param EMRAT   Earth-to-Moon mass ratio (default to DE405 value)
-       @param SERAT   Sun-to-Earth mass ratio (default to DE405 value)
-       @param iers IERS convention to use (default IERS2010)
-       @return Displacement vector, ECEF XYZ in meters.
-       @throw Exception
-      */
-   Triple
-   computeSolidEarthTides(const Position& site, const EphTime& ttag,
-                          const Position& Sun, const Position& Moon,
-                          double EMRAT        = 81.30056,
-                          double SERAT        = 332946.050894783285912,
-                          const IERSConvention& iers = IERSConvention::IERS2010);
+//---------------------------------------------------------------------------------
+/**
+ Compute the site displacement due to solid Earth tides for the given
+ Position (assumed to be fixed to the solid Earth) at the given time,
+ given the position of the site of interest, positions and mass ratios of
+ the sun and moon. Return a Triple containing the site displacement in
+ ECEF XYZ coordinates with units meters. Reference IERS Conventions (1996)
+ found in IERS Technical Note 21
+       and IERS Conventions (2003) found in IERS Technical Note 32
+       and IERS Conventions (2010) found in IERS Technical Note 36.
+ NB. Currently only the largest terms are implemented, yielding a result
+ accurate to the millimeter level. Specifically, TN21 pg 61 eq 8 and
+ TN21 pg 65 eq 17.
+ @param site  Nominal position of the site of interest.
+ @param ttag   Time of interest.
+ @param Sun   Position of the Sun at time
+ @param Moon  Position of the Moon at time
+ @param EMRAT   Earth-to-Moon mass ratio (default to DE405 value)
+ @param SERAT   Sun-to-Earth mass ratio (default to DE405 value)
+ @param iers IERS convention to use (default IERS2010)
+ @return Displacement vector, ECEF XYZ in meters.
+ @throw Exception
+*/
+Triple computeSolidEarthTides(const Position &site, const EphTime &ttag, const Position &Sun, const Position &Moon,
+                              double EMRAT = 81.30056, double SERAT = 332946.050894783285912,
+                              const IERSConvention &iers = IERSConvention::IERS2010);
 
-   //---------------------------------------------------------------------------------
-      /**
-       Compute the site displacement due to rotational deformation due to polar
-       motion for the given Position (assumed to fixed to the solid Earth) at
-       the given time, given the polar motion angles at time
-       (cf.EarthOrientation) and the IERS convention to use. Return a Triple
-       containing the site displacement in ECEF XYZ coordinates with units
-       meters. Reference IERS Conventions (1996) found in IERS Technical Note
-       21, ch. 7 pg 67.
-       @param site  Nominal position of the site of interest.
-       @param ttag   Time of interest.
-       @param xp,yp   Polar motion angles in arcsec (cf. EarthOrientation)
-       @param iers IERS convention to use (default IERS2010)
-       @return Displacement vector, ECEF XYZ in meters.
-       @throw Exception
-      */
-   Triple
-   computePolarTides(const Position& site, const EphTime& ttag, double xp, double yp,
-                     const IERSConvention& iers = IERSConvention::IERS2010);
+//---------------------------------------------------------------------------------
+/**
+ Compute the site displacement due to rotational deformation due to polar
+ motion for the given Position (assumed to fixed to the solid Earth) at
+ the given time, given the polar motion angles at time
+ (cf.EarthOrientation) and the IERS convention to use. Return a Triple
+ containing the site displacement in ECEF XYZ coordinates with units
+ meters. Reference IERS Conventions (1996) found in IERS Technical Note
+ 21, ch. 7 pg 67.
+ @param site  Nominal position of the site of interest.
+ @param ttag   Time of interest.
+ @param xp,yp   Polar motion angles in arcsec (cf. EarthOrientation)
+ @param iers IERS convention to use (default IERS2010)
+ @return Displacement vector, ECEF XYZ in meters.
+ @throw Exception
+*/
+Triple computePolarTides(const Position &site, const EphTime &ttag, double xp, double yp,
+                         const IERSConvention &iers = IERSConvention::IERS2010);
 
 } // end namespace gnsstk
 

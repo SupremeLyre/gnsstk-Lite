@@ -49,65 +49,69 @@
 
 #include "Exception.hpp"
 
-#include "ObsClockModel.hpp"
 #include "ORDEpoch.hpp"
-
-
+#include "ObsClockModel.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup ClockModel
-      //@{
+/// @ingroup ClockModel
+//@{
 
-   class LinearClockModel : public ObsClockModel
-   {
-   public:
-      LinearClockModel(double sigma = 2, double elmask = 0, SvMode mode = ALWAYS)
-            :ObsClockModel(sigma, elmask, mode) {reset();};
+class LinearClockModel : public ObsClockModel
+{
+  public:
+    LinearClockModel(double sigma = 2, double elmask = 0, SvMode mode = ALWAYS) : ObsClockModel(sigma, elmask, mode)
+    {
+        reset();
+    };
 
-      virtual double getOffset(const gnsstk::CommonTime& t) const
-         noexcept
-      {
-         if (!isOffsetValid(t))
+    virtual double getOffset(const gnsstk::CommonTime &t) const noexcept
+    {
+        if (!isOffsetValid(t))
             return 0;
-         else
-            return clockModel.Slope()*(t-baseTime) + clockModel.Intercept();
-      };
+        else
+            return clockModel.Slope() * (t - baseTime) + clockModel.Intercept();
+    };
 
-      virtual bool isOffsetValid(const gnsstk::CommonTime& t) const noexcept
-      {return t >= startTime && t <= endTime && clockModel.N() > 1;};
+    virtual bool isOffsetValid(const gnsstk::CommonTime &t) const noexcept
+    {
+        return t >= startTime && t <= endTime && clockModel.N() > 1;
+    };
 
-         /** Add in the given ord to the clock model.
-          * @throw InvalidValue
-          */
-      virtual void addEpoch(const ORDEpoch& oe);
+    /** Add in the given ord to the clock model.
+     * @throw InvalidValue
+     */
+    virtual void addEpoch(const ORDEpoch &oe);
 
-         /// Reset the accumulated statistics on the clock
-      void reset() noexcept;
+    /// Reset the accumulated statistics on the clock
+    void reset() noexcept;
 
-      void dump(std::ostream& s, short detail=1) const noexcept;
+    void dump(std::ostream &s, short detail = 1) const noexcept;
 
-      friend std::ostream& operator<<(std::ostream& s, const LinearClockModel& r)
-      { r.dump(s, 0); return s; };
+    friend std::ostream &operator<<(std::ostream &s, const LinearClockModel &r)
+    {
+        r.dump(s, 0);
+        return s;
+    };
 
-   private:
-         // x is time y is clock offset
-      gnsstk::TwoSampleStats<double> clockModel;
+  private:
+    // x is time y is clock offset
+    gnsstk::TwoSampleStats<double> clockModel;
 
-      gnsstk::CommonTime startTime, endTime, baseTime;
+    gnsstk::CommonTime startTime, endTime, baseTime;
 
-      unsigned long tossCount;
+    unsigned long tossCount;
 
-         // This is were we store what SVs were used to compute the individual
-         // clock observations
-      std::map<gnsstk::CommonTime, SvStatusMap> prnStatus;
+    // This is were we store what SVs were used to compute the individual
+    // clock observations
+    std::map<gnsstk::CommonTime, SvStatusMap> prnStatus;
 
-         // This is a store of the clock observations that were added into the
-         // clockModel object
-      std::multimap<double,double> clockObs;
-   };
+    // This is a store of the clock observations that were added into the
+    // clockModel object
+    std::multimap<double, double> clockObs;
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 #endif

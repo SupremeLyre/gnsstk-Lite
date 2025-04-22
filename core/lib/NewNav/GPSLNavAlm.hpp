@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,45 +42,48 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Class containing data elements unique to GPS LNav almanac pages.
-   class GPSLNavAlm : public GPSLNavData
-   {
-   public:
-         /// Sets the nav message type.
-      GPSLNavAlm();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GPSLNavAlm>(*this); }
+/// Class containing data elements unique to GPS LNav almanac pages.
+class GPSLNavAlm : public GPSLNavData
+{
+  public:
+    /// Sets the nav message type.
+    GPSLNavAlm();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GPSLNavAlm>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @todo implement some checking.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @todo implement some checking.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-         /** Override dumpHarmonics to hide them in output since GPS
-          * LNav almanacs don't contain this data. */
-      void dumpHarmonics(std::ostream& s) const override
-      {}
+    /** Override dumpHarmonics to hide them in output since GPS
+     * LNav almanacs don't contain this data. */
+    void dumpHarmonics(std::ostream &s) const override
+    {
+    }
 
-         /// Fill the beginFit and endFit values for this object.
-      void fixFit();
+    /// Fill the beginFit and endFit values for this object.
+    void fixFit();
 
-         /** Dump SV status information (e.g. health).
-          * @param[in,out] s The stream to write the data to. */
-      void dumpSVStatus(std::ostream& s) const override;
+    /** Dump SV status information (e.g. health).
+     * @param[in,out] s The stream to write the data to. */
+    void dumpSVStatus(std::ostream &s) const override;
 
-      uint8_t healthBits; ///< 8 SV health bits.
-      double deltai;      ///< Inclination in rad relative to 0.3*pi rad.
-      double toa;         ///< Convenience storage of unqualified toa.
-   };
+    uint8_t healthBits; ///< 8 SV health bits.
+    double deltai;      ///< Inclination in rad relative to 0.3*pi rad.
+    double toa;         ///< Convenience storage of unqualified toa.
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GPSLNAVALM_HPP

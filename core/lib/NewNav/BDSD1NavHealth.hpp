@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,68 +42,72 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Wrapper for the 9-bit health status in BeiDou D1NAV subframe
-       * 5, page 7-8. */
-   class BDSD1NavHealth : public NavHealthData
-   {
-   public:
-         /** Enumeration for defining the D1 health bits meaning.
-          * Intentionally not an enum class, which would require
-          * having to cast the values to an integer before doing bit
-          * math e.g. "svHealth & SatClock" vs. "svHealth &
-          * static_cast<uint16_t>(BDSD1HealthBits::SatClock)" */
-      enum BDSD1HealthBits
-      {
-            /** Per table 5-15: "the satellite clock is unavailable if
-             * the other 8 bits are all “0”; the satellite is in
-             * failure or permanently shut off if the last 8bits are
-             * all “1”; the definition is reserved if the other 8 bits
-             * are in other values." */
-         SatClock = 0x100,
-         B1ISignalWeak = 0x80, ///< B1I signal power 10dB+ lower than nominal.
-         B2ISignalWeak = 0x40, ///< B2I signal power 10dB+ lower than nominal.
-         B3ISignalWeak = 0x20, ///< B3I signal power 10dB+ lower than nominal.
-         NavMsgBad = 0x02,     ///< IOD over limit
-            // remaining bits are currently marked reserved
-      };
+/** Wrapper for the 9-bit health status in BeiDou D1NAV subframe
+ * 5, page 7-8. */
+class BDSD1NavHealth : public NavHealthData
+{
+  public:
+    /** Enumeration for defining the D1 health bits meaning.
+     * Intentionally not an enum class, which would require
+     * having to cast the values to an integer before doing bit
+     * math e.g. "svHealth & SatClock" vs. "svHealth &
+     * static_cast<uint16_t>(BDSD1HealthBits::SatClock)" */
+    enum BDSD1HealthBits
+    {
+        /** Per table 5-15: "the satellite clock is unavailable if
+         * the other 8 bits are all “0”; the satellite is in
+         * failure or permanently shut off if the last 8bits are
+         * all “1”; the definition is reserved if the other 8 bits
+         * are in other values." */
+        SatClock = 0x100,
+        B1ISignalWeak = 0x80, ///< B1I signal power 10dB+ lower than nominal.
+        B2ISignalWeak = 0x40, ///< B2I signal power 10dB+ lower than nominal.
+        B3ISignalWeak = 0x20, ///< B3I signal power 10dB+ lower than nominal.
+        NavMsgBad = 0x02,     ///< IOD over limit
+                              // remaining bits are currently marked reserved
+    };
 
-         /// Initialize to unhealthy using a value typically not seen in health.
-      BDSD1NavHealth();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<BDSD1NavHealth>(*this); }
+    /// Initialize to unhealthy using a value typically not seen in health.
+    BDSD1NavHealth();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<BDSD1NavHealth>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true always as there is nothing to check in this class.
-          */
-      bool validate() const override
-      { return true; }
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true always as there is nothing to check in this class.
+     */
+    bool validate() const override
+    {
+        return true;
+    }
 
-         /** Print the contents of this object in a human-readable
-          * format.
-          * @param[in,out] s The stream to write the data to.
-          * @param[in] dl The level of detail the output should contain. */
-      void dump(std::ostream& s, DumpDetail dl) const override;
+    /** Print the contents of this object in a human-readable
+     * format.
+     * @param[in,out] s The stream to write the data to.
+     * @param[in] dl The level of detail the output should contain. */
+    void dump(std::ostream &s, DumpDetail dl) const override;
 
-         /** Defines the status of NavData::signal, specifically sat
-          * (not xmitSat).
-          * @return Healthy if no health bits are set. */
-      SVHealth getHealth() const override;
+    /** Defines the status of NavData::signal, specifically sat
+     * (not xmitSat).
+     * @return Healthy if no health bits are set. */
+    SVHealth getHealth() const override;
 
-         /// If true, svHealth is representative, otherwise satH1 is.
-      bool isAlmHealth;
-         /// Ephemeris health (autonomous satellite health flag).
-      bool satH1;
-         /// 9-bit health from subframes 4.
-      uint16_t svHealth;
-   };
+    /// If true, svHealth is representative, otherwise satH1 is.
+    bool isAlmHealth;
+    /// Ephemeris health (autonomous satellite health flag).
+    bool satH1;
+    /// 9-bit health from subframes 4.
+    uint16_t svHealth;
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_BDSD1NAVHEALTH_HPP

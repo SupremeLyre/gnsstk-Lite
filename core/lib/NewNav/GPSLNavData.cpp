@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -40,23 +39,16 @@
 
 namespace gnsstk
 {
-   const double GPSLNavData::refioffsetGPS = 0.3 * PI;
-   const double GPSLNavData::refioffsetQZSS = 0.25 * PI;
-   const double GPSLNavData::refEccQZSS = 0.06;
+const double GPSLNavData::refioffsetGPS = 0.3 * PI;
+const double GPSLNavData::refioffsetQZSS = 0.25 * PI;
+const double GPSLNavData::refEccQZSS = 0.06;
 
-   GPSLNavData ::
-   GPSLNavData()
-         : pre(0),
-           tlm(0),
-           isf(false),
-           asFlag(false),
-           alert(false)
-   {}
-
-
-   bool GPSLNavData ::
-   validate() const
-   {
-      return ((pre == 0) || (pre == 0x8b));
-   }
+GPSLNavData ::GPSLNavData() : pre(0), tlm(0), isf(false), asFlag(false), alert(false)
+{
 }
+
+bool GPSLNavData ::validate() const
+{
+    return ((pre == 0) || (pre == 0x8b));
+}
+} // namespace gnsstk

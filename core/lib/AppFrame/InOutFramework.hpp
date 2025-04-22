@@ -47,135 +47,114 @@
 
 #include "LoopedFramework.hpp"
 
-
 namespace gnsstk
 {
-      /// @ingroup AppFrame
-      //@{
+/// @ingroup AppFrame
+//@{
 
-      /**
-       * This is a framework for programs that take a single type of
-       * input data and output a single stream of output.
-       *
-       * The end user should define subclasses of this class,
-       * implementing those methods described as being meant to be
-       * overridden.
-       *
-       * In use, the user will construct an object of the class
-       * derived from this, then call the initialize() and run()
-       * methods in that order.
-       */
-   template<class IType, class OType>
-   class InOutFramework : public LoopedFramework
-   {
-   public:
-         /// Exit code used when the output file can't be opened
-      static const int OUTPUT_ERROR = 1;
+/**
+ * This is a framework for programs that take a single type of
+ * input data and output a single stream of output.
+ *
+ * The end user should define subclasses of this class,
+ * implementing those methods described as being meant to be
+ * overridden.
+ *
+ * In use, the user will construct an object of the class
+ * derived from this, then call the initialize() and run()
+ * methods in that order.
+ */
+template <class IType, class OType> class InOutFramework : public LoopedFramework
+{
+  public:
+    /// Exit code used when the output file can't be opened
+    static const int OUTPUT_ERROR = 1;
 
-         /** Constructor for InOutFramework.
-          *
-          * @param applName   name of the program (argv[0]).
-          * @param applDesc   text description of program's function
-          *                   (used by CommandOption help).
-          */
-      InOutFramework( const std::string& applName,
-                      const std::string& applDesc )
-            noexcept
-            : LoopedFramework(applName, applDesc)
-      {};
+    /** Constructor for InOutFramework.
+     *
+     * @param applName   name of the program (argv[0]).
+     * @param applDesc   text description of program's function
+     *                   (used by CommandOption help).
+     */
+    InOutFramework(const std::string &applName, const std::string &applDesc) noexcept
+        : LoopedFramework(applName, applDesc) {};
 
+    /// Destructor
+    virtual ~InOutFramework() {};
 
-         /// Destructor
-      virtual ~InOutFramework() {};
+    bool initialize(int argc, char *argv[], bool pretty = true) noexcept
+    {
+        using std::ios;
 
+        CommandOptionWithAnyArg inputOpt('i', "input", "A file to take the input from. The default is stdin."),
+            outputOpt('o', "output", "A file to receive the output. The default is stdout.");
 
-      bool initialize( int argc,
-                       char *argv[],
-                       bool pretty = true )
-         noexcept
-      {
-         using std::ios;
-
-         CommandOptionWithAnyArg
-            inputOpt('i', "input",
-                     "A file to take the input from. The default is stdin."),
-            outputOpt('o', "output",
-                      "A file to receive the output. The default is stdout.");
-
-         if (!LoopedFramework::initialize(argc, argv, pretty))
+        if (!LoopedFramework::initialize(argc, argv, pretty))
             return false;
 
-         if (inputOpt.getCount())
+        if (inputOpt.getCount())
             inputFn = inputOpt.getValue()[0];
 
-
-         if (inputFn=="-" || inputFn=="")
-         {
+        if (inputFn == "-" || inputFn == "")
+        {
             input.copyfmt(std::cin);
             input.clear(std::cin.rdstate());
             input.ios::rdbuf(std::cin.rdbuf());
             inputFn = "<stdin>";
-         }
-         else
-         {
+        }
+        else
+        {
             input.open(inputFn.c_str(), std::ios::in);
-         }
+        }
 
-
-         if (!input)
-         {
+        if (!input)
+        {
             std::cerr << "Could not open: " << inputFn << std::endl;
             exitCode = gnsstk::BasicFramework::EXIST_ERROR;
             return false;
-         }
+        }
 
-         if (outputOpt.getCount())
+        if (outputOpt.getCount())
             outputFn = outputOpt.getValue()[0];
 
-         if (outputFn=="-" || outputFn=="")
-         {
+        if (outputFn == "-" || outputFn == "")
+        {
             output.copyfmt(std::cout);
             output.clear(std::cout.rdstate());
             output.ios::rdbuf(std::cout.rdbuf());
             outputFn = "<stdout>";
-         }
-         else
-         {
+        }
+        else
+        {
             output.open(outputFn.c_str(), std::ios::out);
-         }
+        }
 
-         if (!output)
-         {
+        if (!output)
+        {
             std::cerr << "Could not open: " << outputFn << std::endl;
             exitCode = OUTPUT_ERROR;
             return false;
-         }
+        }
 
-         if (debugLevel)
-            std::cerr << "Sending output to " << outputFn << std::endl
-                      << "Reading input from " << inputFn << std::endl;
+        if (debugLevel)
+            std::cerr << "Sending output to " << outputFn << std::endl << "Reading input from " << inputFn << std::endl;
 
-         return true;
-      }  // End of method 'InOutFramework::initialize()'
+        return true;
+    } // End of method 'InOutFramework::initialize()'
 
+    IType input;
 
-      IType input;
+    OType output;
 
-      OType output;
+    std::string inputFn, outputFn;
 
-      std::string inputFn, outputFn;
+  private:
+    // Do not allow the use of the default constructor.
+    InOutFramework();
 
+}; // End of class 'InOutFramework'
 
-   private:
+//@}
 
-
-         // Do not allow the use of the default constructor.
-      InOutFramework();
-
-
-   }; // End of class 'InOutFramework'
-
-      //@}
-
-}  // End of namespace gnsstk
-#endif   // INOUTFRAMEWORK_HPP
+} // End of namespace gnsstk
+#endif // INOUTFRAMEWORK_HPP

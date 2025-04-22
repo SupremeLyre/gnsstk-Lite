@@ -41,47 +41,47 @@
 
 namespace gnsstk
 {
-      /// @ingroup TimeHandling
-      //@{
+/// @ingroup TimeHandling
+//@{
 
-      /** Implement a correction for errors in week-rollover,
-       * i.e. when the GPS 10-bit week changes from 1023 to 0.
-       * @param[in] toCorrectWeek The suspect week from data that
-       *   might be off by 1024 weeks.
-       * @param[in,out] refWeek The known full week that will be used
-       *   as a reference.  If this value is zero (the default), the
-       *   local system clock will be consulted to obtain a reference
-       *   week.  It is recommended for the best performance that the
-       *   calling application retain this reference week for
-       *   subsequent calls to this function as each time the function
-       *   is called with a reference week of zero, system calls are
-       *   performed to obtain the system clock, and conversions are
-       *   performed to turn that time into GPS week-second time.  The
-       *   week according to the system clock should be valid for at
-       *   least a single week epoch, i.e. 1024 weeks (~19 years), so
-       *   unless you're planning on leaving your software running for
-       *   more than 19 years straight, it should be valid.
-       * @return The value of toCorrectWeek having been adjusted by as
-       *   many epochs as necessary to bring it to within half a GPS
-       *   week epoch (i.e. 512 weeks) of the reference time.
-       */
-   long timeAdjustWeekRollover(long toCorrectWeek, long& refWeek);
+/** Implement a correction for errors in week-rollover,
+ * i.e. when the GPS 10-bit week changes from 1023 to 0.
+ * @param[in] toCorrectWeek The suspect week from data that
+ *   might be off by 1024 weeks.
+ * @param[in,out] refWeek The known full week that will be used
+ *   as a reference.  If this value is zero (the default), the
+ *   local system clock will be consulted to obtain a reference
+ *   week.  It is recommended for the best performance that the
+ *   calling application retain this reference week for
+ *   subsequent calls to this function as each time the function
+ *   is called with a reference week of zero, system calls are
+ *   performed to obtain the system clock, and conversions are
+ *   performed to turn that time into GPS week-second time.  The
+ *   week according to the system clock should be valid for at
+ *   least a single week epoch, i.e. 1024 weeks (~19 years), so
+ *   unless you're planning on leaving your software running for
+ *   more than 19 years straight, it should be valid.
+ * @return The value of toCorrectWeek having been adjusted by as
+ *   many epochs as necessary to bring it to within half a GPS
+ *   week epoch (i.e. 512 weeks) of the reference time.
+ */
+long timeAdjustWeekRollover(long toCorrectWeek, long &refWeek);
 
-      /** This function is the same as timeAdjustWeekRollover, except
-       * that it is designed for 8-bit weeks (e.g. WNa) as opposed to
-       * 10-bit weeks.
-       * @param[in] toCorrectWeek The suspect week from data that
-       *   might be off by 256 weeks.
-       * @param[in,out] refWeek The known full week that will be used
-       *   as a reference.  If this value is zero (the default), the
-       *   local system clock will be consulted to obtain a reference
-       *   week.
-       * @return The value of toCorrectWeek having been adjusted by as
-       *   many epochs as necessary to bring it to within 128 weeks of
-       *   the reference time.
-       */
-   long timeAdjust8BitWeekRollover(long toCorrectWeek, long& refWeek);
-      //@}
-}
+/** This function is the same as timeAdjustWeekRollover, except
+ * that it is designed for 8-bit weeks (e.g. WNa) as opposed to
+ * 10-bit weeks.
+ * @param[in] toCorrectWeek The suspect week from data that
+ *   might be off by 256 weeks.
+ * @param[in,out] refWeek The known full week that will be used
+ *   as a reference.  If this value is zero (the default), the
+ *   local system clock will be consulted to obtain a reference
+ *   week.
+ * @return The value of toCorrectWeek having been adjusted by as
+ *   many epochs as necessary to bring it to within 128 weeks of
+ *   the reference time.
+ */
+long timeAdjust8BitWeekRollover(long toCorrectWeek, long &refWeek);
+//@}
+} // namespace gnsstk
 
 #endif // GNSSTK_TIMECORRECTION_HPP

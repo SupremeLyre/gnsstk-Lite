@@ -44,32 +44,32 @@
 #ifndef GNSSTK_OBSEPOCHMAP_HPP
 #define GNSSTK_OBSEPOCHMAP_HPP
 
-#include <map>
 #include <iostream>
+#include <map>
 
 #include "CommonTime.hpp"
 #include "SvObsEpoch.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup ClockModel
-      //@{
+/// @ingroup ClockModel
+//@{
 
-      /** All the observations collected from a single receiver at a
-       * single epoch */
-   struct ObsEpoch : public std::map<SatID, SvObsEpoch>
-   {
-      gnsstk::CommonTime time;
-      vdouble rxClock;
-   };
+/** All the observations collected from a single receiver at a
+ * single epoch */
+struct ObsEpoch : public std::map<SatID, SvObsEpoch>
+{
+    gnsstk::CommonTime time;
+    vdouble rxClock;
+};
 
-      /// A time history of the observations collected from a single receiver.
-   typedef std::map<CommonTime, ObsEpoch> ObsEpochMap;
+/// A time history of the observations collected from a single receiver.
+typedef std::map<CommonTime, ObsEpoch> ObsEpochMap;
 
-   std::ostream& operator<<(std::ostream& s, const ObsEpoch& oe) noexcept;
+std::ostream &operator<<(std::ostream &s, const ObsEpoch &oe) noexcept;
 
-      //@}
+//@}
 
-} // namespace
+} // namespace gnsstk
 
 #endif

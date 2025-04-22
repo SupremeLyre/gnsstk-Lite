@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -40,32 +39,36 @@
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(CorrDupHandling e) noexcept
-      {
-         switch (e)
-         {
-            case CorrDupHandling::Unknown:      return "Unknown";
-            case CorrDupHandling::ComputeFirst: return "ComputeFirst";
-            case CorrDupHandling::ComputeLast:  return "ComputeLast";
-            case CorrDupHandling::UseFirst:     return "UseFirst";
-            default:                            return "???";
-         } // switch (e)
-      } // asString(CorrDupHandling)
+namespace StringUtils
+{
+std::string asString(CorrDupHandling e) noexcept
+{
+    switch (e)
+    {
+    case CorrDupHandling::Unknown:
+        return "Unknown";
+    case CorrDupHandling::ComputeFirst:
+        return "ComputeFirst";
+    case CorrDupHandling::ComputeLast:
+        return "ComputeLast";
+    case CorrDupHandling::UseFirst:
+        return "UseFirst";
+    default:
+        return "???";
+    } // switch (e)
+} // asString(CorrDupHandling)
 
-
-      CorrDupHandling asCorrDupHandling(const std::string& s) noexcept
-      {
-         if (s == "Unknown")
-            return CorrDupHandling::Unknown;
-         if (s == "ComputeFirst")
-            return CorrDupHandling::ComputeFirst;
-         if (s == "ComputeLast")
-            return CorrDupHandling::ComputeLast;
-         if (s == "UseFirst")
-            return CorrDupHandling::UseFirst;
-         return CorrDupHandling::Unknown;
-      } // asCorrDupHandling(string)
-   } // namespace StringUtils
+CorrDupHandling asCorrDupHandling(const std::string &s) noexcept
+{
+    if (s == "Unknown")
+        return CorrDupHandling::Unknown;
+    if (s == "ComputeFirst")
+        return CorrDupHandling::ComputeFirst;
+    if (s == "ComputeLast")
+        return CorrDupHandling::ComputeLast;
+    if (s == "UseFirst")
+        return CorrDupHandling::UseFirst;
+    return CorrDupHandling::Unknown;
+} // asCorrDupHandling(string)
+} // namespace StringUtils
 } // namespace gnsstk

@@ -36,50 +36,47 @@
 //
 //==============================================================================
 
-#include <math.h>
 #include "AngleReduced.hpp"
 #include "GNSSconstants.hpp"
+#include <math.h>
 
 namespace gnsstk
 {
-   AngleReduced ::
-   AngleReduced()
-         : sine(std::numeric_limits<double>::quiet_NaN()),
-           cosine(std::numeric_limits<double>::quiet_NaN())
-   {}
-
-
-   void AngleReduced ::
-   setValue(double v, AngleType t)
-   {
-      double radians;
-      switch (t)
-      {
-         case AngleType::Rad:
-            sine = ::sin(v);
-            cosine = ::cos(v);
-            break;
-         case AngleType::Deg:
-            radians = v * DEG2RAD;
-            sine = ::sin(radians);
-            cosine = ::cos(radians);
-            break;
-         case AngleType::SemiCircle:
-            radians = v * PI;
-            sine = ::sin(radians);
-            cosine = ::cos(radians);
-            break;
-         case AngleType::Sin:
-            sine = v;
-            cosine = ::sqrt(1-sine*sine);
-            break;
-         case AngleType::Cos:
-            cosine = v;
-            sine = ::sqrt(1-cosine*cosine);
-            break;
-         default:
-            GNSSTK_THROW(Exception("Invalid type in setValue"));
-            break;
-      }
-   }
+AngleReduced ::AngleReduced()
+    : sine(std::numeric_limits<double>::quiet_NaN()), cosine(std::numeric_limits<double>::quiet_NaN())
+{
 }
+
+void AngleReduced ::setValue(double v, AngleType t)
+{
+    double radians;
+    switch (t)
+    {
+    case AngleType::Rad:
+        sine = ::sin(v);
+        cosine = ::cos(v);
+        break;
+    case AngleType::Deg:
+        radians = v * DEG2RAD;
+        sine = ::sin(radians);
+        cosine = ::cos(radians);
+        break;
+    case AngleType::SemiCircle:
+        radians = v * PI;
+        sine = ::sin(radians);
+        cosine = ::cos(radians);
+        break;
+    case AngleType::Sin:
+        sine = v;
+        cosine = ::sqrt(1 - sine * sine);
+        break;
+    case AngleType::Cos:
+        cosine = v;
+        sine = ::sqrt(1 - cosine * cosine);
+        break;
+    default:
+        GNSSTK_THROW(Exception("Invalid type in setValue"));
+        break;
+    }
+}
+} // namespace gnsstk

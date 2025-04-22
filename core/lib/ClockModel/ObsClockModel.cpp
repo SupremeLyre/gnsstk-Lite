@@ -52,131 +52,120 @@
 
 namespace gnsstk
 {
-   using namespace std;
+using namespace std;
 
+ObsClockModel::SvStatus ObsClockModel::getSvStatus(const SatID &svid) const
+{
+    SvStatusMap::const_iterator i = status.find(svid);
+    if (i == status.end())
+    {
+        gnsstk::ObjectNotFound e("No status for SV " + StringUtils::asString(svid) + " available.");
+        GNSSTK_THROW(e);
+    }
+    else
+        return i->second;
+}
 
-   ObsClockModel::SvStatus ObsClockModel::getSvStatus(const SatID& svid) const
-   {
-      SvStatusMap::const_iterator i = status.find(svid);
-      if(i == status.end())
-      {
-         gnsstk::ObjectNotFound e("No status for SV " +
-                                 StringUtils::asString(svid) +
-                                 " available.");
-         GNSSTK_THROW(e);
-      }
-      else
-         return i->second;
-   }
+ObsClockModel &ObsClockModel::setSvModeMap(const SvModeMap &right) noexcept
+{
+    for (int prn = 1; prn <= gnsstk::MAX_PRN; prn++)
+        modes[SatID(prn, SatelliteSystem::GPS)] = IGNORE;
 
+    for (SvModeMap::const_iterator i = right.begin(); i != right.end(); i++)
+        modes[i->first] = i->second;
 
-   ObsClockModel& ObsClockModel::setSvModeMap(const SvModeMap& right)
-      noexcept
-   {
-      for(int prn = 1; prn <= gnsstk::MAX_PRN; prn++)
-         modes[SatID(prn, SatelliteSystem::GPS)] = IGNORE;
+    return *this;
+}
 
-      for(SvModeMap::const_iterator i = right.begin(); i != right.end(); i++)
-         modes[i->first] = i->second;
+ObsClockModel::SvMode ObsClockModel::getSvMode(const SatID &svid) const
+{
+    SvModeMap::const_iterator i = modes.find(svid);
+    if (i == modes.end())
+    {
+        gnsstk::ObjectNotFound e("No status for SV " + StringUtils::asString(svid) + " available.");
+        GNSSTK_THROW(e);
+    }
+    else
+        return i->second;
+}
 
-      return *this;
-   }
+/**
+ * @throw InvalidValue
+ */
+gnsstk::Stats<double> ObsClockModel::simpleOrdClock(const ORDEpoch &oe)
+{
+    gnsstk::Stats<double> stat;
 
+    status.clear();
 
-   ObsClockModel::SvMode ObsClockModel::getSvMode(const SatID& svid) const
-   {
-      SvModeMap::const_iterator i = modes.find(svid);
-      if(i == modes.end())
-      {
-         gnsstk::ObjectNotFound e("No status for SV " +
-                                 StringUtils::asString(svid) +
-                                 " available.");
-         GNSSTK_THROW(e);
-      }
-      else
-         return i->second;
-   }
+    ORDEpoch::ORDMap::const_iterator itr;
+    for (itr = oe.ords.begin(); itr != oe.ords.end(); itr++)
+    {
+        const SatID &svid = itr->first;
+        const ObsRngDev &ord = itr->second;
+        switch (modes[svid])
+        {
+        case IGNORE:
+            status[svid] = MANUAL;
+            break;
+        case ALWAYS:
+            status[svid] = USED;
+            break;
+        case HEALTHY:
+            // SV Health bits are defined in ICD-GPS-200C-IRN4 20.3.3.3.1.4
+            // It is a 6-bit value where the MSB (0x20) indicates a summary of
+            // of NAV data health where 0 = OK, 1 = some or all BAD
+            if (ord.getHealth().is_valid() && (ord.getHealth() & 0x20))
+                status[svid] = SVHEALTH;
+            else
+                status[svid] = USED;
+            break;
+        }
 
-
-      /**
-       * @throw InvalidValue
-       */
-   gnsstk::Stats<double> ObsClockModel::simpleOrdClock(const ORDEpoch& oe)
-   {
-      gnsstk::Stats<double> stat;
-
-      status.clear();
-
-      ORDEpoch::ORDMap::const_iterator itr;
-      for(itr = oe.ords.begin(); itr != oe.ords.end(); itr++)
-      {
-         const SatID& svid = itr->first;
-         const ObsRngDev& ord=itr->second;
-         switch (modes[svid])
-         {
-            case IGNORE:
-               status[svid] = MANUAL;
-               break;
-            case ALWAYS:
-               status[svid] = USED;
-               break;
-            case HEALTHY:
-               // SV Health bits are defined in ICD-GPS-200C-IRN4 20.3.3.3.1.4
-               // It is a 6-bit value where the MSB (0x20) indicates a summary of
-               // of NAV data health where 0 = OK, 1 = some or all BAD
-               if (ord.getHealth().is_valid() && (ord.getHealth() & 0x20))
-                  status[svid] = SVHEALTH;
-               else
-                  status[svid] = USED;
-               break;
-         }
-
-         if (ord.getElevation() < elvmask)
+        if (ord.getElevation() < elvmask)
             status[svid] = ELEVATION;
 
-         if (ord.wonky && !useWonkyData)
+        if (ord.wonky && !useWonkyData)
             status[svid] = WONKY;
 
-         if (status[svid] == USED)
+        if (status[svid] == USED)
             stat.Add(ord.getORD());
-      }
+    }
 
-      if (stat.N() > 2)
-      {
-         for (itr = oe.ords.begin(); itr != oe.ords.end(); itr++)
-         {
-            const SatID& svid = itr->first;
+    if (stat.N() > 2)
+    {
+        for (itr = oe.ords.begin(); itr != oe.ords.end(); itr++)
+        {
+            const SatID &svid = itr->first;
 
             // don't override other types of stripping
             if (status[svid] == USED)
             {
-               // get absolute distance of residual from mean
-               double res = itr->second.getORD();
-               double dist = res - stat.Average();
-               if(fabs(dist) > (sigmam * stat.StdDev()))
-                  status[svid] = SIGMA;
+                // get absolute distance of residual from mean
+                double res = itr->second.getORD();
+                double dist = res - stat.Average();
+                if (fabs(dist) > (sigmam * stat.StdDev()))
+                    status[svid] = SIGMA;
             }
-         }
+        }
 
-         // now, recompute the statistics on unstripped residuals to get
-         // the clock bias value
-         stat.Reset();
-         for (itr = oe.ords.begin(); itr != oe.ords.end(); itr++)
+        // now, recompute the statistics on unstripped residuals to get
+        // the clock bias value
+        stat.Reset();
+        for (itr = oe.ords.begin(); itr != oe.ords.end(); itr++)
             if (status[itr->second.getSvID()] == USED)
-               stat.Add(itr->second.getORD());
-      }
+                stat.Add(itr->second.getORD());
+    }
 
-      return stat;
-   }
-
-   void ObsClockModel::dump(ostream& s, short detail) const noexcept
-   {
-      s << "min elev:" << elvmask
-        << ", max sigma:" << sigmam
-        << ", prn/status: ";
-
-      ObsClockModel::SvStatusMap::const_iterator i;
-      for ( i=status.begin(); i!= status.end(); i++)
-         s << i->first << "/" << i->second << " ";
-   }
+    return stat;
 }
+
+void ObsClockModel::dump(ostream &s, short detail) const noexcept
+{
+    s << "min elev:" << elvmask << ", max sigma:" << sigmam << ", prn/status: ";
+
+    ObsClockModel::SvStatusMap::const_iterator i;
+    for (i = status.begin(); i != status.end(); i++)
+        s << i->first << "/" << i->second << " ";
+}
+} // namespace gnsstk

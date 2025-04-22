@@ -39,97 +39,106 @@
 #ifndef GNSSTK_ANGLEREDUCED_HPP
 #define GNSSTK_ANGLEREDUCED_HPP
 
-#include <limits>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
 #include "AngleType.hpp"
+#include <iomanip>
+#include <iostream>
+#include <limits>
+#include <sstream>
 
 namespace gnsstk
 {
-      /// @ingroup geodeticgroup
-      //@{
+/// @ingroup geodeticgroup
+//@{
 
-      /** Wrap data for just the sine and cosine of an angle.
-       * Intended to be used in geometry where the actual angle isn't
-       * used as a term itself, but only sine and/or cosine are.  This
-       * saves a bit of computing time by storing the sin and cos of
-       * an angle when such values are used repeatedly in geometric
-       * equations, rather than recomputing the value multiple times
-       * over the course of a method/function. */
-   class AngleReduced
-   {
-   public:
-         /// Initialize all data to NaN.
-      AngleReduced();
+/** Wrap data for just the sine and cosine of an angle.
+ * Intended to be used in geometry where the actual angle isn't
+ * used as a term itself, but only sine and/or cosine are.  This
+ * saves a bit of computing time by storing the sin and cos of
+ * an angle when such values are used repeatedly in geometric
+ * equations, rather than recomputing the value multiple times
+ * over the course of a method/function. */
+class AngleReduced
+{
+  public:
+    /// Initialize all data to NaN.
+    AngleReduced();
 
-         /** Initialize using an angular value.  The sine and cosine
-          * will be derived from each other using the Pythagorean
-          * identity sin**2+cos**2=1.
-          * @param[in] v The value to set.
-          * @param[in] t The type of datum contained in v.
-          * @post sin and cos are set. */
-      AngleReduced(double v, AngleType t)
-      { setValue(v, t); }
+    /** Initialize using an angular value.  The sine and cosine
+     * will be derived from each other using the Pythagorean
+     * identity sin**2+cos**2=1.
+     * @param[in] v The value to set.
+     * @param[in] t The type of datum contained in v.
+     * @post sin and cos are set. */
+    AngleReduced(double v, AngleType t)
+    {
+        setValue(v, t);
+    }
 
-         /** Initialize using the sine and cosine values.
-          * @param[in] s The sine value of the angle being represented.
-          * @param[in] c The cosine value of the angle being represented.
-          * @post sin and cos are set. */
-      AngleReduced(double s, double c)
-            : sine(s), cosine(c)
-      {}
+    /** Initialize using the sine and cosine values.
+     * @param[in] s The sine value of the angle being represented.
+     * @param[in] c The cosine value of the angle being represented.
+     * @post sin and cos are set. */
+    AngleReduced(double s, double c) : sine(s), cosine(c)
+    {
+    }
 
-         /// Standard equality operator.
-      inline bool operator==(const AngleReduced& right) const
-      { return ((sine == right.sine) && (cosine == right.cosine)); }
+    /// Standard equality operator.
+    inline bool operator==(const AngleReduced &right) const
+    {
+        return ((sine == right.sine) && (cosine == right.cosine));
+    }
 
-         /** Set all values from a single angle datum.
-          * @param[in] v The value to set.
-          * @param[in] t The type of datum contained in v.
-          * @post sin and cos are set. */
-      void setValue(double v, AngleType t);
+    /** Set all values from a single angle datum.
+     * @param[in] v The value to set.
+     * @param[in] t The type of datum contained in v.
+     * @post sin and cos are set. */
+    void setValue(double v, AngleType t);
 
-         /// Get the sine of this angle.
-      inline double sin() const
-      { return sine; }
+    /// Get the sine of this angle.
+    inline double sin() const
+    {
+        return sine;
+    }
 
-         /// Get the cosine of this angle.
-      inline double cos() const
-      { return cosine; }
+    /// Get the cosine of this angle.
+    inline double cos() const
+    {
+        return cosine;
+    }
 
-         /// Return a string containing the data separated by commas (sin,cos).
-      inline std::string asString() const;
+    /// Return a string containing the data separated by commas (sin,cos).
+    inline std::string asString() const;
 
-   protected:
-      double sine;   ///< The sine of the angle.
-      double cosine; ///< The cosine of the angle.
-   }; // class AngleReduced
+  protected:
+    double sine;   ///< The sine of the angle.
+    double cosine; ///< The cosine of the angle.
+}; // class AngleReduced
 
+inline std::ostream &operator<<(std::ostream &s, const AngleReduced &a)
+{
+    s << std::setprecision(20) << "sin:" << a.sin() << ",cos:" << a.cos();
+    return s;
+}
 
-   inline std::ostream& operator<<(std::ostream& s, const AngleReduced& a)
-   {
-      s << std::setprecision(20) << "sin:" << a.sin() << ",cos:" << a.cos();
-      return s;
-   }
-
-
-   std::string AngleReduced ::
-   asString() const
-   {
-      std::ostringstream s;
-      s << *this;
-      return s.str();
-   }
+std::string AngleReduced ::asString() const
+{
+    std::ostringstream s;
+    s << *this;
+    return s.str();
+}
 
 } // namespace gnsstk
 
 namespace std
 {
-   inline double sin(gnsstk::AngleReduced x)
-   { return x.sin(); }
-   inline double cos(gnsstk::AngleReduced x)
-   { return x.cos(); }
+inline double sin(gnsstk::AngleReduced x)
+{
+    return x.sin();
 }
+inline double cos(gnsstk::AngleReduced x)
+{
+    return x.cos();
+}
+} // namespace std
 
 #endif // GNSSTK_ANGLEREDUCED_HPP

@@ -43,45 +43,50 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFilter
-      //@{
+/// @ingroup NavFilter
+//@{
 
-      /** Filter GPS CNAV messages with
-       * 1. a bad preamble
-       * 2. an invalid TOW count, or
-       * 3. an invalid message ID.
-       * Input data is assumed to be upright.
-       *
-       * @attention Processing depth = 1 epoch. */
-   class CNavTOWFilter : public NavFilter
-   {
-   public:
-      CNavTOWFilter();
+/** Filter GPS CNAV messages with
+ * 1. a bad preamble
+ * 2. an invalid TOW count, or
+ * 3. an invalid message ID.
+ * Input data is assumed to be upright.
+ *
+ * @attention Processing depth = 1 epoch. */
+class CNavTOWFilter : public NavFilter
+{
+  public:
+    CNavTOWFilter();
 
-         /** Check the TLM and HOW of GPS legacy nav messages
-          * (i.e. data fields common to all subframes).
-          * @pre CNavFilterData::sf is set
-          * @param[in,out] msgBitsIn A list of CNavFilterData* objects
-          *   containing GPS legacy navigation messages (id 2).
-          * @param[out] msgBitsOut The messages successfully passing
-          *   the filter. */
-      virtual void validate(NavMsgList& msgBitsIn, NavMsgList& msgBitsOut);
+    /** Check the TLM and HOW of GPS legacy nav messages
+     * (i.e. data fields common to all subframes).
+     * @pre CNavFilterData::sf is set
+     * @param[in,out] msgBitsIn A list of CNavFilterData* objects
+     *   containing GPS legacy navigation messages (id 2).
+     * @param[out] msgBitsOut The messages successfully passing
+     *   the filter. */
+    virtual void validate(NavMsgList &msgBitsIn, NavMsgList &msgBitsOut);
 
-         /// Filter stores no data, therefore this does nothing.
-      virtual void finalize(NavMsgList& msgBitsOut)
-      {}
+    /// Filter stores no data, therefore this does nothing.
+    virtual void finalize(NavMsgList &msgBitsOut)
+    {
+    }
 
-         /// No internal storage of subframe data so return 0.
-      virtual unsigned processingDepth() const noexcept
-      { return 0; }
+    /// No internal storage of subframe data so return 0.
+    virtual unsigned processingDepth() const noexcept
+    {
+        return 0;
+    }
 
-         /// Return the filter name.
-      virtual std::string filterName() const noexcept
-      { return "TOW"; }
-   };
+    /// Return the filter name.
+    virtual std::string filterName() const noexcept
+    {
+        return "TOW";
+    }
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // LNAVTLMHOWFILTER_HPP

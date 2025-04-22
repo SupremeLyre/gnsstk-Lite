@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -41,29 +40,32 @@
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(NavSearchOrder e)
-      {
-         switch (e)
-         {
-            case NavSearchOrder::Unknown: return "Unknown";
-            case NavSearchOrder::User:    return "User";
-            case NavSearchOrder::Nearest: return "Nearest";
-            default:                      return "???";
-         } // switch (e)
-      } // asString(NavSearchOrder)
+namespace StringUtils
+{
+std::string asString(NavSearchOrder e)
+{
+    switch (e)
+    {
+    case NavSearchOrder::Unknown:
+        return "Unknown";
+    case NavSearchOrder::User:
+        return "User";
+    case NavSearchOrder::Nearest:
+        return "Nearest";
+    default:
+        return "???";
+    } // switch (e)
+} // asString(NavSearchOrder)
 
-
-      NavSearchOrder asNavSearchOrder(const std::string& s)
-      {
-         std::string lower(s);
-         StringUtils::lowerCase(lower);
-         if (lower == "user")
-            return NavSearchOrder::User;
-         if (lower == "nearest")
-            return NavSearchOrder::Nearest;
-         return NavSearchOrder::Unknown;
-      } // asNavSearchOrder(string)
-   } // namespace StringUtils
+NavSearchOrder asNavSearchOrder(const std::string &s)
+{
+    std::string lower(s);
+    StringUtils::lowerCase(lower);
+    if (lower == "user")
+        return NavSearchOrder::User;
+    if (lower == "nearest")
+        return NavSearchOrder::Nearest;
+    return NavSearchOrder::Unknown;
+} // asNavSearchOrder(string)
+} // namespace StringUtils
 } // namespace gnsstk

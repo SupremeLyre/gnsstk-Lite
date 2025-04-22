@@ -48,49 +48,49 @@
 namespace gnsstk
 {
 
-   /** This enum encapsulates the choice of IERS Convention, which
-    * applies directly to the operation of class EarthOrientation,
-    * and is used in class SolarSystem and in the functions defined
-    * in SolidEarthTides.cpp.  The IERS convention determines the
-    * precise form of frame transformations between the
-    * conventional terrestrial frame and the conventional inertial
-    * frame, as well as the solid earth tides.
-    *
-    * References:
-    * IERS1996: IERS Technical Note 21, "IERS Conventions (1996),"
-    *   Dennis D. McCarthy, U.S. Naval Observatory, 1996.
-    * IERS2003: IERS Technical Note 32, "IERS Conventions (2003),"
-    *   Dennis D. McCarthy and Gerard Petit eds., U.S. Naval Observatory and
-    *   Bureau International des Poids et Mesures, 2004.
-    * IERS2010: IERS Technical Note 36, "IERS Conventions (2010),"
-    *   Gerard Petit and Brian Luzum eds., Bureau International des
-    *   Poids et Mesures and U.S. Naval Observatory, 2010.
-    */
-   enum class IERSConvention
-   {
-      Unknown = 0, // 0 MUST be first
-      IERS1996,
-      IERS2003,
-      IERS2010,
-      Last // the number of conventions; this must be last
-   };
+/** This enum encapsulates the choice of IERS Convention, which
+ * applies directly to the operation of class EarthOrientation,
+ * and is used in class SolarSystem and in the functions defined
+ * in SolidEarthTides.cpp.  The IERS convention determines the
+ * precise form of frame transformations between the
+ * conventional terrestrial frame and the conventional inertial
+ * frame, as well as the solid earth tides.
+ *
+ * References:
+ * IERS1996: IERS Technical Note 21, "IERS Conventions (1996),"
+ *   Dennis D. McCarthy, U.S. Naval Observatory, 1996.
+ * IERS2003: IERS Technical Note 32, "IERS Conventions (2003),"
+ *   Dennis D. McCarthy and Gerard Petit eds., U.S. Naval Observatory and
+ *   Bureau International des Poids et Mesures, 2004.
+ * IERS2010: IERS Technical Note 36, "IERS Conventions (2010),"
+ *   Gerard Petit and Brian Luzum eds., Bureau International des
+ *   Poids et Mesures and U.S. Naval Observatory, 2010.
+ */
+enum class IERSConvention
+{
+    Unknown = 0, // 0 MUST be first
+    IERS1996,
+    IERS2003,
+    IERS2010,
+    Last // the number of conventions; this must be last
+};
 
-   namespace StringUtils
-   {
-         /// Convert a IERSConvention enum to its string representation.
-      std::string asString(IERSConvention e);
-         /// Convert a string representation of IERSConvention to an enum.
-      IERSConvention asIERSConvention(const std::string& s);
-   } // namespace StringUtils
+namespace StringUtils
+{
+/// Convert a IERSConvention enum to its string representation.
+std::string asString(IERSConvention e);
+/// Convert a string representation of IERSConvention to an enum.
+IERSConvention asIERSConvention(const std::string &s);
+} // namespace StringUtils
 
-   /** Write name (asString()) of a Convention to an output stream.
-    * @param[in,out] os The output stream
-    * @param[in] cv The Convention to be written
-    * @return reference to the output stream */
-   inline std::ostream& operator<<(std::ostream& os, IERSConvention cv)
-   {
-      return os << StringUtils::asString(cv);
-   }
+/** Write name (asString()) of a Convention to an output stream.
+ * @param[in,out] os The output stream
+ * @param[in] cv The Convention to be written
+ * @return reference to the output stream */
+inline std::ostream &operator<<(std::ostream &os, IERSConvention cv)
+{
+    return os << StringUtils::asString(cv);
+}
 
 } // end namespace gnsstk
 

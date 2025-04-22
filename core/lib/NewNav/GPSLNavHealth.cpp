@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -42,53 +41,45 @@ using namespace std;
 
 namespace gnsstk
 {
-   GPSLNavHealth ::
-   GPSLNavHealth()
-         : svHealth(0x80)
-   {
-      msgLenSec = 6.0;
-   }
-
-
-   void GPSLNavHealth ::
-   dump(std::ostream& s, DumpDetail dl) const
-   {
-      const ios::fmtflags oldFlags = s.flags();
-      s.setf(ios::fixed, ios::floatfield);
-      s.setf(ios::right, ios::adjustfield);
-      s.setf(ios::uppercase);
-      s.precision(0);
-      s.fill(' ');
-      switch (dl)
-      {
-         case DumpDetail::OneLine:
-            NavData::dump(s,dl);
-            break;
-         case DumpDetail::Brief:
-            NavData::dump(s,dl);
-            s << "svHealth = " << hex << (unsigned)svHealth << dec << "  "
-              << StringUtils::asString(getHealth()) << endl;
-            break;
-         case DumpDetail::Full:
-               // "header"
-            s << "*************************************************************"
-              << "***************" << endl
-              << "Satellite Health"
-              << endl
-              << endl
-              << getSignalString() << endl
-              << "           TIMES OF INTEREST"
-              << endl << endl
-              << "              " << getDumpTimeHdr(dl) << endl
-              << "Transmit:     " << getDumpTime(dl, timeStamp) << endl
-              << endl
-              << "           HEALTH DATA" << endl
-              << "Bits               0x" << hex << setw(1) << setfill('0')
-              << (unsigned)svHealth << endl
-              << "Status             " << StringUtils::asString(getHealth())
-              << endl;
-            break;
-      }
-      s.flags(oldFlags);
-   }
+GPSLNavHealth ::GPSLNavHealth() : svHealth(0x80)
+{
+    msgLenSec = 6.0;
 }
+
+void GPSLNavHealth ::dump(std::ostream &s, DumpDetail dl) const
+{
+    const ios::fmtflags oldFlags = s.flags();
+    s.setf(ios::fixed, ios::floatfield);
+    s.setf(ios::right, ios::adjustfield);
+    s.setf(ios::uppercase);
+    s.precision(0);
+    s.fill(' ');
+    switch (dl)
+    {
+    case DumpDetail::OneLine:
+        NavData::dump(s, dl);
+        break;
+    case DumpDetail::Brief:
+        NavData::dump(s, dl);
+        s << "svHealth = " << hex << (unsigned)svHealth << dec << "  " << StringUtils::asString(getHealth()) << endl;
+        break;
+    case DumpDetail::Full:
+        // "header"
+        s << "*************************************************************"
+          << "***************" << endl
+          << "Satellite Health" << endl
+          << endl
+          << getSignalString() << endl
+          << "           TIMES OF INTEREST" << endl
+          << endl
+          << "              " << getDumpTimeHdr(dl) << endl
+          << "Transmit:     " << getDumpTime(dl, timeStamp) << endl
+          << endl
+          << "           HEALTH DATA" << endl
+          << "Bits               0x" << hex << setw(1) << setfill('0') << (unsigned)svHealth << endl
+          << "Status             " << StringUtils::asString(getHealth()) << endl;
+        break;
+    }
+    s.flags(oldFlags);
+}
+} // namespace gnsstk

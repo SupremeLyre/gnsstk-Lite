@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -39,66 +38,69 @@
 #ifndef GNSSTK_GALINAVHEALTH_HPP
 #define GNSSTK_GALINAVHEALTH_HPP
 
-#include "NavHealthData.hpp"
-#include "GalHealthStatus.hpp"
 #include "GalDataValid.hpp"
+#include "GalHealthStatus.hpp"
+#include "NavHealthData.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /** Wrapper for the combined Signal Health Status (SHS) and Data
-       * Validity Status (DVS) associated with Galileo satellites. */
-   class GalINavHealth : public NavHealthData
-   {
-   public:
-         /// Initialize to unhealthy using a value typically not seen in health.
-      GalINavHealth();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GalINavHealth>(*this); }
+/** Wrapper for the combined Signal Health Status (SHS) and Data
+ * Validity Status (DVS) associated with Galileo satellites. */
+class GalINavHealth : public NavHealthData
+{
+  public:
+    /// Initialize to unhealthy using a value typically not seen in health.
+    GalINavHealth();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GalINavHealth>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @return true always as there is nothing to check in this class.
-          */
-      bool validate() const override
-      { return true; }
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @return true always as there is nothing to check in this class.
+     */
+    bool validate() const override
+    {
+        return true;
+    }
 
-         /** Print the contents of this object in a human-readable
-          * format.
-          * @param[in,out] s The stream to write the data to.
-          * @param[in] dl The level of detail the output should contain. */
-      void dump(std::ostream& s, DumpDetail dl) const override;
+    /** Print the contents of this object in a human-readable
+     * format.
+     * @param[in,out] s The stream to write the data to.
+     * @param[in] dl The level of detail the output should contain. */
+    void dump(std::ostream &s, DumpDetail dl) const override;
 
-         /** Defines the status of NavData::signal, specifically sat
-          * (not xmitSat).
-          * @note Galileo-OS-SDD refers to a SIS status as "Marginal",
-          *   where we use the SVHealth enumeration name "Degraded".
-          * @return Rolled-up health status based on internal data. */
-      SVHealth getHealth() const override;
+    /** Defines the status of NavData::signal, specifically sat
+     * (not xmitSat).
+     * @note Galileo-OS-SDD refers to a SIS status as "Marginal",
+     *   where we use the SVHealth enumeration name "Degraded".
+     * @return Rolled-up health status based on internal data. */
+    SVHealth getHealth() const override;
 
-         /** Static version of getHealth for convenience.
-          * @param[in] shs The Signal Health Status of a given signal.
-          * @param[in] dvs The Data Validity Status of a given signal.
-          * @param[in] sisa The Signal In Space Accuracy Index of a given signal
-          * @note Galileo-OS-SDD refers to a SIS status as "Marginal",
-          *   where we use the SVHealth enumeration name "Degraded".
-          * @return Rolled-up health status based on internal data. */
-      static SVHealth galHealth(GalHealthStatus shs, GalDataValid dvs,
-                                uint8_t sisa);
+    /** Static version of getHealth for convenience.
+     * @param[in] shs The Signal Health Status of a given signal.
+     * @param[in] dvs The Data Validity Status of a given signal.
+     * @param[in] sisa The Signal In Space Accuracy Index of a given signal
+     * @note Galileo-OS-SDD refers to a SIS status as "Marginal",
+     *   where we use the SVHealth enumeration name "Degraded".
+     * @return Rolled-up health status based on internal data. */
+    static SVHealth galHealth(GalHealthStatus shs, GalDataValid dvs, uint8_t sisa);
 
-         /// Signal health status (SHS)
-      GalHealthStatus sigHealthStatus;
-         /// Data Validity Status (DVS)
-      GalDataValid dataValidityStatus;
-         /// Signal in space accuracy index (OS-SIS-ICD tbl 76)
-      uint8_t sisaIndex;
-   };
+    /// Signal health status (SHS)
+    GalHealthStatus sigHealthStatus;
+    /// Data Validity Status (DVS)
+    GalDataValid dataValidityStatus;
+    /// Signal in space accuracy index (OS-SIS-ICD tbl 76)
+    uint8_t sisaIndex;
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GALINAVHEALTH_HPP

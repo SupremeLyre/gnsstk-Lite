@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -47,23 +46,19 @@ static const double mintot = 0;
 
 namespace gnsstk
 {
-   GPSLNavTimeOffset ::
-   GPSLNavTimeOffset()
-   {
-      msgLenSec = 6.0;
-      src = TimeSystem::GPS;
-      tgt = TimeSystem::UTC;
-   }
-
-
-   bool GPSLNavTimeOffset ::
-   validate() const
-   {
-         // see IS-GPS-200
-         // DN is defined in the ICD as being 1-7 but we also include
-         // the value 0 as valid because we won't always have anything
-         // else.
-      return ((dn <= maxDN) && (tot <= maxtot) && (tot >= mintot));
-   }
+GPSLNavTimeOffset ::GPSLNavTimeOffset()
+{
+    msgLenSec = 6.0;
+    src = TimeSystem::GPS;
+    tgt = TimeSystem::UTC;
 }
 
+bool GPSLNavTimeOffset ::validate() const
+{
+    // see IS-GPS-200
+    // DN is defined in the ICD as being 1-7 but we also include
+    // the value 0 as valid because we won't always have anything
+    // else.
+    return ((dn <= maxDN) && (tot <= maxtot) && (tot >= mintot));
+}
+} // namespace gnsstk

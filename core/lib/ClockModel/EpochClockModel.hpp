@@ -45,81 +45,84 @@
 #ifndef EPOCHCLOCKMODEL_HPP
 #define EPOCHCLOCKMODEL_HPP
 
-#include <map>
 #include "Exception.hpp"
 #include "gps_constants.hpp"
+#include <map>
 
-#include "ObsClockModel.hpp"
 #include "ORDEpoch.hpp"
+#include "ObsClockModel.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup ClockModel
-      //@{
+/// @ingroup ClockModel
+//@{
 
-   class EpochClockModel : public ObsClockModel
-   {
-   public:
+class EpochClockModel : public ObsClockModel
+{
+  public:
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wreorder"
-      EpochClockModel(double sigma = 2,
-                      double elmask = 0,
-                      SvMode mode = ALWAYS)
-            : ObsClockModel(sigma, elmask, mode), valid(false), clkc(0){}
+    EpochClockModel(double sigma = 2, double elmask = 0, SvMode mode = ALWAYS)
+        : ObsClockModel(sigma, elmask, mode), valid(false), clkc(0)
+    {
+    }
 #pragma clang diagnostic pop
-         /**
-          * @throw InvalidArgumentException
-          */
-      virtual double getOffset(const gnsstk::CommonTime& t) const
-      {
-         if (t!=time)
-         {
+    /**
+     * @throw InvalidArgumentException
+     */
+    virtual double getOffset(const gnsstk::CommonTime &t) const
+    {
+        if (t != time)
+        {
             gnsstk::InvalidArgumentException e;
             GNSSTK_THROW(e);
-         }
-         return clkc;
-      };
+        }
+        return clkc;
+    };
 
-         /**
-          * @throw InvalidArgumentException
-          */
-      virtual bool isOffsetValid(const gnsstk::CommonTime& t) const
-      {
-         if (t!=time)
-         {
+    /**
+     * @throw InvalidArgumentException
+     */
+    virtual bool isOffsetValid(const gnsstk::CommonTime &t) const
+    {
+        if (t != time)
+        {
             gnsstk::InvalidArgumentException e;
             GNSSTK_THROW(e);
-         }
-         return valid;
-      };
+        }
+        return valid;
+    };
 
+    // An unchecked accessor for programs that don't need the generic
+    // interface
+    double getOffset() const noexcept
+    {
+        return clkc;
+    };
 
-         // An unchecked accessor for programs that don't need the generic
-         // interface
-      double getOffset() const
-         noexcept {return clkc;};
+    bool isOffsetValid() const noexcept
+    {
+        return valid;
+    };
 
-      bool isOffsetValid() const
-         noexcept {return valid;};
+    /**
+     * @throw InvalidValue
+     */
+    virtual void addEpoch(const ORDEpoch &oe)
+    {
+        gnsstk::Stats<double> stat = simpleOrdClock(oe);
+        clkc = stat.Average();
+        valid = stat.N() >= 3; /// we need at least three to have a real avg
+        time = oe.time;
+    }
 
-         /**
-          * @throw InvalidValue
-          */
-      virtual void addEpoch(const ORDEpoch& oe)
-      {
-         gnsstk::Stats<double> stat = simpleOrdClock(oe);
-         clkc = stat.Average();
-         valid = stat.N() >=  3; /// we need at least three to have a real avg
-         time = oe.time;
-      }
+  private:
+    gnsstk::CommonTime time; ///< The time of this offset
+    double clkc;             ///< clock bias value (same units as residuals)
+    bool valid;              ///< flag indicating clock bias statistical validity
+};
 
-   private:
-      gnsstk::CommonTime time;   ///< The time of this offset
-      double clkc;           ///< clock bias value (same units as residuals)
-      bool valid;            ///< flag indicating clock bias statistical validity
-   };
+//@}
 
-      //@}
-
-}
+} // namespace gnsstk
 #endif

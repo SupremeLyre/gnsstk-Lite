@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,47 +42,50 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Class containing data elements unique to BeiDou D1 almanac pages.
-   class BDSD1NavAlm : public BDSD1NavData
-   {
-   public:
-         /// Sets the nav message type.
-      BDSD1NavAlm();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<BDSD1NavAlm>(*this); }
+/// Class containing data elements unique to BeiDou D1 almanac pages.
+class BDSD1NavAlm : public BDSD1NavData
+{
+  public:
+    /// Sets the nav message type.
+    BDSD1NavAlm();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<BDSD1NavAlm>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @todo implement some checking.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @todo implement some checking.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-         /** Override dumpHarmonics to hide them in output since BeiDou
-          * almanacs don't contain this data. */
-      void dumpHarmonics(std::ostream& s) const override
-      {}
+    /** Override dumpHarmonics to hide them in output since BeiDou
+     * almanacs don't contain this data. */
+    void dumpHarmonics(std::ostream &s) const override
+    {
+    }
 
-         /// Fill the beginFit and endFit values for this object.
-      void fixFit();
+    /// Fill the beginFit and endFit values for this object.
+    void fixFit();
 
-         /** Dump SV status information (e.g. health).
-          * @param[in,out] s The stream to write the data to. */
-      void dumpSVStatus(std::ostream& s) const override;
+    /** Dump SV status information (e.g. health).
+     * @param[in,out] s The stream to write the data to. */
+    void dumpSVStatus(std::ostream &s) const override;
 
-      uint8_t pnum;        ///< Almanac page number.
-      double deltai;       ///< Inclination in rad relative to 0.3*pi rad.
-      double toa;          ///< Convenience storage of unqualified toa.
-      uint16_t healthBits; ///< 9 bits of health from sf5,pg7/8.
-      bool isDefault;      ///< True if the source page was all 0s for orbit.
-   };
+    uint8_t pnum;        ///< Almanac page number.
+    double deltai;       ///< Inclination in rad relative to 0.3*pi rad.
+    double toa;          ///< Convenience storage of unqualified toa.
+    uint16_t healthBits; ///< 9 bits of health from sf5,pg7/8.
+    bool isDefault;      ///< True if the source page was all 0s for orbit.
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_BDSD1NAVALM_HPP

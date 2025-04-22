@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -42,21 +41,14 @@ using namespace std;
 
 namespace gnsstk
 {
-   GLOFNavData ::
-   GLOFNavData()
-         : health(SVHealth::Unknown),
-           satType(GLOFNavSatType::Unknown),
-           slot(-1),
-           lhealth(false)
-   {
-      weekFmt = "";
-   }
-
-
-   bool GLOFNavData ::
-   validate() const
-   {
-         /// @todo implement some checking.
-      return true;
-   }
+GLOFNavData ::GLOFNavData() : health(SVHealth::Unknown), satType(GLOFNavSatType::Unknown), slot(-1), lhealth(false)
+{
+    weekFmt = "";
 }
+
+bool GLOFNavData ::validate() const
+{
+    /// @todo implement some checking.
+    return true;
+}
+} // namespace gnsstk

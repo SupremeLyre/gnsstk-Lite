@@ -44,10 +44,10 @@
 #ifndef GNSSTK_FILESPEC_HPP
 #define GNSSTK_FILESPEC_HPP
 
-#include <vector>
 #include <functional>
 #include <map>
 #include <set>
+#include <vector>
 
 #include "CommonTime.hpp"
 
@@ -59,270 +59,280 @@ const char slash = '/';
 
 namespace gnsstk
 {
-      /// This exception is thrown when there is a problem with
-      /// handling file specifications.
-      /// @ingroup exceptiongroup
-   NEW_EXCEPTION_CLASS(FileSpecException, gnsstk::Exception);
+/// This exception is thrown when there is a problem with
+/// handling file specifications.
+/// @ingroup exceptiongroup
+NEW_EXCEPTION_CLASS(FileSpecException, gnsstk::Exception);
 
-      /// @ingroup FileDirProc
-      //@{
+/// @ingroup FileDirProc
+//@{
 
-      /**
-       * A FileSpec is how file names are defined.  For instance,
-       * ASM%4Y.%3j is the file spec for a SMODF file.  The format is similar
-       * to what you would use in sprintf(), and specifically it uses the same
-       * fields as CommonTime::printf().  For the most predictable results,
-       * fully specify the field length (as in %4Y vs. %Y).  Check the
-       * FileSpecType enum values for how characters map to fields. Any new
-       * fields added should conform to CommonTime or already existing fields,
-       * if there are any.
-       */
-   class FileSpec
-   {
-   public:
-         /** This enum lists the different possible elements you can
-          * have in a FileSpec.
-          *
-          * @note
-          * Whenever a format is added or removed from the CommonTime
-          * class, it more than likely should also be added or removed
-          * from the FileSpec class.  Additionally, the format
-          * character must not conflict with any of the existing
-          * format characters in CommonTime or FileSpec.
-          */
-      enum FileSpecType
-      {
-         unknown,       ///< Unknown type
-         station,       ///< 'n' A field for station numbers
-         receiver,      ///< 'r' A field for the receiver number
-         prn,           ///< 'p' A field for PRN number
-         selected,      ///< 't' A field for selected/unselected receiver
-         sequence,      ///< 'I' A sequence number, as in part 1, part 2, etc..
-         version,       ///< 'v' A version number, as in version 2
-                        ///<     is more recent than version 1
-         fixed,         ///< A field for fixed characters
-         clock,         ///< 'k' A field for the clock number
-         text,          ///< 'x' A field for arbitrary text,
-                        ///<     left-aligned and space-padded
+/**
+ * A FileSpec is how file names are defined.  For instance,
+ * ASM%4Y.%3j is the file spec for a SMODF file.  The format is similar
+ * to what you would use in sprintf(), and specifically it uses the same
+ * fields as CommonTime::printf().  For the most predictable results,
+ * fully specify the field length (as in %4Y vs. %Y).  Check the
+ * FileSpecType enum values for how characters map to fields. Any new
+ * fields added should conform to CommonTime or already existing fields,
+ * if there are any.
+ */
+class FileSpec
+{
+  public:
+    /** This enum lists the different possible elements you can
+     * have in a FileSpec.
+     *
+     * @note
+     * Whenever a format is added or removed from the CommonTime
+     * class, it more than likely should also be added or removed
+     * from the FileSpec class.  Additionally, the format
+     * character must not conflict with any of the existing
+     * format characters in CommonTime or FileSpec.
+     */
+    enum FileSpecType
+    {
+        unknown,  ///< Unknown type
+        station,  ///< 'n' A field for station numbers
+        receiver, ///< 'r' A field for the receiver number
+        prn,      ///< 'p' A field for PRN number
+        selected, ///< 't' A field for selected/unselected receiver
+        sequence, ///< 'I' A sequence number, as in part 1, part 2, etc..
+        version,  ///< 'v' A version number, as in version 2
+                  ///<     is more recent than version 1
+        fixed,    ///< A field for fixed characters
+        clock,    ///< 'k' A field for the clock number
+        text,     ///< 'x' A field for arbitrary text,
+                  ///<     left-aligned and space-padded
 
+        // see CommonTime for more information on the following elements
+        year,             ///< 'y' or 'Y' A field for a year
+        firstTime = year, ///< First enumeration value pertaining to time
+        month,            ///< 'm' A field for month (numeric)
+        dayofmonth,       ///< 'd' A field for day-of-month
+        hour,             ///< 'H' A field for hours (out of 24)
+        minute,           ///< 'M' A field for minutes (out of 60)
+        second,           ///< 'S' A field for seconds (out of 60)
+        fsecond,          ///< 'f' A field for seconds (float)
+        gpsweek,          ///< 'G' A field for 10 bit GPS weeks
+        fullgpsweek,      ///< 'F' A field for full GPS weeks
+        gpssecond,        ///< 'g' A field for GPS second-of-week
+        mjd,              ///< 'Q' A field for Modified Julian Date
+        dayofweek,        ///< 'w' A field for day-of-week (numeric)
+        day,              ///< 'j' A field for day of year
+        doysecond,        ///< 's' a field for second-of-day (float)
+        zcount,           ///< 'Z' A field for GPS Z-count
+        zcountfloor,      ///< 'z' A field for GPS Z-count rounded down
+        unixsec,          ///< 'U' A field for UNIX seconds
+        unixusec,         ///< 'u' A field for UNIX microseconds
+        fullzcount,       ///< 'C' or 'c' A field for Full GPS Z-count
 
-            // see CommonTime for more information on the following elements
-         year,          ///< 'y' or 'Y' A field for a year
-         firstTime = year, ///< First enumeration value pertaining to time
-         month,         ///< 'm' A field for month (numeric)
-         dayofmonth,    ///< 'd' A field for day-of-month
-         hour,          ///< 'H' A field for hours (out of 24)
-         minute,        ///< 'M' A field for minutes (out of 60)
-         second,        ///< 'S' A field for seconds (out of 60)
-         fsecond,       ///< 'f' A field for seconds (float)
-         gpsweek,       ///< 'G' A field for 10 bit GPS weeks
-         fullgpsweek,   ///< 'F' A field for full GPS weeks
-         gpssecond,     ///< 'g' A field for GPS second-of-week
-         mjd,           ///< 'Q' A field for Modified Julian Date
-         dayofweek,     ///< 'w' A field for day-of-week (numeric)
-         day,           ///< 'j' A field for day of year
-         doysecond,     ///< 's' a field for second-of-day (float)
-         zcount,        ///< 'Z' A field for GPS Z-count
-         zcountfloor,   ///< 'z' A field for GPS Z-count rounded down
-         unixsec,       ///< 'U' A field for UNIX seconds
-         unixusec,      ///< 'u' A field for UNIX microseconds
-         fullzcount,    ///< 'C' or 'c' A field for Full GPS Z-count
+        end ///< A place holder for the end of this list
+    };
 
-         end            ///< A place holder for the end of this list
-      };
+    /// A map from a FileSpecType to a string, used in the
+    /// toString function.
+    typedef std::map<FileSpecType, std::string> FSTStringMap;
 
-         /// A map from a FileSpecType to a string, used in the
-         /// toString function.
-      typedef std::map<FileSpecType, std::string> FSTStringMap;
+    /// An enum for identifying the sort order of the list returned
+    /// from FileHunter.
+    enum FileSpecSortType
+    {
+        ascending,
+        descending
+    };
 
+    /// Default constructor
+    FileSpec()
+    {
+    }
 
-         /// An enum for identifying the sort order of the list returned
-         /// from FileHunter.
-      enum FileSpecSortType
-      {
-         ascending,
-         descending
-      };
+    /** Constructor with a string to parse
+     * @throw FileSpecException */
+    FileSpec(const std::string &fileSpec)
+    {
+        init(fileSpec);
+    }
 
-         /// Default constructor
-      FileSpec() {}
+    /// Destructor
+    virtual ~FileSpec()
+    {
+    }
 
-         /** Constructor with a string to parse
-          * @throw FileSpecException */
-      FileSpec(const std::string& fileSpec)
-      {init(fileSpec);}
+    /** Reinitializes this FileSpec with the new string
+     * @throw FileSpecException */
+    virtual FileSpec &newSpec(const std::string &fileSpec)
+    {
+        init(fileSpec);
+        return *this;
+    }
 
-         /// Destructor
-      virtual ~FileSpec() {}
+    /// Returns the string of the filespec
+    virtual std::string getSpecString(void) const
+    {
+        return fileSpecString;
+    }
 
-         /** Reinitializes this FileSpec with the new string
-          * @throw FileSpecException */
-      virtual FileSpec& newSpec(const std::string& fileSpec)
-      {init(fileSpec); return *this;}
+    /**
+     * Returns a string that can be used to search for files
+     * matching this FileSpec.  Essentailly turns every non-fixed
+     * field into strings of '?'.
+     * @throw FileSpecException when there's an error in the FileSpec
+     */
+    virtual std::string createSearchString() const;
 
-         /// Returns the string of the filespec
-      virtual std::string getSpecString(void) const
-      {return fileSpecString;}
+    /**
+     * Given a file name and a field, returns that field from the string.
+     * Use hasField() first to see if the field exists in the FileSpec.
+     * If multiple fields of FileSpecType are defined, only the first
+     * is returned.  If the FileSpec contains fields without an explicit
+     * width, the behavior of this method is currently undefined.
+     * @throw FileSpecException when the FileSpecType doesn't exist
+     *  in the FileSpec
+     */
+    virtual std::string extractField(const std::string &filename, const FileSpecType) const;
 
-         /**
-          * Returns a string that can be used to search for files
-          * matching this FileSpec.  Essentailly turns every non-fixed
-          * field into strings of '?'.
-          * @throw FileSpecException when there's an error in the FileSpec
-          */
-      virtual std::string createSearchString() const;
+    /**
+     * Given a field type, returns true if the FileSpec has that field.
+     */
+    virtual bool hasField(FileSpecType fst) const
+    {
+        return fileSpecSet.count(fst) != 0;
+    }
 
-         /**
-          * Given a file name and a field, returns that field from the string.
-          * Use hasField() first to see if the field exists in the FileSpec.
-          * If multiple fields of FileSpecType are defined, only the first
-          * is returned.  If the FileSpec contains fields without an explicit
-          * width, the behavior of this method is currently undefined.
-          * @throw FileSpecException when the FileSpecType doesn't exist
-          *  in the FileSpec
-          */
-      virtual std::string extractField(const std::string& filename,
-                                       const FileSpecType) const;
+    /// Return true if this FileSpec has any time fields.
+    bool hasTimeField() const
+    {
+        return fileSpecSet.lower_bound(firstTime) != fileSpecSet.end();
+    }
 
-         /**
-          * Given a field type, returns true if the FileSpec has that field.
-          */
-      virtual bool hasField(FileSpecType fst) const
-      { return fileSpecSet.count(fst) != 0; }
+    /// Return true if this FileSpec has any non-time fields.
+    bool hasNonTimeField() const
+    {
+        return (!fileSpecSet.empty() && ((*fileSpecSet.begin()) < firstTime));
+    }
 
-         /// Return true if this FileSpec has any time fields.
-      bool hasTimeField() const
-      { return fileSpecSet.lower_bound(firstTime) != fileSpecSet.end(); }
+    /**
+     * If possible, returns a CommonTime object with the time the file
+     * represents.  Since the time resolution only goes to days for
+     * most file types, all times are set to midnight of that day.
+     * If the FileSpec contains fields without an explicit width,
+     * the behavior of this method is currently undefined.
+     * @throw FileSpecException when a time can't be formed
+     */
+    virtual gnsstk::CommonTime extractCommonTime(const std::string &filename) const;
 
-         /// Return true if this FileSpec has any non-time fields.
-      bool hasNonTimeField() const
-      { return (!fileSpecSet.empty() && ((*fileSpecSet.begin()) < firstTime)); }
+    /**
+     * For the given FileSpec, fills in the fields with the given
+     * information and returns a string of that file name.  Use the
+     * FSTStringMap to provide all the other non-time data for the
+     * string (i.e. FSTSMap[station] = "85408";).  Any unspecified
+     * field will be filled with 0's.  The one side affect of this
+     * is that you can only specify one of each field in the map,
+     * but you're likely not going to need two different station
+     * numbers in the file name.  If you want, you can put the CommonTime
+     * information into the FSTSMap, but it's not necessary.
+     * @return the new filename.
+     */
+    virtual std::string toString(const gnsstk::CommonTime &dt, const FSTStringMap &fstsMap = FSTStringMap()) const;
 
-         /**
-          * If possible, returns a CommonTime object with the time the file
-          * represents.  Since the time resolution only goes to days for
-          * most file types, all times are set to midnight of that day.
-          * If the FileSpec contains fields without an explicit width,
-          * the behavior of this method is currently undefined.
-          * @throw FileSpecException when a time can't be formed
-          */
-      virtual gnsstk::CommonTime extractCommonTime(const std::string& filename)
-         const;
+    /**
+     * Sort the list of files ascending or
+     * descending.  The fields of the files are sorted in the order
+     * that they're specified in the FileSpecType enum.
+     * The list fileList is modified as a result
+     * of this.  If the files in fileList have paths listed, then
+     * only the file name (taken to be the word after the last '/')
+     * will be used in the comparison.  This function also filters
+     * out older versions of files in the fileList.
+     * @throw FileSpecException
+     */
+    virtual void sortList(std::vector<std::string> &fileList, const FileSpecSortType fsst = ascending) const;
 
-         /**
-          * For the given FileSpec, fills in the fields with the given
-          * information and returns a string of that file name.  Use the
-          * FSTStringMap to provide all the other non-time data for the
-          * string (i.e. FSTSMap[station] = "85408";).  Any unspecified
-          * field will be filled with 0's.  The one side affect of this
-          * is that you can only specify one of each field in the map,
-          * but you're likely not going to need two different station
-          * numbers in the file name.  If you want, you can put the CommonTime
-          * information into the FSTSMap, but it's not necessary.
-          * @return the new filename.
-          */
-      virtual std::string toString(const gnsstk::CommonTime& dt,
-                                   const FSTStringMap& fstsMap = FSTStringMap())
-         const;
+    /// semi-nicely print the FileSpec to the stream.
+    virtual void dump(std::ostream &o) const;
 
-         /**
-          * Sort the list of files ascending or
-          * descending.  The fields of the files are sorted in the order
-          * that they're specified in the FileSpecType enum.
-          * The list fileList is modified as a result
-          * of this.  If the files in fileList have paths listed, then
-          * only the file name (taken to be the word after the last '/')
-          * will be used in the comparison.  This function also filters
-          * out older versions of files in the fileList.
-          * @throw FileSpecException
-          */
-      virtual void sortList(std::vector<std::string>& fileList,
-                            const FileSpecSortType fsst = ascending) const;
+  protected:
+    /** Parses the string into the FileSpec object
+     * @throw FileSpecException
+     */
+    virtual void init(const std::string &fileSpec);
 
-         /// semi-nicely print the FileSpec to the stream.
-      virtual void dump(std::ostream& o) const;
+  public:
+    /**
+     * Converts the FileSpecType to a string it is identified with.
+     * @throw FileSpecException when FileSpecType doesn't match
+     *  any known types
+     */
+    static std::string convertFileSpecType(const FileSpecType);
 
-   protected:
-         /** Parses the string into the FileSpec object
-          * @throw FileSpecException
-          */
-      virtual void init(const std::string& fileSpec);
+    /**
+     * Converts the string into its corresponding FileSpecType
+     * @throw FileSpecException when FileSpecType doesn't match
+     *  any known types
+     */
+    static FileSpecType convertFileSpecType(const std::string &);
 
-   public:
-         /**
-          * Converts the FileSpecType to a string it is identified with.
-          * @throw FileSpecException when FileSpecType doesn't match
-          *  any known types
-          */
-      static std::string convertFileSpecType(const FileSpecType);
-
-         /**
-          * Converts the string into its corresponding FileSpecType
-          * @throw FileSpecException when FileSpecType doesn't match
-          *  any known types
-          */
-      static FileSpecType convertFileSpecType(const std::string&);
-
-   protected:
-         /// This is an internal, private class of FileSpec that holds
-         /// information for one individual file specification element.
-      class FileSpecElement
-      {
+  protected:
+    /// This is an internal, private class of FileSpec that holds
+    /// information for one individual file specification element.
+    class FileSpecElement
+    {
       public:
-            /// This is the default constructor too.
-         FileSpecElement(const std::string::size_type numChars = 0,
-                         const std::string::size_type offs = 0,
-                         const FileSpecType fst = unknown,
-                         const std::string& fld = std::string())
-               : numCh(numChars), offset(offs), type(fst), field(fld)
-         {}
+        /// This is the default constructor too.
+        FileSpecElement(const std::string::size_type numChars = 0, const std::string::size_type offs = 0,
+                        const FileSpecType fst = unknown, const std::string &fld = std::string())
+            : numCh(numChars), offset(offs), type(fst), field(fld)
+        {
+        }
 
-            /// The number of characters this field is in the file name.
-         std::string::size_type numCh;
-            /// The offset in the string where this field begins
-         std::string::size_type offset;
-            /// The type which this field corresponds to.
-         FileSpecType type;
-            /// For fixed strings, the characters it represents.
-            /// For all other types, it's the original string for
-            /// that field (i.e. '%03j').
-         std::string field;
-      };
+        /// The number of characters this field is in the file name.
+        std::string::size_type numCh;
+        /// The offset in the string where this field begins
+        std::string::size_type offset;
+        /// The type which this field corresponds to.
+        FileSpecType type;
+        /// For fixed strings, the characters it represents.
+        /// For all other types, it's the original string for
+        /// that field (i.e. '%03j').
+        std::string field;
+    };
 
-      struct FileSpecSort :
-         public std::binary_function<std::string,std::string,bool>
-      {
+    struct FileSpecSort : public std::binary_function<std::string, std::string, bool>
+    {
       public:
-         FileSpecSort(const FileSpec& fs, const FileSpecSortType s)
-               : fileSpec(fs), sortDir(s) {}
-            /// Compares two strings based on the substrings defined by
-            /// offset and length accounting for any directory names
-            /// in the strings
-         bool operator() (const std::string& l, const std::string& r) const;
+        FileSpecSort(const FileSpec &fs, const FileSpecSortType s) : fileSpec(fs), sortDir(s)
+        {
+        }
+        /// Compares two strings based on the substrings defined by
+        /// offset and length accounting for any directory names
+        /// in the strings
+        bool operator()(const std::string &l, const std::string &r) const;
+
       private:
-            /// ascending or descending
-         FileSpecSortType sortDir;
-            /// The FileSpec doing the sorting
-         const FileSpec &fileSpec;
-      };
+        /// ascending or descending
+        FileSpecSortType sortDir;
+        /// The FileSpec doing the sorting
+        const FileSpec &fileSpec;
+    };
 
-         /// Holds all of the FileSpecElements for this FileSpec
-      std::vector<FileSpecElement> fileSpecList;
-         /// Set of all FileSpecType values present in this FileSpec
-      std::set<FileSpecType> fileSpecSet;
-         /// Holds the string that the fileSpecList was generated from
-      std::string fileSpecString;
+    /// Holds all of the FileSpecElements for this FileSpec
+    std::vector<FileSpecElement> fileSpecList;
+    /// Set of all FileSpecType values present in this FileSpec
+    std::set<FileSpecType> fileSpecSet;
+    /// Holds the string that the fileSpecList was generated from
+    std::string fileSpecString;
 
-      friend struct FileSpecSort;
+    friend struct FileSpecSort;
 
-   }; // class FileSpec
+}; // class FileSpec
 
-      /// Operator-- for FileSpecType
-   FileSpec::FileSpecType& operator-- (FileSpec::FileSpecType& fst, int);
-      /// Operator++ for FileSpecType
-   FileSpec::FileSpecType& operator++ (FileSpec::FileSpecType& fst, int);
+/// Operator-- for FileSpecType
+FileSpec::FileSpecType &operator--(FileSpec::FileSpecType &fst, int);
+/// Operator++ for FileSpecType
+FileSpec::FileSpecType &operator++(FileSpec::FileSpecType &fst, int);
 
-      //@}
+//@}
 
 } // namespace gnsstk
 

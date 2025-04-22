@@ -42,36 +42,35 @@
 // forward declarations for CommonTime
 namespace gnsstk
 {
-   class TimeSystemConverter;
-   class CommonTime;
-}
+class TimeSystemConverter;
+class CommonTime;
+} // namespace gnsstk
 
 #include "CommonTime.hpp"
 
 namespace gnsstk
 {
-      /// @ingroup TimeHandling
-      //@{
+/// @ingroup TimeHandling
+//@{
 
-      /** Define an abstract base class for implementing conversions
-       * between time systems. */
-   class TimeSystemConverter
-   {
-   public:
-         /** Get the offset in seconds between fromSys and toSys.
-          * @param[in] fromSys The time system to convert from.
-          * @param[in] toSys The time system to convert to.
-          * @param[in] t The time at which the offset is being
-          *   requested (i.e. the time being converted).
-          * @param[out] offs The resulting offset in seconds, 
-          *   if available, where when(toSys)=when(fromSys)-offset.
-          * @return true if successful, false if unavailable. */
-      virtual bool getOffset(TimeSystem fromSys, TimeSystem toSys,
-                             const CommonTime& t, double& offs) = 0;
-   };
+/** Define an abstract base class for implementing conversions
+ * between time systems. */
+class TimeSystemConverter
+{
+  public:
+    /** Get the offset in seconds between fromSys and toSys.
+     * @param[in] fromSys The time system to convert from.
+     * @param[in] toSys The time system to convert to.
+     * @param[in] t The time at which the offset is being
+     *   requested (i.e. the time being converted).
+     * @param[out] offs The resulting offset in seconds,
+     *   if available, where when(toSys)=when(fromSys)-offset.
+     * @return true if successful, false if unavailable. */
+    virtual bool getOffset(TimeSystem fromSys, TimeSystem toSys, const CommonTime &t, double &offs) = 0;
+};
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_TIMESYSTEMCONVERTER_HPP

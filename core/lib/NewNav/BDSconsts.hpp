@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -45,33 +44,33 @@
 
 namespace gnsstk
 {
-   namespace bds
-   {
-         // use enum for integral constants and constexpr for floating
-         // point to avoid having the linker allocate storage for the
-         // data.
+namespace bds
+{
+// use enum for integral constants and constexpr for floating
+// point to avoid having the linker allocate storage for the
+// data.
 
-         /// Integer constants for BDS.
-      enum BDSIntConsts
-      {
-         Preamble = 0x712,      ///< Nav message preamble value
-         D1MinSF = 1,           ///< Minimum D1 subframe ID
-         D1MinEphSF = 1,        ///< Minimum D1 subframe ID containing eph data
-         D1MaxEphSF = 3,        ///< Maximum D1 subframe ID containing eph data
-         D1AmEpIDSF = 4,        ///< Subframe containing the AmEpID values
-         D1MinAlmSF = 4,        ///< Minimum D1 subframe ID containing alm data
-         D1MaxAlmSF = 5,        ///< Maximum D1 subframe ID containing alm data
-         D1MaxSF = 5,           ///< Maximum D1 subframe ID
-         D1MinExpAlmPg = 11,    ///< Minimum D1 SF5 page containing expanded alm
-         D1MaxExpAlmPg = 23,    ///< Maximum D1 SF5 page containing expanded alm
-         D1ExpAlmHeaPg = 24,    ///< Page containing expanded almanac health
+/// Integer constants for BDS.
+enum BDSIntConsts
+{
+    Preamble = 0x712,   ///< Nav message preamble value
+    D1MinSF = 1,        ///< Minimum D1 subframe ID
+    D1MinEphSF = 1,     ///< Minimum D1 subframe ID containing eph data
+    D1MaxEphSF = 3,     ///< Maximum D1 subframe ID containing eph data
+    D1AmEpIDSF = 4,     ///< Subframe containing the AmEpID values
+    D1MinAlmSF = 4,     ///< Minimum D1 subframe ID containing alm data
+    D1MaxAlmSF = 5,     ///< Maximum D1 subframe ID containing alm data
+    D1MaxSF = 5,        ///< Maximum D1 subframe ID
+    D1MinExpAlmPg = 11, ///< Minimum D1 SF5 page containing expanded alm
+    D1MaxExpAlmPg = 23, ///< Maximum D1 SF5 page containing expanded alm
+    D1ExpAlmHeaPg = 24, ///< Page containing expanded almanac health
 
-         D2MinSF = 1,           ///< Minimum D2 subframe ID
-         D2EphSF = 1,           ///< D2 subframe ID containing ephemeris data
-         D2AlmSF = 5,           ///< D2 subframe ID containing almanac data
-         D2MaxSF = 5,           ///< Maximum D2 subframe ID
-      };
-   }
-}
+    D2MinSF = 1, ///< Minimum D2 subframe ID
+    D2EphSF = 1, ///< D2 subframe ID containing ephemeris data
+    D2AlmSF = 5, ///< D2 subframe ID containing almanac data
+    D2MaxSF = 5, ///< Maximum D2 subframe ID
+};
+} // namespace bds
+} // namespace gnsstk
 
 #endif // GNSSTK_BDSCONSTS_HPP

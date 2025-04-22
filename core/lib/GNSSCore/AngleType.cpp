@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -41,39 +40,45 @@
 
 namespace gnsstk
 {
-   namespace StringUtils
-   {
-      std::string asString(AngleType e) noexcept
-      {
-         switch (e)
-         {
-            case AngleType::Unknown:    return "Unknown";
-            case AngleType::Rad:        return "radians";
-            case AngleType::Deg:        return "degrees";
-            case AngleType::SemiCircle: return "semi-circles";
-            case AngleType::Sin:        return "sin";
-            case AngleType::Cos:        return "cos";
-            default:                    return "???";
-         }
-      }
+namespace StringUtils
+{
+std::string asString(AngleType e) noexcept
+{
+    switch (e)
+    {
+    case AngleType::Unknown:
+        return "Unknown";
+    case AngleType::Rad:
+        return "radians";
+    case AngleType::Deg:
+        return "degrees";
+    case AngleType::SemiCircle:
+        return "semi-circles";
+    case AngleType::Sin:
+        return "sin";
+    case AngleType::Cos:
+        return "cos";
+    default:
+        return "???";
+    }
+}
 
-
-      AngleType asAngleType(const std::string& s) noexcept
-      {
-         std::string lc(gnsstk::StringUtils::lowerCase(s));
-         if (lc == "unknown")
-            return AngleType::Unknown;
-         if (lc == "radians")
-            return AngleType::Rad;
-         if (lc == "degrees")
-            return AngleType::Deg;
-         if (lc == "semi-circles")
-            return AngleType::SemiCircle;
-         if (lc == "sin")
-            return AngleType::Sin;
-         if (lc == "cos")
-            return AngleType::Cos;
-         return AngleType::Unknown;
-      }
-   } // namespace StringUtils
+AngleType asAngleType(const std::string &s) noexcept
+{
+    std::string lc(gnsstk::StringUtils::lowerCase(s));
+    if (lc == "unknown")
+        return AngleType::Unknown;
+    if (lc == "radians")
+        return AngleType::Rad;
+    if (lc == "degrees")
+        return AngleType::Deg;
+    if (lc == "semi-circles")
+        return AngleType::SemiCircle;
+    if (lc == "sin")
+        return AngleType::Sin;
+    if (lc == "cos")
+        return AngleType::Cos;
+    return AngleType::Unknown;
+}
+} // namespace StringUtils
 } // namespace gnsstk

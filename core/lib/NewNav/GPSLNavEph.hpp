@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -44,111 +43,110 @@
 
 namespace gnsstk
 {
-      /// @ingroup NavFactory
-      //@{
+/// @ingroup NavFactory
+//@{
 
-      /// Class containing data elements unique to GPS LNav ephemerides.
-   class GPSLNavEph : public GPSLNavData
-   {
-   public:
-         /// Sets the nav message type and all other data members to 0.
-      GPSLNavEph();
-         /// Create a deep copy of this object.
-      NavDataPtr clone() const override
-      { return std::make_shared<GPSLNavEph>(*this); }
+/// Class containing data elements unique to GPS LNav ephemerides.
+class GPSLNavEph : public GPSLNavData
+{
+  public:
+    /// Sets the nav message type and all other data members to 0.
+    GPSLNavEph();
+    /// Create a deep copy of this object.
+    NavDataPtr clone() const override
+    {
+        return std::make_shared<GPSLNavEph>(*this);
+    }
 
-         /** Checks the contents of this message against known
-          * validity rules as defined in the appropriate ICD.
-          * @todo implement some checking.
-          * @return true if this message is valid according to ICD criteria.
-          */
-      bool validate() const override;
+    /** Checks the contents of this message against known
+     * validity rules as defined in the appropriate ICD.
+     * @todo implement some checking.
+     * @return true if this message is valid according to ICD criteria.
+     */
+    bool validate() const override;
 
-         /** Returns the time when the navigation message would have
-          * first been available to the user equipment, i.e. the time
-          * at which the final bit of a given broadcast navigation
-          * message is received.  This is used by
-          * NavDataFactoryWithStore::find() in User mode.
-          * @return most recent transmit time + 6s.
-          */
-      CommonTime getUserTime() const override;
+    /** Returns the time when the navigation message would have
+     * first been available to the user equipment, i.e. the time
+     * at which the final bit of a given broadcast navigation
+     * message is received.  This is used by
+     * NavDataFactoryWithStore::find() in User mode.
+     * @return most recent transmit time + 6s.
+     */
+    CommonTime getUserTime() const override;
 
-         /** Fill the beginFit and endFit values for this object.
-          * @pre Toe, iodc, fitIntFlag and xmitTime must all be set. */
-      void fixFit();
+    /** Fill the beginFit and endFit values for this object.
+     * @pre Toe, iodc, fitIntFlag and xmitTime must all be set. */
+    void fixFit();
 
-         /** Print the contents of this NavData object in a (usually)
-          * human-readable format.
-          * @param[in,out] s The stream to write the data to.
-          * @param[in] dl The level of detail the output should contain. */
-      void dump(std::ostream& s, DumpDetail dl) const override;
+    /** Print the contents of this NavData object in a (usually)
+     * human-readable format.
+     * @param[in,out] s The stream to write the data to.
+     * @param[in] dl The level of detail the output should contain. */
+    void dump(std::ostream &s, DumpDetail dl) const override;
 
-         /** Dump SV status information (e.g. health).
-          * @param[in,out] s The stream to write the data to. */
-      void dumpSVStatus(std::ostream& s) const override;
+    /** Dump SV status information (e.g. health).
+     * @param[in,out] s The stream to write the data to. */
+    void dumpSVStatus(std::ostream &s) const override;
 
-      CommonTime xmit2;   ///< Transmit time for subframe 2.
-      CommonTime xmit3;   ///< Transmit time for subframe 3.
-      uint32_t pre2;      ///< The TLM preamble from word 1 of subframe 2.
-      uint32_t pre3;      ///< The TLM preamble from word 1 of subframe 3.
-      uint32_t tlm2;      ///< The TLM message from word 1 of subframe 2.
-      uint32_t tlm3;      ///< The TLM message from word 1 of subframe 3.
-      bool isf2;          ///< Integrity status flag from subframe 2.
-      bool isf3;          ///< Integrity status flag from subframe 3.
-      uint16_t iodc;      ///< Issue Of Data-Clock for the ephemeris.
-      uint16_t iode;      ///< Issue Of Data-Ephemeris.
-      uint8_t fitIntFlag; ///< Fit interval flag from subframe 2.
-      uint8_t healthBits; ///< 6 SV health bits from subframe 1, word 3.
-      uint8_t uraIndex;   ///< 4-bit URA index from subframe 1, word 3.
-      double tgd;         ///< Ionospheric group delay in seconds.
-      bool alert2;        ///< Alert flag from SF2 HOW
-      bool alert3;        ///< Alert flag from SF3 HOW
-      bool asFlag2;       ///< Anti-spoof flag from SF2 HOW.
-      bool asFlag3;       ///< Anti-spoof flag from SF3 HOW.
-      GPSLNavL2Codes codesL2; ///< Code on L2 in-phase component.
-         /** L2 P data flag from subframe 1, word 3.
-          * @note This retains the behavior as described in
-          *   IS-GPS-200K 20.3.3.3.1.6, in that true (1) indicates the
-          *   LNAV data stream was commanded OFF on the P-code of the
-          *   in-phase component of the L2 channel */
-      bool L2Pdata;
-      long aodo;          ///< Age of Data Offset in seconds (-1=uninitialized).
-   };
+    CommonTime xmit2;       ///< Transmit time for subframe 2.
+    CommonTime xmit3;       ///< Transmit time for subframe 3.
+    uint32_t pre2;          ///< The TLM preamble from word 1 of subframe 2.
+    uint32_t pre3;          ///< The TLM preamble from word 1 of subframe 3.
+    uint32_t tlm2;          ///< The TLM message from word 1 of subframe 2.
+    uint32_t tlm3;          ///< The TLM message from word 1 of subframe 3.
+    bool isf2;              ///< Integrity status flag from subframe 2.
+    bool isf3;              ///< Integrity status flag from subframe 3.
+    uint16_t iodc;          ///< Issue Of Data-Clock for the ephemeris.
+    uint16_t iode;          ///< Issue Of Data-Ephemeris.
+    uint8_t fitIntFlag;     ///< Fit interval flag from subframe 2.
+    uint8_t healthBits;     ///< 6 SV health bits from subframe 1, word 3.
+    uint8_t uraIndex;       ///< 4-bit URA index from subframe 1, word 3.
+    double tgd;             ///< Ionospheric group delay in seconds.
+    bool alert2;            ///< Alert flag from SF2 HOW
+    bool alert3;            ///< Alert flag from SF3 HOW
+    bool asFlag2;           ///< Anti-spoof flag from SF2 HOW.
+    bool asFlag3;           ///< Anti-spoof flag from SF3 HOW.
+    GPSLNavL2Codes codesL2; ///< Code on L2 in-phase component.
+                            /** L2 P data flag from subframe 1, word 3.
+                             * @note This retains the behavior as described in
+                             *   IS-GPS-200K 20.3.3.3.1.6, in that true (1) indicates the
+                             *   LNAV data stream was commanded OFF on the P-code of the
+                             *   in-phase component of the L2 channel */
+    bool L2Pdata;
+    long aodo; ///< Age of Data Offset in seconds (-1=uninitialized).
+};
 
-      /** Class that sorts GPSLNavEph using the combination of
-       * NavSatelliteID, GPS week and IODC.  Intended to be used as a
-       * comparator for standard C++ library containers. */
-   class GPSLNavEphIODCComp
-   {
-   public:
-         /** Comparison function for the container class.
-          * @return true if signal, Toe.week and iodc in lhs are less than rhs.
-          */
-      bool operator()(const std::shared_ptr<GPSLNavEph> lhs,
-                      const std::shared_ptr<GPSLNavEph> rhs) const;
-   };
+/** Class that sorts GPSLNavEph using the combination of
+ * NavSatelliteID, GPS week and IODC.  Intended to be used as a
+ * comparator for standard C++ library containers. */
+class GPSLNavEphIODCComp
+{
+  public:
+    /** Comparison function for the container class.
+     * @return true if signal, Toe.week and iodc in lhs are less than rhs.
+     */
+    bool operator()(const std::shared_ptr<GPSLNavEph> lhs, const std::shared_ptr<GPSLNavEph> rhs) const;
+};
 
-      /// Store GPSLNavEph shared_ptrs using GPSLNavEphIODCComp to sort.
-   typedef std::set<std::shared_ptr<GPSLNavEph>, GPSLNavEphIODCComp> GPSLNavIODCUniq;
+/// Store GPSLNavEph shared_ptrs using GPSLNavEphIODCComp to sort.
+typedef std::set<std::shared_ptr<GPSLNavEph>, GPSLNavEphIODCComp> GPSLNavIODCUniq;
 
-      /** Class that sorts GPSLNavEph using the CEI data as defined in
-       * Table-6-I-1 of IS-GPS-200. */
-   class GPSLNavEphCEIComp
-   {
-   public:
-         /** Comparison function for the container class.
-          * @return true if the CEI data set parameters in lhs are
-          *   less than rhs. */
-      bool operator()(const std::shared_ptr<GPSLNavEph> lhs,
-                      const std::shared_ptr<GPSLNavEph> rhs) const;
-   };
+/** Class that sorts GPSLNavEph using the CEI data as defined in
+ * Table-6-I-1 of IS-GPS-200. */
+class GPSLNavEphCEIComp
+{
+  public:
+    /** Comparison function for the container class.
+     * @return true if the CEI data set parameters in lhs are
+     *   less than rhs. */
+    bool operator()(const std::shared_ptr<GPSLNavEph> lhs, const std::shared_ptr<GPSLNavEph> rhs) const;
+};
 
-      /// Store GPSLNavEph shared_ptrs using GPSLNavEphCEIComp to sort.
-   typedef std::set<std::shared_ptr<GPSLNavEph>,GPSLNavEphCEIComp> GPSLNavCEIUniq;
-      
+/// Store GPSLNavEph shared_ptrs using GPSLNavEphCEIComp to sort.
+typedef std::set<std::shared_ptr<GPSLNavEph>, GPSLNavEphCEIComp> GPSLNavCEIUniq;
 
-      //@}
+//@}
 
-}
+} // namespace gnsstk
 
 #endif // GNSSTK_GPSLNAVEPH_HPP

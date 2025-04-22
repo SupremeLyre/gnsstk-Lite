@@ -41,22 +41,22 @@
 namespace gnsstk
 {
 
-      // This is a terrible kludge that nevertheless is necessary
-      // under Windows 2003 and 2005 because global optimization
-      // (compiler switch /O1 or /O2 or /Og) causes the reportingLevel
-      // to be defined ONLY in the module in which ReportingLevel() is
-      // assigned. Rather than give up optimization or
-      // ReportingLevel(), I came up with this kludge, which is to
-      // remove reportingLevel from the ReportingLevel() function and
-      // make it a static member of the class, then initialize it
-      // outside the class.
-      // Similarly for dumpTimeTags and dumpLevels.
+// This is a terrible kludge that nevertheless is necessary
+// under Windows 2003 and 2005 because global optimization
+// (compiler switch /O1 or /O2 or /Og) causes the reportingLevel
+// to be defined ONLY in the module in which ReportingLevel() is
+// assigned. Rather than give up optimization or
+// ReportingLevel(), I came up with this kludge, which is to
+// remove reportingLevel from the ReportingLevel() function and
+// make it a static member of the class, then initialize it
+// outside the class.
+// Similarly for dumpTimeTags and dumpLevels.
 #ifdef WIN32
-//#ifndef LOGSTREAM_INITIALIZE_REPORTING_LEVEL
-//#define LOGSTREAM_INITIALIZE_REPORTING_LEVEL
-   template<> LogLevel Log<ConfigureLOGstream>::reportingLevel = INFO;
-   template<> bool Log<ConfigureLOGstream>::dumpTimeTags = false;
-   template<> bool Log<ConfigureLOGstream>::dumpLevels = false;
-//#endif
+// #ifndef LOGSTREAM_INITIALIZE_REPORTING_LEVEL
+// #define LOGSTREAM_INITIALIZE_REPORTING_LEVEL
+template <> LogLevel Log<ConfigureLOGstream>::reportingLevel = INFO;
+template <> bool Log<ConfigureLOGstream>::dumpTimeTags = false;
+template <> bool Log<ConfigureLOGstream>::dumpLevels = false;
+// #endif
 #endif
-}
+} // namespace gnsstk

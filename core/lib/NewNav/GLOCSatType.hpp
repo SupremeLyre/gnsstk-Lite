@@ -22,7 +22,6 @@
 //
 //==============================================================================
 
-
 //==============================================================================
 //
 //  This software was developed by Applied Research Laboratories at the
@@ -43,21 +42,20 @@
 
 namespace gnsstk
 {
-      /// Values for Word M in the ephemeris (immediate) and almanac data.
-   enum class GLOCSatType
-   {
-      Unknown = -1,   ///< Unknown/Uninitialized value.
-      GLONASS_M = 0,  ///< GLONASS-M with L3 nav payload transmits L3 CDMA.
-      GLONASS_K1 = 1, ///< GLONASS-K1 transmits L3 CDMA.
-      GLONASS_K2 = 2, ///< GLONASS-K2 transmits L1, L2 and L3 CDMA.
-      GLONASS_K1b= 3, ///< GLONASS-K1 transmits L2 and L3 CDMA.
-   };
+/// Values for Word M in the ephemeris (immediate) and almanac data.
+enum class GLOCSatType
+{
+    Unknown = -1,    ///< Unknown/Uninitialized value.
+    GLONASS_M = 0,   ///< GLONASS-M with L3 nav payload transmits L3 CDMA.
+    GLONASS_K1 = 1,  ///< GLONASS-K1 transmits L3 CDMA.
+    GLONASS_K2 = 2,  ///< GLONASS-K2 transmits L1, L2 and L3 CDMA.
+    GLONASS_K1b = 3, ///< GLONASS-K1 transmits L2 and L3 CDMA.
+};
 
-
-   namespace StringUtils
-   {
-      std::string asString(GLOCSatType e);
-   }
+namespace StringUtils
+{
+std::string asString(GLOCSatType e);
 }
+} // namespace gnsstk
 
 #endif // GNSSTK_GLOCSATTYPE_HPP
