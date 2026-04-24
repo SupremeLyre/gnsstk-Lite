@@ -43,6 +43,7 @@
 #include <termios.h> // POSIX terminal control definitions
 
 #include "FDStreamBuff.hpp"
+#include "StringUtils.hpp"
 #include "TCPStreamBuff.hpp"
 
 namespace gnsstk

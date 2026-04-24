@@ -14,5 +14,12 @@
             "-740311.8581,-5457066.4731,3207249.3343:%x,%y,%z"
         ],
         "cwd": "${workspaceFolder}/apps/positioning/examples",
-    }
+    },
+    "ROS2.distro": "jazzy",
+    "python.autoComplete.extraPaths": [
+        "/opt/ros/jazzy/lib/python3.12/site-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/opt/ros/jazzy/lib/python3.12/site-packages"
+    ]
 }
